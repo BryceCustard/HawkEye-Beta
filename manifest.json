@@ -1,14 +1,24 @@
 {
-  "name": "HawkEye — FRC 3310 Scouting",
-  "short_name": "HawkEye",
-  "description": "FRC Team 3310 Black Hawks · REBUILT 2026 Scouting System",
-  "start_url": "./index.html",
+  "name": "3310 Scout — REBUILT 2026",
+  "short_name": "3310 Scout",
+  "description": "FRC Team 3310 HawkEye scouting app for REBUILT 2026",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#0b0b16",
   "theme_color": "#0b0b16",
   "orientation": "portrait",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
