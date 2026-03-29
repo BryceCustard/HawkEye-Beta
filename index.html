@@ -164,7 +164,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .mode-seg-b{flex:1;padding:7px 6px;border:none;background:transparent;color:var(--text3);font-size:12px;font-weight:700;cursor:pointer;border-radius:6px;transition:all .15s;text-align:center;font-family:inherit;touch-action:manipulation}
 .mode-seg-b.on{background:var(--surf4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.35)}
 
-/* HOME BANNER */
+/* ─── HOME BANNER ─── */
 .home-banner{
   background:linear-gradient(135deg,var(--surf) 0%,rgba(240,165,0,.07) 100%);
   border-bottom:1px solid rgba(240,165,0,.22);
@@ -176,7 +176,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .banner-title{font-size:19px;font-weight:900;letter-spacing:-.3px;line-height:1.15}
 .banner-sub{font-size:11px;color:var(--text2);margin-top:3px;letter-spacing:.3px}
 
-/* INFO SCREEN */
+/* ─── INFO SCREEN ─── */
 .info-section{margin-bottom:14px}
 .info-rule{display:flex;justify-content:space-between;align-items:baseline;
   padding:7px 0;border-bottom:1px solid var(--border);font-size:14px}
@@ -200,7 +200,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .ctr.foul .cb-big.plus{background:var(--red);color:#fff}
 .ctr.foul .cb-sm.p5{background:rgba(232,83,74,.2);color:var(--red)}
 
-/* TOGGLE ROW */
+/* ─── TOGGLE ROW ─── */
 .trow{
   display:flex;align-items:center;justify-content:space-between;
   padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;
@@ -222,7 +222,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 }
 .tog.on::after{transform:translateX(21px)}
 
-/* SEGMENT */
+/* ─── SEGMENT ─── */
 .seg{display:flex;background:var(--surf2);border-radius:var(--r-sm);padding:3px;gap:3px}
 .seg-b{
   flex:1;padding:9px 3px;border:none;background:transparent;
@@ -235,7 +235,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .seg-b.on.r{background:var(--red);color:#fff}
 .seg-b.on.b{background:var(--blue);color:#fff}
 
-/* FORM FIELDS */
+/* ─── FORM FIELDS ─── */
 .lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
      color:var(--text2);margin-bottom:6px;margin-top:14px;display:block}
 .lbl:first-child{margin-top:0}
@@ -251,7 +251,7 @@ input.big{font-size:26px;font-weight:800;text-align:center;padding:13px}
 textarea{resize:none;min-height:82px;line-height:1.5}
 select option{background:var(--surf2)}
 
-/* ALLIANCE PICK */
+/* ─── ALLIANCE PICK ─── */
 .ally{display:flex;gap:10px}
 .ally-b{
   flex:1;padding:16px 8px;border-radius:var(--r);border:2px solid var(--border);
@@ -263,7 +263,7 @@ select option{background:var(--surf2)}
 .ally-b.r.on{border-color:var(--red);background:var(--red-d);color:var(--red)}
 .ally-b.b.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
 
-/* START POSITIONS */
+/* ─── START POSITIONS ─── */
 .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .pos-b{
   padding:11px 4px;background:var(--surf2);border:2px solid var(--border);
@@ -273,7 +273,7 @@ select option{background:var(--surf2)}
 }
 .pos-b.on{border-color:var(--gold);background:var(--gold-d);color:var(--gold)}
 
-/* SPEED GRID */
+/* ─── SPEED GRID ─── */
 .spd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .spd-b{
   padding:10px 4px;background:var(--surf2);border:2px solid var(--border);
@@ -285,7 +285,7 @@ select option{background:var(--surf2)}
 .spd-b.on{border-color:var(--gold);background:var(--gold-d);color:var(--gold)}
 .spd-b.on .tier{color:var(--gold)}
 
-/* CHIPS */
+/* ─── CHIPS ─── */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
 .chip{
   padding:8px 14px;background:var(--surf2);border:2px solid var(--border);
@@ -294,7 +294,7 @@ select option{background:var(--surf2)}
 }
 .chip.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
 
-/* DRIVETRAIN GRID */
+/* ─── DRIVETRAIN GRID ─── */
 .dt-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .dt-b{
   padding:14px 8px;background:var(--surf2);border:2px solid var(--border);
@@ -303,12 +303,12 @@ select option{background:var(--surf2)}
 }
 .dt-b.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
 
-/* DATA SUMMARY */
+/* ─── DATA SUMMARY ─── */
 .sum{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
 .sum-k{color:var(--text2);font-weight:500}
 .sum-v{font-weight:700;text-align:right}
 
-/* BUTTONS */
+/* ─── BUTTONS ─── */
 .btn{
   width:100%;padding:15px;border:none;border-radius:var(--r);
   font-size:15px;font-weight:700;cursor:pointer;
@@ -322,10 +322,1365 @@ select option{background:var(--surf2)}
 .btn-blue{background:var(--blue);color:#fff}
 .btn-red{background:var(--red);color:#fff}
 
-/* SAVED ITEM */
+/* ─── SAVED ITEM ─── */
 .si{
   display:flex;align-items:center;justify-content:space-between;
   padding:11px 12px;background:var(--surf2);border-radius:var(--r-sm);
-  margin-bottom:10px
+  margin-bottom:7px;border:1px solid var(--border)
 }
-.sum-k{color:var(--text2);font-weight:500}.sum-v{font-weight:700;text-align:right}/* ━━━ BUTTONS ━━━ */.btn{width:100%;padding:15px;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;font-family:inherit;letter-spacing:.3px;margin-bottom:9px;touch-action:manipulation}.btn:last-child{margin-bottom:0}.btn:active{transform:scale(.98)}.btn-gold{background:var(--gold);color:#000}.btn-surf{background:var(--surf2);color:var(--text);border:1px solid var(--border)}.btn-blue{background:var(--blue);color:#fff}.btn-red{background:var(--red);color:#fff}/* ━━━ SAVED ITEM ━━━ */.si{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;background:var(--surf2);border-radius:var(--r-sm);margin-bottom:10px}.si-l{flex:1;min-width:0}.si-time{font-size:11px;color:var(--text3)}.si-match{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.si-team{font-size:13px;color:var(--text2)}.si-delete{flex-shrink:0;margin-left:8px;padding:6px;cursor:pointer;color:var(--text3);transition:color .15s}.si-delete:active{color:var(--red)}</style></head><body><div id="sc-match" class="screen active"><div class="hdr"><div class="hdr-mid"><div class="hdr-title">MATCH SCOUT</div><div class="hdr-sub">FRC Event Tracker</div></div><div class="hdr-btn gold">⚙</div></div><div class="prog"><div class="prog-pip on"></div><div class="prog-pip"></div><div class="prog-pip"></div><div class="prog-pip"></div><div class="prog-pip"></div><div class="prog-pip"></div></div><div class="body"><div class="card"><div class="card-hd">EVENT</div><select id="eventSelect"><option>Baw5 Demo Event</option></select></div><div class="card"><div class="card-hd">MATCH NUMBER</div><input type="number" class="ctr-num" min="1" max="160" value="1"></div><div class="card"><div class="card-hd">TEAM NUMBER</div><input type="number" class="ctr-num" min="1" max="9999" value="0"></div><div class="card"><div class="card-hd">ALLIANCE</div><div class="ally"><button class="ally-b r" data-alliance="red">RED</button><button class="ally-b b" data-alliance="blue">BLUE</button></div></div><div class="card"><div class="card-hd">TEAM ROLE</div><div class="ally"><button class="ally-b r" data-role="1">1 (Left)</button><button class="ally-b b" data-role="2">2 (Center)</button><button class="ally-b" data-role="3">3 (Right)</button></div></div><div class="card"><div class="card-hd">MODE</div><div class="mode-seg"><button class="mode-seg-b on" data-mode="auton">AUTON</button><button class="mode-seg-b" data-mode="teleop">TELEOP</button></div></div><div class="card"><div class="card-hd">START POSITION</div><div class="pos-grid"><button class="pos-b" data-pos="1"><span>1</span></button><button class="pos-b" data-pos="2"><span>2</span></button><button class="pos-b" data-pos="3"><span>3</span></button></div></div><div class="card"><div class="card-hd">AUTO LEAVE / PARK</div><div class="trow" id="autoLeaveRow"><div><div class="trow-lbl">Left Start?</div><div class="trow-sub">Team crossed midline</div></div><button class="tog"></button></div></div><div class="card"><div class="card-hd">AUTOMOUS SCORING</div><div class="ctr" id="autoSpeaker"><div class="ctr-lbl">SPEAKER</div><div class="ctr-box"><input type="number" class="ctr-num" value="0" min="0"></div><div class="rate-inline"><span class="rate-bps"><span id="autoSpeakerRate">0</span> bps</span></div></div><div class="ctr" id="autoAmp"><div class="ctr-lbl">AMP
+.si-name{font-size:13px;font-weight:700}
+.si-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.si-del{
+  background:var(--red-d);color:var(--red);border:none;border-radius:6px;
+  width:30px;height:30px;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-family:inherit;touch-action:manipulation;
+}
+
+/* ─── QR AREA ─── */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0}
+.qr-box{background:#fff;padding:12px;border-radius:var(--r);display:inline-block}
+.qr-note{font-size:12px;color:var(--text2);text-align:center;max-width:260px;line-height:1.5}
+
+/* ─── MODAL ─── */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.82);
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;padding:20px
+}
+.modal-box{
+  background:var(--surf);border-radius:var(--r);padding:22px;
+  max-width:320px;width:100%;text-align:center;
+  border:1px solid var(--border);box-shadow:var(--sh)
+}
+.modal-title{font-size:11px;font-weight:800;letter-spacing:1.2px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.modal-qr-inner{background:#fff;padding:12px;border-radius:var(--r-sm);
+  display:inline-block;margin-bottom:12px}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:84px;left:50%;
+  transform:translateX(-50%) translateY(14px);
+  background:var(--surf3);color:var(--text);
+  padding:11px 20px;border-radius:20px;font-size:14px;font-weight:600;
+  opacity:0;transition:all .26s;pointer-events:none;z-index:1000;
+  white-space:nowrap;border:1px solid var(--border);box-shadow:var(--sh)
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ─── HOME ─── */
+.home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.hero{padding:28px 14px 10px;text-align:center}
+.hero-icon{font-size:52px;line-height:1;margin-bottom:8px}
+.hero-name{font-size:26px;font-weight:900;letter-spacing:-.5px}
+.hero-sub{font-size:13px;color:var(--text2);margin-top:4px}
+.hcards{display:flex;flex-direction:column;gap:11px;padding:14px}
+.hcard{
+  background:var(--surf);border:1px solid var(--border);
+  border-radius:var(--r);padding:18px;cursor:pointer;
+  transition:transform .12s;display:flex;align-items:center;gap:14px;
+  position:relative;overflow:hidden;touch-action:manipulation;
+}
+.hcard:active{transform:scale(.985)}
+.hcard::before{content:'';position:absolute;inset:0;pointer-events:none}
+.hcard.gold{border-color:rgba(240,165,0,.25)}
+.hcard.gold::before{background:linear-gradient(135deg,rgba(240,165,0,.08) 0%,transparent 55%)}
+.hcard.blue{border-color:rgba(74,143,232,.25)}
+.hcard.blue::before{background:linear-gradient(135deg,rgba(74,143,232,.08) 0%,transparent 55%)}
+.hcard.green{border-color:rgba(76,175,125,.25)}
+.hcard.green::before{background:linear-gradient(135deg,rgba(76,175,125,.08) 0%,transparent 55%)}
+.hcard-icon{font-size:36px;flex-shrink:0}
+.hcard-title{font-size:19px;font-weight:800}
+.hcard-desc{font-size:12px;color:var(--text2);margin-top:3px}
+.hcard-arr{position:absolute;right:17px;font-size:20px;color:var(--text3)}
+.badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--gold);color:#000;font-size:11px;font-weight:900;
+  border-radius:10px;padding:2px 7px;margin-left:7px;min-width:22px
+}
+.ref-g{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:12px}
+.ref-k{color:var(--text2)}
+.ref-v{font-weight:700;color:var(--gold);text-align:right}
+
+/* ─── UTILITIES ─── */
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--surf3);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.page{animation:fadeUp .18s ease}
+.dimmed{opacity:.32;pointer-events:none}
+
+/* ─── LANDSCAPE OPTIMIZATION ─── */
+@media (max-height:500px) and (orientation:landscape){
+  .hdr{padding:5px 12px;padding-top:5px}
+  .hdr-title{font-size:13px}
+  .hdr-sub{display:none}
+  .prog{padding:5px 12px}
+  .body{padding:9px 10px 74px}
+  .card{padding:11px;margin-bottom:7px}
+  .card-hd{margin-bottom:9px;font-size:9px}
+  .ctr{margin-bottom:7px}
+  .ctr-num{font-size:34px;padding:5px 0 1px}
+  .ctr-lbl{font-size:12px;margin-bottom:4px}
+  .cb-big{font-size:22px;padding:11px 0}
+  .cb-sm{padding:7px 0;font-size:12px}
+  .tab{padding:5px 4px 3px;gap:2px;font-size:8px;letter-spacing:.4px}
+  .tab svg{width:17px;height:17px}
+  .pos-grid{grid-template-columns:repeat(6,1fr)}
+  .spd-grid{grid-template-columns:repeat(6,1fr)}
+  .hero{padding:12px 14px 4px}
+  .hero-icon{font-size:32px;margin-bottom:4px}
+  .hero-name{font-size:18px}
+  .hero-sub{font-size:11px}
+  .hcards{gap:7px;padding:8px}
+  .hcard{padding:11px}
+  .hcard-title{font-size:15px}
+  .hcard-icon{font-size:28px}
+  .toast{bottom:58px}
+  .home-banner{padding:8px 14px}
+  .banner-title{font-size:15px}
+  .banner-logo svg{width:34px;height:34px}
+  .ctr-num{font-size:34px}
+  .ctr-slider{height:36px}
+  .ctr-slider::-webkit-slider-thumb{width:28px;height:28px;margin-top:-10px}
+  .ctr-slider-wrap{padding:4px 10px 8px}
+  .trow{padding:10px 0}
+  .trow-lbl{font-size:13px}
+  .ally-b{padding:12px 8px;font-size:14px}
+  input.big{font-size:22px;padding:10px}
+  .btn{padding:12px;font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div class="screen active" id="sc-home">
+  <div class="hdr" style="justify-content:center;flex-direction:column;text-align:center;gap:3px">
+    <div class="hdr-title">Team 3310 "HawkEye"</div>
+    <div class="hdr-sub">REBUILT 2026</div>
+  </div>
+  <div class="home-scroll">
+    <div class="hero">
+      <img src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png"
+           alt="Black Hawks"
+           style="height:64px;width:auto;max-width:220px;object-fit:contain;display:block;margin:0 auto 10px;filter:drop-shadow(0 2px 10px rgba(240,165,0,.3))"
+           onerror="this.style.display='none';document.getElementById('logo-fb').style.display='block'">
+      <span id="logo-fb" style="display:none;font-size:52px;line-height:1;margin-bottom:8px">🦅</span>
+      <div class="hero-name">Black Hawks</div>
+      <div class="hero-sub">FRC 2026 · REBUILT™</div>
+    </div>
+    <div class="hcards">
+      <div class="hcard gold" onclick="openMatch()">
+        <div class="hcard-icon">🎮</div>
+        <div>
+          <div class="hcard-title">Match Scout</div>
+          <div class="hcard-desc">Auton · Teleop · Fuel · Climb</div>
+        </div>
+        <div class="hcard-arr">›</div>
+      </div>
+      <div class="hcard blue" onclick="openPit()">
+        <div class="hcard-icon">🔧</div>
+        <div>
+          <div class="hcard-title">Pit Scout</div>
+          <div class="hcard-desc">Robot specs · Capabilities · Strategy</div>
+        </div>
+        <div class="hcard-arr">›</div>
+      </div>
+      <div class="hcard green" onclick="goTo('sc-history')">
+        <div class="hcard-icon">📋</div>
+        <div>
+          <div class="hcard-title">Saved Data <span class="badge" id="home-badge">0</span></div>
+          <div class="hcard-desc">View, export &amp; manage entries</div>
+        </div>
+        <div class="hcard-arr">›</div>
+      </div>
+      <div class="hcard" style="border-color:rgba(138,107,232,.3)" onclick="goTo('sc-info')">
+        <div class="hcard-icon">⚡</div>
+        <div>
+          <div class="hcard-title">Game Info</div>
+          <div class="hcard-desc">REBUILT™ rules, scoring &amp; field guide</div>
+        </div>
+        <div class="hcard-arr">›</div>
+      </div>
+    </div>
+    <div style="padding:0 14px 28px">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd">REBUILT 2026 — Quick Reference</div>
+        <div class="ref-g">
+          <span class="ref-k">⚽ Auton Fuel</span><span class="ref-v">1 pt / ball</span>
+          <span class="ref-k">⚽ Teleop Fuel</span><span class="ref-v">1 pt / ball</span>
+          <span class="ref-k">🏆 Auton Climb L1</span><span class="ref-v">15 pts</span>
+          <span class="ref-k">🏆 Climb L1</span><span class="ref-v">10 pts</span>
+          <span class="ref-k">🏆 Climb L2</span><span class="ref-v">20 pts</span>
+          <span class="ref-k">🏆 Climb L3</span><span class="ref-v">30 pts</span>
+          <span class="ref-k">🎯 Energized RP</span><span class="ref-v">100+ fuel</span>
+          <span class="ref-k">⚡ Supercharged RP</span><span class="ref-v">360+ fuel</span>
+          <span class="ref-k">🗼 Traversal RP</span><span class="ref-v">50+ tower pts</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:4px 0 4px;color:var(--text3);font-size:12px">Team 3310 Black Hawks · REBUILT™ 2026</div>
+    <div style="text-align:center;padding:0 20px 4px;color:var(--text3);font-size:11px;line-height:1.6">
+      <span style="color:var(--text2);font-weight:700;letter-spacing:.3px">HawkEye Scouting System</span><br>
+      Created by Bryce Custer, Pavel Popoff, and Claude Cowork
+    </div>
+    <div style="text-align:center;padding:0 20px 28px;color:var(--text3);font-size:11px">⚡ Powered by Diet Coke</div>
+  </div>
+</div>
+
+<!-- ═══════════════ MATCH SCOUT ═══════════════ -->
+<div class="screen" id="sc-match">
+  <div class="hdr">
+    <button class="hdr-btn" onclick="goTo('sc-home')">‹ Home</button>
+    <div class="hdr-mid">
+      <div class="hdr-title" id="m-title">Match Scout</div>
+      <div class="hdr-sub" id="m-sub">Setup</div>
+    </div>
+    <button class="hdr-btn" id="m-next" onclick="mNext()">Next ›</button>
+  </div>
+  <div class="prog" id="m-prog"></div>
+  <div class="body" id="m-body"></div>
+  <div class="tabs">
+    <button class="tab" id="mt0" onclick="mGoTab(0)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Setup
+    </button>
+    <button class="tab" id="mt1" onclick="mGoTab(1)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="2" x2="12" y2="5"/><circle cx="12" cy="2" r="1" fill="currentColor" stroke="none"/><rect x="7" y="5" width="10" height="7" rx="1.5"/><circle cx="9.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><rect x="5" y="13" width="14" height="8" rx="1.5"/><line x1="5" y1="16" x2="2" y2="16"/><line x1="19" y1="16" x2="22" y2="16"/></svg>
+      Auton
+    </button>
+    <button class="tab" id="mt2" onclick="mGoTab(2)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="8" width="20" height="12" rx="4"/><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><circle cx="15" cy="11" r=".5" fill="currentColor"/><circle cx="17" cy="13" r=".5" fill="currentColor"/></svg>
+      Teleop
+    </button>
+    <button class="tab" id="mt3" onclick="mGoTab(3)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════ PIT SCOUT ═══════════════ -->
+<div class="screen" id="sc-pit">
+  <div class="hdr">
+    <button class="hdr-btn" onclick="goTo('sc-home')">‹ Home</button>
+    <div class="hdr-mid">
+      <div class="hdr-title">Pit Scout</div>
+      <div class="hdr-sub" id="p-sub">Robot Info</div>
+    </div>
+    <button class="hdr-btn gold" onclick="savePit(true)">Save ✓</button>
+  </div>
+  <div class="body" id="p-body"></div>
+</div>
+
+<!-- ═══════════════ INFO ═══════════════ -->
+<div class="screen" id="sc-info">
+  <div class="hdr">
+    <button class="hdr-btn" onclick="goTo('sc-home')">‹ Home</button>
+    <div class="hdr-mid">
+      <div class="hdr-title">⚡ Game Info</div>
+      <div class="hdr-sub">REBUILT™ 2026</div>
+    </div>
+    <div style="min-width:62px"></div>
+  </div>
+  <div class="body" id="info-body"></div>
+</div>
+
+<!-- ═══════════════ HISTORY ═══════════════ -->
+<div class="screen" id="sc-history">
+  <div class="hdr">
+    <button class="hdr-btn" onclick="goTo('sc-home')">‹ Back</button>
+    <div class="hdr-mid">
+      <div class="hdr-title">Saved Data</div>
+      <div class="hdr-sub" id="h-sub">— entries</div>
+    </div>
+    <button class="hdr-btn red-btn" onclick="clearAll()">Clear All</button>
+  </div>
+  <div class="body" id="h-body"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════
+   CONSTANTS
+═══════════════════════════════════════════ */
+var SPEEDS = [
+  {id:'T0',label:'Tier 0 — >30 b/s'},
+  {id:'T1',label:'Tier 1 — >20 b/s'},
+  {id:'T2',label:'Tier 2 — 15 b/s'},
+  {id:'T3',label:'Tier 3 — 10 b/s'},
+  {id:'T4',label:'Tier 4 — 5 b/s'},
+  {id:'T5',label:'Tier 5 — 1 b/s'},
+  {id:'T6',label:'Tier 6 — <0.5 b/s'}
+];
+var START_POS = [
+  {id:'OT',label:'Outpost\nTrench'},
+  {id:'OB',label:'Outpost\nBump'},
+  {id:'CE',label:'Center'},
+  {id:'DB',label:'Depot\nBump'},
+  {id:'DT',label:'Depot\nTrench'},
+  {id:'NM',label:'No Move'}
+];
+var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+function blankM() {
+  return {
+    matchNum:'26', teamNum:'', alliance:'', scoutName:'',
+    noShow:false, startPos:'',
+    autonScored:0, autonMissed:0, autonFoul:0,
+    autonPassed:false, autonClimbed:false, autonNotes:'',
+    teleScored:0, teleMissed:0, teleFoul:0,
+    telePassed:false, teleDefense:false, teleStuck:false, teleBroke:false,
+    climbLevel:'', wentOverBump:false, wentUnderTrench:false,
+    shooterSpeed:'', teleNotes:''
+  };
+}
+function blankP() {
+  return {
+    teamNum:'', scoutName:'', driveCoach:'',
+    drivetrain:'', batteryCount:'', archetype:'',
+    humanPlayerCount:'', hopperCapacity:'', notes:''
+  };
+}
+
+var M = blankM();
+var P = blankP();
+var mTab = 0;
+var saved = [];
+try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) { saved = []; }
+
+/* ═══════════════════════════════════════════
+   NAV + BADGE
+═══════════════════════════════════════════ */
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  if (id === 'sc-history') renderHistory();
+  if (id === 'sc-info') renderInfo();
+  refreshBadge();
+}
+function openMatch() { goTo('sc-match'); mGoTab(0); }
+function openPit()   { goTo('sc-pit'); renderPit(); }
+
+function refreshBadge() {
+  try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) {}
+  var el = document.getElementById('home-badge');
+  if (el) el.textContent = saved.length;
+}
+
+/* ═══════════════════════════════════════════
+   TOAST + HAPTIC
+═══════════════════════════════════════════ */
+var toastTimer = null;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.classList.remove('on'); }, 2600);
+}
+function vibe(ms) {
+  try { if (navigator.vibrate) navigator.vibrate(ms || 8); } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   TBA API AUTOFILL
+═══════════════════════════════════════════ */
+var TBA_KEY = 'mCWUnuS0o1swGST82WAUwFFhSXJLC52EadtStbwjKRwkE3EFuh5Mb8xMxdwUcc9H';
+var tbaCache = {};
+var tbaTimers = {};
+
+function scheduleTBALookup(val, scope) {
+  if (tbaTimers[scope]) clearTimeout(tbaTimers[scope]);
+  var num = parseInt(val);
+  if (!num || num < 1 || num > 99999) { showTeamInfo(null, scope); return; }
+  tbaTimers[scope] = setTimeout(function() { fetchTBA(num, scope); }, 400);
+}
+
+function fetchTBA(teamNum, scope) {
+  if (tbaCache[teamNum]) { showTeamInfo(tbaCache[teamNum], scope); return; }
+  fetch('https://www.thebluealliance.com/api/v3/team/frc' + teamNum, {
+    headers: { 'X-TBA-Auth-Key': TBA_KEY }
+  }).then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(d) {
+      if (d && d.nickname) {
+        var info = {
+          name: d.nickname,
+          loc: [d.city, d.state_prov, d.country].filter(Boolean).join(', ')
+        };
+        tbaCache[teamNum] = info;
+        showTeamInfo(info, scope);
+      } else {
+        showTeamInfo(null, scope);
+      }
+    }).catch(function() { showTeamInfo(null, scope); });
+}
+
+function showTeamInfo(info, scope) {
+  var el = document.getElementById(scope + '-team-info');
+  if (!el) return;
+  if (!info || !info.name) { el.innerHTML = ''; el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML =
+    '<span style="color:var(--gold);font-weight:700">' + info.name + '</span>' +
+    (info.loc ? '<span style="color:var(--text2);font-size:11px;margin-left:8px">' + info.loc + '</span>' : '');
+  // (teamName field removed; TBA name shown inline only)
+}
+
+/* ═══════════════════════════════════════════
+   GEO BACKGROUND
+═══════════════════════════════════════════ */
+function initGeoBg() {
+  try {
+    var sz = 60;
+    var c = document.createElement('canvas');
+    c.width = sz; c.height = sz;
+    var ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, sz, sz);
+    // diamond outline
+    ctx.strokeStyle = 'rgba(240,165,0,0.065)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(sz/2, 1);
+    ctx.lineTo(sz-1, sz/2);
+    ctx.lineTo(sz/2, sz-1);
+    ctx.lineTo(1, sz/2);
+    ctx.closePath();
+    ctx.stroke();
+    // center dot
+    ctx.fillStyle = 'rgba(240,165,0,0.10)';
+    ctx.beginPath();
+    ctx.arc(sz/2, sz/2, 1.4, 0, Math.PI*2);
+    ctx.fill();
+    // corner dots (for seamless tiling)
+    var corners = [[0,0],[sz,0],[0,sz],[sz,sz]];
+    corners.forEach(function(pt) {
+      ctx.beginPath();
+      ctx.arc(pt[0], pt[1], 1.4, 0, Math.PI*2);
+      ctx.fill();
+    });
+    document.body.style.backgroundImage = 'url(' + c.toDataURL() + ')';
+    document.body.style.backgroundRepeat = 'repeat';
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════
+   COUNTER
+═══════════════════════════════════════════ */
+function mkCtr(field, label, isFoul) {
+  var fc = isFoul ? ' foul' : '';
+  var obj = (field.charAt(0)==='p'&&field.charAt(1)==='_') ? P : M;
+  var key = obj===P ? field.slice(2) : field;
+  var cur = obj[key] || 0;
+  // Foul counters: always buttons, always ±1 only — no slider
+  if (isFoul) {
+    return '<div class="ctr' + fc + '">' +
+      '<div class="ctr-lbl">' + label + '</div>' +
+      '<div class="ctr-box">' +
+      '<input type="number" inputmode="numeric" min="0" class="ctr-num" id="c-' + field + '" value="' + cur + '" oninput="adjSet(\'' + field + '\',this.value)">' +
+      '<div class="ctr-btns-row">' +
+      '<button class="cb cb-big" style="flex:1" onclick="adj(\'' + field + '\',-1)">−</button>' +
+      '<button class="cb cb-big plus" style="flex:1" onclick="adj(\'' + field + '\',1)">+</button>' +
+      '</div></div></div>';
+  }
+  return '<div class="ctr">' +
+    '<div class="ctr-lbl">' + label + '</div>' +
+    '<div class="ctr-box">' +
+    '<input type="number" inputmode="numeric" min="0" class="ctr-num" id="c-' + field + '" value="' + cur + '" oninput="adjSet(\'' + field + '\',this.value)">' +
+    '<div class="ctr-btns-row">' +
+    '<button class="cb cb-sm" onclick="adj(\'' + field + '\',-5)">−5</button>' +
+    '<button class="cb cb-big" onclick="adj(\'' + field + '\',-1)">−</button>' +
+    '<button class="cb cb-big plus" onclick="adj(\'' + field + '\',1)">+</button>' +
+    '<button class="cb cb-sm p5" onclick="adj(\'' + field + '\',5)">+5</button>' +
+    '</div>' +
+    '<div class="ctr-slider-wrap">' +
+    '<input type="range" min="0" max="500" value="' + cur + '" class="ctr-slider" id="s-' + field + '" oninput="adjSlide(\'' + field + '\',this.value)">' +
+    '</div>' +
+    '</div></div>';
+}
+
+function adj(field, delta) {
+  var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
+  var key = obj === P ? field.slice(2) : field;
+  var cur = (obj[key] || 0) + delta;
+  if (cur < 0) cur = 0;
+  obj[key] = cur;
+  var el = document.getElementById('c-' + field);
+  if (el) {
+    el.value = cur;
+    el.classList.add('pop');
+    setTimeout(function() { el.classList.remove('pop'); }, 90);
+  }
+  var sl = document.getElementById('s-' + field);
+  if (sl) sl.value = cur;
+  // Rate calc: positive teleScored increments during session feed the rate
+  if (field === 'teleScored' && delta > 0 && rateState.running) {
+    if (rateState.balls === 0) rateState.firstBallTime = Date.now();
+    rateState.balls += delta;
+    rateState.lastBallTime = Date.now();
+    scheduleRateFinalize();
+    updateRateDisplay();
+  }
+  vibe(7);
+}
+
+function adjSet(field, val) {
+  var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
+  var key = obj === P ? field.slice(2) : field;
+  var oldVal = obj[key] || 0;
+  var n = parseInt(val, 10);
+  if (isNaN(n) || n < 0) n = 0;
+  obj[key] = n;
+  var sl = document.getElementById('s-' + field);
+  if (sl) sl.value = n;
+  // Rate calc: typed increase in teleScored during session
+  if (field === 'teleScored' && n > oldVal && rateState.running) {
+    if (rateState.balls === 0) rateState.firstBallTime = Date.now();
+    rateState.balls += (n - oldVal);
+    rateState.lastBallTime = Date.now();
+    scheduleRateFinalize();
+    updateRateDisplay();
+  }
+}
+
+function adjSlide(field, val) {
+  var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
+  var key = obj === P ? field.slice(2) : field;
+  var oldVal = obj[key] || 0;
+  var n = Math.max(0, Math.min(500, parseInt(val, 10) || 0));
+  obj[key] = n;
+  var el = document.getElementById('c-' + field);
+  if (el) el.value = n;
+  // Rate calc: upward slider drag on teleScored during session
+  if (field === 'teleScored' && n > oldVal && rateState.running) {
+    if (rateState.balls === 0) rateState.firstBallTime = Date.now();
+    rateState.balls += (n - oldVal);
+    rateState.lastBallTime = Date.now();
+    scheduleRateFinalize();
+    updateRateDisplay();
+  }
+  vibe(4);
+}
+
+var ctrMode = 'buttons';
+function setCtrMode(m) {
+  ctrMode = m;
+  if (m === 'slider') {
+    document.body.classList.add('slider-mode');
+  } else {
+    document.body.classList.remove('slider-mode');
+  }
+  document.querySelectorAll('.mode-seg-b').forEach(function(b) {
+    b.classList.toggle('on', b.getAttribute('data-mode') === m);
+  });
+}
+
+function mkModeSeg() {
+  return '<div class="mode-seg">' +
+    '<button class="mode-seg-b' + (ctrMode==='buttons'?' on':'') + '" data-mode="buttons" onclick="setCtrMode(\'buttons\')">🔘 Buttons</button>' +
+    '<button class="mode-seg-b' + (ctrMode==='slider'?' on':'') + '" data-mode="slider" onclick="setCtrMode(\'slider\')">🎚 Slider (0–500)</button>' +
+    '</div>';
+}
+
+function syncCtrDisplay() {
+  var fields = ['autonScored','autonMissed','autonFoul','teleScored','teleMissed','teleFoul'];
+  fields.forEach(function(f) {
+    var el = document.getElementById('c-' + f);
+    if (el) el.value = M[f] || 0;
+    var sl = document.getElementById('s-' + f);
+    if (sl) sl.value = M[f] || 0;
+  });
+}
+
+/* ═══════════════════════════════════════════
+   TOGGLE
+═══════════════════════════════════════════ */
+function mkTog(field, label, desc, isDanger) {
+  var obj = (field.charAt(0) === 'p' && field.charAt(1) === '_') ? P : M;
+  var key = obj === P ? field.slice(2) : field;
+  var val = obj[key];
+  var dan = isDanger ? true : false;
+  var onCls = val ? ' on' : '';
+  var danCls = (dan && val) ? ' red' : '';
+  return '<div class="trow" onclick="togFn(\'' + field + '\',' + dan + ')">' +
+    '<div><div class="trow-lbl">' + label + '</div>' +
+    (desc ? '<div class="trow-sub">' + desc + '</div>' : '') +
+    '</div>' +
+    '<div class="tog' + onCls + danCls + '" id="t-' + field + '"></div>' +
+    '</div>';
+}
+
+function togFn(field, isDanger) {
+  var isPit = field.charAt(0) === 'p' && field.charAt(1) === '_';
+  var obj = isPit ? P : M;
+  var key = isPit ? field.slice(2) : field;
+  obj[key] = !obj[key];
+  var el = document.getElementById('t-' + field);
+  if (el) {
+    el.classList.toggle('on', obj[key]);
+    if (isDanger) el.classList.toggle('red', obj[key]);
+  }
+  vibe(10);
+  // Side effects
+  if (field === 'noShow') {
+    var bod = document.getElementById('auton-rest');
+    if (bod) bod.className = M.noShow ? 'dimmed' : '';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MATCH TABS
+═══════════════════════════════════════════ */
+function mGoTab(t) {
+  mTab = t;
+  for (var i = 0; i < 4; i++) {
+    var tb = document.getElementById('mt' + i);
+    if (tb) tb.classList.toggle('on', i === t);
+  }
+  // tab background tints
+  document.body.classList.remove('tab-auton','tab-teleop');
+  if (t === 1) document.body.classList.add('tab-auton');
+  if (t === 2) document.body.classList.add('tab-teleop');
+  // progress pips
+  var prog = document.getElementById('m-prog');
+  if (prog) {
+    prog.innerHTML = [0,1,2,3].map(function(i) {
+      return '<div class="prog-pip' + (i <= t ? ' on' : '') + '"></div>';
+    }).join('');
+  }
+  // next btn
+  var nb = document.getElementById('m-next');
+  if (nb) {
+    nb.textContent = t < 3 ? 'Next ›' : '';
+    nb.style.opacity = t < 3 ? '1' : '0';
+    nb.style.pointerEvents = t < 3 ? '' : 'none';
+  }
+  document.getElementById('m-sub').textContent = TAB_NAMES[t];
+  updateMHeader();
+  var renders = [renderSetup, renderAuton, renderTeleop, renderExport];
+  var body = document.getElementById('m-body');
+  body.innerHTML = renders[t]();
+  body.scrollTop = 0;
+  syncCtrDisplay();
+  if (t === 0 && M.teamNum) scheduleTBALookup(M.teamNum, 'm');
+  if (t === 2) updateRateDisplay();
+  if (t === 3) setTimeout(buildMatchQR, 120);
+}
+
+function mNext() { if (mTab < 3) mGoTab(mTab + 1); }
+
+function updateMHeader() {
+  var t = M.teamNum || '?';
+  var m = M.matchNum || '?';
+  var clr = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--text2)';
+  document.getElementById('m-title').innerHTML =
+    '<span style="color:' + clr + '">●</span> M' + m + ' · #' + t;
+}
+
+/* ─── SETUP ─── */
+function renderSetup() {
+  return '<div class="page">' +
+  '<div class="card">' +
+  '<div class="card-hd">Match Info</div>' +
+  '<label class="lbl">Match Number</label>' +
+  '<input class="big" type="number" inputmode="numeric" placeholder="26" value="' + (M.matchNum||'') + '" oninput="M.matchNum=this.value;updateMHeader()">' +
+  '<label class="lbl">Team Number</label>' +
+  '<input class="big" type="number" inputmode="numeric" placeholder="3310" value="' + (M.teamNum||'') + '" oninput="M.teamNum=this.value;updateMHeader();scheduleTBALookup(this.value,\'m\')">' +
+  '<div id="m-team-info" style="padding:6px 2px 2px;font-size:13px;display:none"></div>' +
+  '<label class="lbl">Scout Name</label>' +
+  '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Alliance</div>' +
+  '<div class="ally">' +
+  '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
+  '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
+  '</div></div>' +
+  '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
+  '</div>';
+}
+
+function setAlly(a) {
+  M.alliance = a;
+  document.querySelectorAll('.ally-b').forEach(function(b) {
+    b.classList.toggle('on', b.classList.contains(a === 'red' ? 'r' : 'b'));
+  });
+  updateMHeader();
+}
+
+/* ─── AUTON ─── */
+function renderAuton() {
+  return '<div class="page">' +
+  '<div class="card">' +
+  '<div class="card-hd">Status</div>' +
+  mkTog('noShow', 'No Show', 'Robot did not appear on field', true) +
+  '</div>' +
+  '<div id="auton-rest" class="' + (M.noShow ? 'dimmed' : '') + '">' +
+  '<div class="card">' +
+  '<div class="card-hd">Starting Position</div>' +
+  '<div class="pos-grid">' +
+  START_POS.map(function(p) {
+    return '<div class="pos-b' + (M.startPos===p.id?' on':'') + '" ' +
+      'onclick="setStartPos(\'' + p.id + '\')" ' +
+      'style="white-space:pre-line">' + p.label + '</div>';
+  }).join('') +
+  '</div></div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Fuel Shots</div>' +
+  mkModeSeg() +
+  mkCtr('autonScored', '⚽ Scored', false) +
+  mkCtr('autonMissed', '❌ Missed', false) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Actions</div>' +
+  mkTog('autonPassed', 'Passed?', 'Robot crossed the field boundary', false) +
+  mkTog('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Fouls Committed</div>' +
+  mkCtr('autonFoul', '🟥 Fouls', true) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Comments</div>' +
+  '<textarea placeholder="Notes on auton performance…" oninput="M.autonNotes=this.value">' + (M.autonNotes||'') + '</textarea>' +
+  '</div></div>' +
+  '<button class="btn btn-gold" onclick="mGoTab(2)">Continue → Teleop</button>' +
+  '</div>';
+}
+
+function setStartPos(id) {
+  M.startPos = id;
+  document.querySelectorAll('.pos-b').forEach(function(b) {
+    var onclick = b.getAttribute('onclick') || '';
+    b.classList.toggle('on', onclick.indexOf("'" + id + "'") !== -1);
+  });
+}
+
+/* ─── TELEOP ─── */
+function renderTeleop() {
+  var climbMap = {L3:'L3 (30 pts)', L2:'L2 (20 pts)', L1:'L1 (10 pts)', none:'No Climb'};
+  return '<div class="page">' +
+  '<div class="card">' +
+  '<div class="card-hd">Fuel Shots</div>' +
+  mkModeSeg() +
+  mkCtr('teleScored', '⚽ Scored', false) +
+  '<div class="rate-inline">' +
+  '<div class="rate-bps" id="rate-display">— b/s</div>' +
+  '<button id="rate-toggle-btn" class="btn btn-surf" style="margin:0;flex:1;padding:9px;font-size:13px" onclick="rateToggle()">&#9654; Start</button>' +
+  '<button class="btn btn-red" style="margin:0;flex:1;padding:9px;font-size:13px" onclick="rateApply()">Apply &#10003;</button>' +
+  '</div>' +
+  '<div style="font-size:11px;color:var(--text3);padding:3px 12px 8px;line-height:1.5">Needs 3+ balls. If it doesn\'t work, pick a speed below and ignore the timer.</div>' +
+  mkCtr('teleMissed', '❌ Missed', false) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Shooter Speed</div>' +
+  '<div class="spd-grid2">' +
+  SPEEDS.map(function(s) {
+    return '<button class="spd-grid2-b' + (M.shooterSpeed===s.id?' on':'') + '" onclick="setSpeed(\'' + s.id + '\')">' + s.label + '</button>';
+  }).join('') +
+  '</div></div>' +
+  '<div class="card">' +
+  '<div class="card-hd">End-game Climb</div>' +
+  '<div class="seg">' +
+  ['L3','L2','L1','none'].map(function(c) {
+    return '<button class="seg-b' + (M.climbLevel===c?' on g':'') + '" onclick="setClimb(\'' + c + '\')">' +
+      climbMap[c] + '</button>';
+  }).join('') +
+  '</div></div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Field Navigation</div>' +
+  mkTog('wentOverBump', 'Went Over Bump', 'Robot drove over the bump', false) +
+  mkTog('wentUnderTrench', 'Went Under Trench', 'Robot passed under the trench arm', false) +
+  mkTog('telePassed', 'Passed Zone', 'Crossed into opponent zone', false) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Robot Status</div>' +
+  mkTog('teleDefense', 'Played Defense', 'Primary role was defense', false) +
+  mkTog('teleStuck', 'Got Stuck', 'Robot became immobile', true) +
+  mkTog('teleBroke', 'Broke Down', 'Mechanical or electrical failure', true) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Fouls Committed</div>' +
+  mkCtr('teleFoul', '🟥 Fouls', true) +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Comments</div>' +
+  '<textarea placeholder="Notes on teleop performance…" oninput="M.teleNotes=this.value">' + (M.teleNotes||'') + '</textarea>' +
+  '</div>' +
+  '<button class="btn btn-gold" onclick="saveAndExport()">Save &amp; Export →</button>' +
+  '</div>';
+}
+
+function setSpeed(id) {
+  M.shooterSpeed = id;
+  document.querySelectorAll('.spd-grid2-b').forEach(function(b) {
+    var oc = b.getAttribute('onclick') || '';
+    b.classList.toggle('on', oc.indexOf("'" + id + "'") !== -1);
+  });
+}
+
+function setClimb(c) {
+  M.climbLevel = c;
+  document.querySelectorAll('.seg-b').forEach(function(b) {
+    var oc = b.getAttribute('onclick') || '';
+    var match = oc.indexOf("'" + c + "'") !== -1;
+    b.classList.toggle('on', match);
+    b.classList.toggle('g', match);
+  });
+}
+
+/* ─── EXPORT ─── */
+function saveAndExport() { saveMatchEntry(false); mGoTab(3); }
+
+function renderExport() {
+  var ms = saved.filter(function(e) { return e.type === 'match'; });
+  var total = (M.autonScored||0) + (M.teleScored||0);
+  var shots = total + (M.autonMissed||0) + (M.teleMissed||0);
+  var acc = shots > 0 ? Math.round(total / shots * 100) : 0;
+  var cpts = {L3:30, L2:20, L1:10, none:0, '':0};
+  var climbStr = M.climbLevel ? M.climbLevel + ' (' + (cpts[M.climbLevel]||0) + ' pts)' : '—';
+  var allyClr = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--text2)';
+
+  var savedRows = '';
+  if (ms.length) {
+    var items = ms.map(function(e) {
+      var gi = saved.indexOf(e);
+      var ec = e.alliance === 'red' ? 'var(--red)' : e.alliance === 'blue' ? 'var(--blue)' : 'var(--text)';
+      return '<div class="si">' +
+        '<div>' +
+        '<div class="si-name" style="color:' + ec + '">M' + e.matchNum + ' · Team #' + e.teamNum + '</div>' +
+        '<div class="si-sub">⚽ ' + ((e.autonScored||0)+(e.teleScored||0)) + ' fuel · 🏆 ' + (e.climbLevel||'no climb') + '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center">' +
+        '<button class="si-del" style="background:var(--blue-d);border-color:var(--blue);color:var(--blue)" onclick="exportSingleMatchQR(' + gi + ')">📤</button>' +
+        '<button class="si-del" onclick="delEntry(' + gi + ');mGoTab(3)">✕</button>' +
+        '</div>' +
+        '</div>';
+    }).join('');
+    savedRows = '<div class="card">' +
+      '<div class="card-hd">Saved Matches (' + ms.length + ')</div>' +
+      items +
+      '<button class="btn btn-blue" style="margin-top:6px" onclick="exportAllMatchQR()">📤 Export All Matches as QR</button>' +
+      '</div>';
+  }
+
+  return '<div class="page">' +
+  '<div class="card">' +
+  '<div class="card-hd">QR Code — Current Match</div>' +
+  '<div class="qr-wrap">' +
+  '<div class="qr-box" id="qr-match"></div>' +
+  '<div class="qr-note">Scan to transfer. Hit Regenerate if code looks broken.</div>' +
+  '</div>' +
+  '<button class="btn btn-surf" style="margin-top:10px" onclick="buildMatchQR()">↺ Regenerate</button>' +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Match Summary</div>' +
+  '<div class="sum">' +
+  '<span class="sum-k">Match / Team</span><span class="sum-v">M' + (M.matchNum||'?') + ' / #' + (M.teamNum||'?') + '</span>' +
+  '<span class="sum-k">Alliance</span><span class="sum-v" style="color:' + allyClr + '">' + ((M.alliance||'—').toUpperCase()) + '</span>' +
+  '<span class="sum-k">Auton Scored</span><span class="sum-v">' + (M.autonScored||0) + '</span>' +
+  '<span class="sum-k">Teleop Scored</span><span class="sum-v">' + (M.teleScored||0) + '</span>' +
+  '<span class="sum-k">Total Fuel</span><span class="sum-v" style="color:var(--gold)">' + total + '</span>' +
+  '<span class="sum-k">Shot Accuracy</span><span class="sum-v">' + acc + '%</span>' +
+  '<span class="sum-k">Climb</span><span class="sum-v">' + climbStr + '</span>' +
+  '<span class="sum-k">Total Fouls</span><span class="sum-v" style="color:var(--red)">' + ((M.autonFoul||0)+(M.teleFoul||0)) + '</span>' +
+  '</div></div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Actions</div>' +
+  '<button class="btn btn-gold" onclick="saveMatchEntry(true)">💾 Save Entry</button>' +
+  '<button class="btn btn-surf" onclick="newMatch()">＋ New Match (Clear)</button>' +
+  '</div>' +
+  savedRows +
+  '</div>';
+}
+
+function mCSV(e) {
+  var d = e || M;
+  var ns = d.noShow ? 1 : 0;
+  return [
+    d.matchNum, d.teamNum, d.alliance, d.scoutName,
+    ns, ns ? '' : (d.startPos||''),
+    ns ? 0 : (d.autonScored||0), ns ? 0 : (d.autonMissed||0), ns ? 0 : (d.autonFoul||0),
+    ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
+    ns ? '' : (d.autonNotes||'').replace(/,/g,';'),
+    ns ? 0 : (d.teleScored||0), ns ? 0 : (d.teleMissed||0), ns ? 0 : (d.teleFoul||0),
+    ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
+    ns ? 0 : (d.teleStuck?1:0), ns ? 0 : (d.teleBroke?1:0),
+    ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump?1:0), ns ? 0 : (d.wentUnderTrench?1:0),
+    ns ? '' : (d.shooterSpeed||''), ns ? '' : (d.teleNotes||'').replace(/,/g,';')
+  ].join(',');
+}
+
+function buildMatchQR() {
+  var el = document.getElementById('qr-match');
+  if (!el) return;
+  el.innerHTML = '';
+  try {
+    new QRCode(el, {
+      text: mCSV() || 'empty',
+      width: 220, height: 220,
+      colorDark:'#000000', colorLight:'#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch(err) {
+    el.innerHTML = '<div style="color:var(--red);padding:10px;font-size:12px">QR error: ' + err.message + '</div>';
+  }
+}
+
+function saveMatchEntry(notify) {
+  var idx = -1;
+  for (var i = 0; i < saved.length; i++) {
+    if (saved[i].type === 'match' && saved[i].matchNum === M.matchNum && saved[i].teamNum === M.teamNum) {
+      idx = i; break;
+    }
+  }
+  var entry = {};
+  Object.keys(M).forEach(function(k) { entry[k] = M[k]; });
+  entry.type = 'match';
+  entry.savedAt = Date.now();
+  if (idx >= 0) saved[idx] = entry; else saved.push(entry);
+  localStorage.setItem('bh3310', JSON.stringify(saved));
+  refreshBadge();
+  if (notify) {
+    toast('✅ Match entry saved!');
+    M.matchNum = String((parseInt(M.matchNum) || 0) + 1);
+    mGoTab(3);
+    setTimeout(buildMatchQR, 80);
+  }
+}
+
+function newMatch() {
+  if (!confirm('Clear match data and start a new form?')) return;
+  var scout = M.scoutName;
+  var ally  = M.alliance;
+  var nextNum = M.matchNum;  // already incremented by saveMatchEntry
+  M = blankM();
+  M.scoutName = scout;
+  M.alliance  = ally;
+  M.matchNum  = nextNum;
+  mGoTab(0);
+  toast('🗑 Form cleared — scout name & alliance kept');
+}
+
+function exportAllMatchQR() {
+  var ms = saved.filter(function(e) { return e.type === 'match'; });
+  if (!ms.length) { toast('No match data to export'); return; }
+  var hdr = 'match,team,alliance,scout,noshow,startpos,a_sc,a_ms,a_fl,a_ps,a_cl,a_notes,t_sc,t_ms,t_fl,t_ps,t_df,t_st,t_br,climb,bump,trench,speed,t_notes';
+  var csv = hdr + '\n' + ms.map(mCSV).join('\n');
+  showQRModal('All Matches · ' + ms.length + ' entries', csv, ms.length + ' match entries — ' + new Date().toLocaleDateString());
+}
+
+function exportSingleMatchQR(i) {
+  var e = saved[i];
+  if (!e || e.type !== 'match') { toast('Entry not found'); return; }
+  var hdr = 'match,team,alliance,scout,noshow,startpos,a_sc,a_ms,a_fl,a_ps,a_cl,a_notes,t_sc,t_ms,t_fl,t_ps,t_df,t_st,t_br,climb,bump,trench,speed,t_notes';
+  var csv = hdr + '\n' + mCSV(e);
+  showQRModal('M' + e.matchNum + ' · Team #' + e.teamNum, csv, 'Match ' + e.matchNum + ' — ' + (e.scoutName||'unknown scout'));
+}
+
+/* ═══════════════════════════════════════════
+   PIT SCOUT
+═══════════════════════════════════════════ */
+function renderPit() {
+  var psub = document.getElementById('p-sub');
+  if (psub) psub.textContent = P.teamNum ? 'Team #' + P.teamNum : 'Robot Info';
+
+  var ARCHETYPES = ['Turret','Big Dumper','Single Lane Fixed','Double Lane Fixed','Other'];
+  var DRIVETRAINS = ['Swerve','Tank','H-Drive','Other'];
+
+  var html = '<div class="page">' +
+
+  '<div class="card">' +
+  '<div class="card-hd">Team Info</div>' +
+  '<label class="lbl">Scout\'s Name</label>' +
+  '<input type="text" placeholder="Your name" value="' + (P.scoutName||'') + '" oninput="P.scoutName=this.value">' +
+  '<label class="lbl">Team Number</label>' +
+  '<input class="big" type="number" inputmode="numeric" placeholder="3310" value="' + (P.teamNum||'') + '" oninput="P.teamNum=this.value;var s=document.getElementById(\'p-sub\');if(s)s.textContent=this.value?\'Team #\'+this.value:\'Robot Info\';scheduleTBALookup(this.value,\'p\')">' +
+  '<div id="p-team-info" style="padding:6px 2px 2px;font-size:13px;display:none"></div>' +
+  '<label class="lbl">Drive Coach\'s Name</label>' +
+  '<input type="text" placeholder="Drive coach" value="' + (P.driveCoach||'') + '" oninput="P.driveCoach=this.value">' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">Robot Info</div>' +
+  '<label class="lbl">Drivetrain Type</label>' +
+  '<div class="dt-grid">' +
+  DRIVETRAINS.map(function(d) {
+    return '<div class="dt-b' + (P.drivetrain===d?' on':'') + '" onclick="setPDT(\'' + d + '\')">' + d + '</div>';
+  }).join('') +
+  '</div>' +
+  '<label class="lbl" style="margin-top:14px">Battery Count</label>' +
+  '<input type="number" inputmode="numeric" placeholder="e.g. 2" value="' + (P.batteryCount||'') + '" oninput="P.batteryCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
+  '<label class="lbl" style="margin-top:14px">Robot Archetype</label>' +
+  '<div class="arch-grid">' +
+  ARCHETYPES.map(function(a) {
+    return '<div class="arch-b' + (P.archetype===a?' on':'') + '" onclick="setPArch(\'' + a + '\')">' + a + '</div>';
+  }).join('') +
+  '</div>' +
+  '<label class="lbl" style="margin-top:14px">Human Player Count</label>' +
+  '<input type="number" inputmode="numeric" placeholder="e.g. 1" value="' + (P.humanPlayerCount||'') + '" oninput="P.humanPlayerCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
+  '<label class="lbl" style="margin-top:14px">Hopper Capacity</label>' +
+  '<input type="number" inputmode="numeric" placeholder="# of balls" value="' + (P.hopperCapacity||'') + '" oninput="P.hopperCapacity=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">Comments</div>' +
+  '<textarea placeholder="Notes on the robot, strategy, capabilities…" style="min-height:100px" oninput="P.notes=this.value">' + (P.notes||'') + '</textarea>' +
+  '</div>' +
+
+  '<button class="btn btn-gold" onclick="savePitAndQR()">Save &amp; Generate QR →</button>' +
+  '<button class="btn btn-surf" onclick="newPit()">＋ New Robot (Clear)</button>' +
+  '</div>';
+
+  document.getElementById('p-body').innerHTML = html;
+  if (P.teamNum) scheduleTBALookup(P.teamNum, 'p');
+}
+
+function setPDT(d)    { P.drivetrain = d; renderPit(); }
+function setPArch(a)  { P.archetype = a; renderPit(); }
+
+function pCSV(e) {
+  var d = e || P;
+  return [
+    d.teamNum, d.scoutName, d.driveCoach,
+    d.drivetrain, d.batteryCount||'', d.archetype||'',
+    d.humanPlayerCount||'', d.hopperCapacity||'',
+    (d.notes||'').replace(/,/g,';')
+  ].join(',');
+}
+
+function savePit(notify) {
+  var idx = -1;
+  for (var i = 0; i < saved.length; i++) {
+    if (saved[i].type === 'pit' && saved[i].teamNum === P.teamNum) { idx = i; break; }
+  }
+  var entry = {};
+  Object.keys(P).forEach(function(k) { entry[k] = P[k]; });
+  entry.autonPositions = (P.autonPositions || []).slice();
+  entry.type = 'pit';
+  entry.savedAt = Date.now();
+  if (idx >= 0) saved[idx] = entry; else saved.push(entry);
+  localStorage.setItem('bh3310', JSON.stringify(saved));
+  refreshBadge();
+  if (notify) toast('✅ Pit entry saved!');
+}
+
+function savePitAndQR() {
+  savePit(true);
+  showQRModal('Pit · Team #' + (P.teamNum||'?'), pCSV(),
+    (P.teamName || 'Team ' + P.teamNum) + ' · ' + (P.drivetrain||'?') + ' · Climb ' + (P.climbLevel||'?'));
+}
+
+function newPit() {
+  if (!confirm('Clear pit form for a new robot?')) return;
+  P = blankP();
+  renderPit();
+  toast('🗑 Pit form cleared');
+}
+
+/* ═══════════════════════════════════════════
+   HISTORY
+═══════════════════════════════════════════ */
+function renderHistory() {
+  try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) {}
+  var ms = saved.filter(function(e) { return e.type === 'match'; });
+  var ps = saved.filter(function(e) { return e.type === 'pit'; });
+  var hsub = document.getElementById('h-sub');
+  if (hsub) hsub.textContent = saved.length + ' total entries';
+  var html = '';
+
+  if (ms.length) {
+    html += '<div class="card"><div class="card-hd">Match Entries (' + ms.length + ')</div>';
+    ms.forEach(function(e) {
+      var gi = saved.indexOf(e);
+      var ec = e.alliance === 'red' ? 'var(--red)' : e.alliance === 'blue' ? 'var(--blue)' : 'var(--text)';
+      html += '<div class="si">' +
+        '<div>' +
+        '<div class="si-name" style="color:' + ec + '">M' + e.matchNum + ' · Team #' + e.teamNum + '</div>' +
+        '<div class="si-sub">⚽ ' + ((e.autonScored||0)+(e.teleScored||0)) + ' fuel &nbsp;·&nbsp; 🏆 ' +
+          (e.climbLevel||'no climb') + ' &nbsp;·&nbsp; ' + (e.scoutName||'—') + '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center">' +
+        '<button class="si-del" style="background:var(--blue-d);border-color:var(--blue);color:var(--blue)" onclick="exportSingleMatchQR(' + gi + ')">📤</button>' +
+        '<button class="si-del" onclick="delEntry(' + gi + ');renderHistory()">✕</button>' +
+        '</div>' +
+        '</div>';
+    });
+    html += '<button class="btn btn-blue" style="margin-top:6px" onclick="exportAllMatchQR()">📤 Export All Match QR</button></div>';
+  }
+
+  if (ps.length) {
+    html += '<div class="card"><div class="card-hd">Pit Entries (' + ps.length + ')</div>';
+    ps.forEach(function(e) {
+      var gi = saved.indexOf(e);
+      html += '<div class="si">' +
+        '<div>' +
+        '<div class="si-name">Team #' + e.teamNum + (e.teamName ? ' — ' + e.teamName : '') + '</div>' +
+        '<div class="si-sub">🔧 ' + (e.drivetrain||'?') + ' &nbsp;·&nbsp; 🏆 ' + (e.climbLevel||'none') + ' &nbsp;·&nbsp; 🎯 ' + (e.shooterSpeed||'none') + '</div>' +
+        '</div>' +
+        '<button class="si-del" onclick="delEntry(' + gi + ');renderHistory()">✕</button>' +
+        '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (!saved.length) {
+    html = '<div style="text-align:center;padding:70px 20px;color:var(--text3)">' +
+      '<div style="font-size:50px;margin-bottom:14px">📋</div>' +
+      '<div style="font-size:17px;font-weight:700;color:var(--text2)">No saved entries</div>' +
+      '<div style="font-size:13px;margin-top:6px">Scout matches and robots to see data here.</div>' +
+      '</div>';
+  }
+
+  document.getElementById('h-body').innerHTML = html;
+}
+
+function delEntry(i) {
+  saved.splice(i, 1);
+  localStorage.setItem('bh3310', JSON.stringify(saved));
+  refreshBadge();
+}
+
+function clearAll() {
+  if (!confirm('Delete ALL saved entries? This cannot be undone.')) return;
+  saved = [];
+  localStorage.setItem('bh3310', '[]');
+  refreshBadge();
+  renderHistory();
+  toast('🗑 All data cleared');
+}
+
+/* ═══════════════════════════════════════════
+   QR MODAL
+═══════════════════════════════════════════ */
+function showQRModal(title, csvData, subtitle) {
+  var bg = document.createElement('div');
+  bg.className = 'modal-bg';
+  bg.innerHTML = '<div class="modal-box" onclick="event.stopPropagation()">' +
+    '<div class="modal-title">' + title + '</div>' +
+    '<div class="modal-qr-inner" id="mqr"></div>' +
+    '<div class="modal-sub">' + (subtitle||'') + '</div>' +
+    '<button class="btn btn-gold" onclick="this.closest(\'.modal-bg\').remove()">Done ✓</button>' +
+    '</div>';
+  bg.addEventListener('click', function() { bg.remove(); });
+  document.body.appendChild(bg);
+
+  setTimeout(function() {
+    var el = document.getElementById('mqr');
+    if (!el) return;
+    var lvl = QRCode.CorrectLevel.M;
+    try {
+      new QRCode(el, { text: csvData || 'empty', width:210, height:210, colorDark:'#000000', colorLight:'#ffffff', correctLevel: lvl });
+    } catch(e1) {
+      el.innerHTML = '';
+      try {
+        new QRCode(el, { text: csvData || 'empty', width:210, height:210, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.L });
+      } catch(e2) {
+        el.innerHTML = '<div style="color:var(--red);padding:14px;font-size:12px;max-width:180px">⚠️ Too much data for one QR. Export individual entries.</div>';
+      }
+    }
+  }, 80);
+}
+
+/* ═══════════════════════════════════════════
+   INFO SCREEN
+═══════════════════════════════════════════ */
+function renderInfo() {
+  var html = '<div class="page">' +
+
+  '<div class="card">' +
+  '<div class="card-hd">📱 How to Use This App</div>' +
+  '<div class="info-rule"><span class="info-k">1. Pick a mode</span><span class="info-v" style="color:var(--text)">Match Scout or Pit Scout</span></div>' +
+  '<div class="info-rule"><span class="info-k">2. Enter team &amp; match #</span><span class="info-v" style="color:var(--text)">TBA auto-fills team name</span></div>' +
+  '<div class="info-rule"><span class="info-k">3. Pick alliance color</span><span class="info-v" style="color:var(--text)">Stays between matches</span></div>' +
+  '<div class="info-rule"><span class="info-k">4. Count fuel balls</span><span class="info-v" style="color:var(--text)">Buttons, slider, or type</span></div>' +
+  '<div class="info-rule"><span class="info-k">5. Fill toggles &amp; climb</span><span class="info-v" style="color:var(--text)">Tap to toggle on/off</span></div>' +
+  '<div class="info-rule"><span class="info-k">6. Add notes</span><span class="info-v" style="color:var(--text)">Comment box at bottom</span></div>' +
+  '<div class="info-rule"><span class="info-k">7. Save &amp; Export</span><span class="info-v" style="color:var(--text)">QR code is generated</span></div>' +
+  '<div class="info-rule"><span class="info-k">8. Scan QR</span><span class="info-v" style="color:var(--text)">Receive data on any device</span></div>' +
+  '<div class="info-rule"><span class="info-k">No-show robot?</span><span class="info-v" style="color:var(--red)">Toggle No Show → all data zeroed</span></div>' +
+  '<div class="info-rule"><span class="info-k">Qual # auto-advances</span><span class="info-v" style="color:var(--gold)">After each save +1</span></div>' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">⚽ Fuel Scoring</div>' +
+  '<div class="info-rule"><span class="info-k">Auton fuel scored</span><span class="info-v">1 pt / ball</span></div>' +
+  '<div class="info-rule"><span class="info-k">Teleop fuel scored</span><span class="info-v">1 pt / ball</span></div>' +
+  '<div class="info-rule"><span class="info-k">Max balls per match</span><span class="info-v">~500</span></div>' +
+  '<div class="info-rule"><span class="info-k">Ball capacity (Hub)</span><span class="info-v">Unlimited</span></div>' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">🏆 Tower Climb</div>' +
+  '<div class="info-rule"><span class="info-k">Auton Climb L1</span><span class="info-v">15 pts</span></div>' +
+  '<div class="info-rule"><span class="info-k">Teleop Climb L1</span><span class="info-v">10 pts</span></div>' +
+  '<div class="info-rule"><span class="info-k">Teleop Climb L2</span><span class="info-v">20 pts</span></div>' +
+  '<div class="info-rule"><span class="info-k">Teleop Climb L3</span><span class="info-v">30 pts</span></div>' +
+  '<div class="info-rule"><span class="info-k">Traversal RP threshold</span><span class="info-v">50+ tower pts</span></div>' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">🎯 Ranking Points</div>' +
+  '<div class="info-rule"><span class="info-k">⚡ Energized RP</span><span class="info-v">100+ fuel scored</span></div>' +
+  '<div class="info-rule"><span class="info-k">🔋 Supercharged RP</span><span class="info-v">360+ fuel scored</span></div>' +
+  '<div class="info-rule"><span class="info-k">🗼 Traversal RP</span><span class="info-v">50+ tower pts</span></div>' +
+  '<div class="info-rule"><span class="info-k">Win RP</span><span class="info-v">2 pts (win) / 1 pt (tie)</span></div>' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">🗺 Field Zones</div>' +
+  '<div class="info-rule"><span class="info-k">Outpost Trench</span><span class="info-v">Low clearance zone</span></div>' +
+  '<div class="info-rule"><span class="info-k">Outpost Bump</span><span class="info-v">Elevated bump near outpost</span></div>' +
+  '<div class="info-rule"><span class="info-k">Center</span><span class="info-v">Open mid-field</span></div>' +
+  '<div class="info-rule"><span class="info-k">Depot Bump</span><span class="info-v">Elevated bump near depot</span></div>' +
+  '<div class="info-rule"><span class="info-k">Depot Trench</span><span class="info-v">Low clearance near depot</span></div>' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">📱 Scouting Tips</div>' +
+  '<div class="info-rule"><span class="info-k">Input mode</span><span class="info-v">Buttons or Slider</span></div>' +
+  '<div class="info-rule"><span class="info-k">Type score directly</span><span class="info-v">Tap the number</span></div>' +
+  '<div class="info-rule"><span class="info-k">QR export</span><span class="info-v">Export → Scan</span></div>' +
+  '<div class="info-rule"><span class="info-k">Auto-saves alliance</span><span class="info-v">Persists between matches</span></div>' +
+  '<div class="info-rule"><span class="info-k">Qual auto-increments</span><span class="info-v">After each save</span></div>' +
+  '<div class="info-rule"><span class="info-k">TBA lookup</span><span class="info-v">Auto-fills team name</span></div>' +
+  '</div>' +
+
+  '<div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:12px">Team 3310 Black Hawks · REBUILT™ 2026</div>' +
+  '<div style="text-align:center;padding:0 20px 4px;color:var(--text3);font-size:11px;line-height:1.6">' +
+  '<span style="color:var(--text2);font-weight:700;letter-spacing:.3px">HawkEye Scouting System</span><br>' +
+  'Created by Bryce Custer, Pavel Popoff, and Claude Cowork' +
+  '</div>' +
+  '<div style="text-align:center;padding:0 20px 24px;color:var(--text3);font-size:11px">⚡ Powered by Diet Coke</div>' +
+  '</div>';
+
+  var el = document.getElementById('info-body');
+  if (el) el.innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════
+   RATE CALCULATOR
+   Logic: scout taps Start, then scores balls normally.
+   Timer is frozen between taps — only the window from
+   first ball to last ball counts. After 1s of inactivity
+   the session auto-finalizes, snapping elapsed to the
+   last ball moment. No Stop button needed.
+═══════════════════════════════════════════ */
+var rateState = {
+  running: false,
+  startTime: 0,
+  balls: 0,
+  firstBallTime: 0,  // timestamp of first scored ball in session
+  lastBallTime: 0,   // timestamp of most recent scored ball
+  finalBps: 0,       // locked bps after finalization
+  inactivityTimer: null
+};
+
+function rateToggle() {
+  // Tapping when running is a no-op — session ends automatically
+  if (rateState.running) return;
+  if (rateState.inactivityTimer) { clearTimeout(rateState.inactivityTimer); rateState.inactivityTimer = null; }
+  rateState.running = true;
+  rateState.startTime = Date.now();
+  rateState.balls = 0;
+  rateState.firstBallTime = 0;
+  rateState.lastBallTime = 0;
+  rateState.finalBps = 0;
+  updateRateDisplay();
+}
+
+function scheduleRateFinalize() {
+  if (rateState.inactivityTimer) clearTimeout(rateState.inactivityTimer);
+  rateState.inactivityTimer = setTimeout(rateFinalizeSession, 2000);
+}
+
+function rateFinalizeSession() {
+  if (!rateState.running) return;
+  rateState.running = false;
+  rateState.inactivityTimer = null;
+  // Elapsed = first ball → last ball only.
+  // Pre-first-ball wait and inter-ball gaps don't inflate the window;
+  // the 2s inactivity timer already guarantees consecutive balls are close.
+  var elapsed = (rateState.firstBallTime > 0 && rateState.lastBallTime > rateState.firstBallTime)
+    ? (rateState.lastBallTime - rateState.firstBallTime) / 1000
+    : 0;
+  // Valid only if ≥3 balls were scored in this burst
+  if (rateState.balls >= 3) {
+    rateState.finalBps = rateState.balls / Math.max(elapsed, 0.001);
+  } else {
+    rateState.finalBps = 0;
+    if (rateState.balls > 0) toast('\u26a0\ufe0f Need at least 3 balls \u2014 try again');
+  }
+  updateRateDisplay();
+}
+
+function updateRateDisplay() {
+  var el  = document.getElementById('rate-display');
+  var btn = document.getElementById('rate-toggle-btn');
+  if (!el) return;
+  if (rateState.running) {
+    if (btn) { btn.textContent = '\u25cf Live'; btn.disabled = true; btn.style.opacity = '.45'; }
+    if (rateState.balls === 0) {
+      // Timer open but no ball yet — don't start measuring
+      el.textContent = 'waiting\u2026';
+    } else {
+      // First→last ball window only (frozen between presses)
+      var elapsed = (rateState.lastBallTime > rateState.firstBallTime)
+        ? (rateState.lastBallTime - rateState.firstBallTime) / 1000
+        : 0;
+      var bps = (elapsed > 0 && rateState.balls > 1) ? rateState.balls / elapsed : 0;
+      var tier = rateToTier(bps);
+      el.textContent = (bps > 0 ? bps.toFixed(2) : '0.00') + ' b/s' + (tier ? '  \u2192  ' + tier.id : '');
+    }
+  } else if (rateState.finalBps > 0) {
+    var tier2 = rateToTier(rateState.finalBps);
+    el.textContent = rateState.finalBps.toFixed(2) + ' b/s' + (tier2 ? '  \u2192  ' + tier2.id : '');
+    if (btn) { btn.textContent = '\u25b6 Again'; btn.disabled = false; btn.style.opacity = ''; }
+  } else {
+    el.textContent = '\u2014 b/s';
+    if (btn) { btn.textContent = '\u25b6 Start'; btn.disabled = false; btn.style.opacity = ''; }
+  }
+}
+
+function rateToTier(bps) {
+  if (bps <= 0) return null;
+  if (bps > 30)  return SPEEDS[0];
+  if (bps > 20)  return SPEEDS[1];
+  if (bps >= 15) return SPEEDS[2];
+  if (bps >= 10) return SPEEDS[3];
+  if (bps >= 5)  return SPEEDS[4];
+  if (bps >= 1)  return SPEEDS[5];
+  return SPEEDS[6];
+}
+
+function rateApply() {
+  if (rateState.running) { toast('\u23f1 Still timing \u2014 score a ball first'); return; }
+  if (rateState.finalBps === 0) { toast('\u25b6 Tap Start, then score balls to measure'); return; }
+  var tier = rateToTier(rateState.finalBps);
+  if (!tier) { toast('No valid rate \u2014 score more balls'); return; }
+  setSpeed(tier.id);
+  toast('\u2705 Speed set: ' + tier.label);
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+refreshBadge();
+initGeoBg();
+
+// PWA Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(e) {
+    console.log('SW registration failed:', e);
+  });
+}
+</script>
+</body>
+</html>
