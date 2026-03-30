@@ -28,11 +28,11 @@ html,body{
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   background:var(--surf);color:var(--text);overflow:hidden;font-size:16px
 }
-
+ 
 /* ─── SCREENS ─── */
 .screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden}
 .screen.active{display:flex}
-
+ 
 /* ─── HEADER ─── */
 .hdr{
   display:flex;align-items:center;justify-content:space-between;
@@ -55,15 +55,15 @@ html,body{
 .hdr-btn:active{opacity:.65}
 .hdr-btn.gold{background:var(--gold);color:#000;border-color:var(--gold)}
 .hdr-btn.red-btn{background:var(--red);color:#fff;border-color:var(--red)}
-
+ 
 /* ─── PROGRESS BAR ─── */
 .prog{display:flex;gap:5px;padding:9px calc(14px + env(safe-area-inset-right,0px)) 9px calc(14px + env(safe-area-inset-left,0px));background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
 .prog-pip{flex:1;height:3px;background:var(--surf4);border-radius:2px;transition:background .3s}
 .prog-pip.on{background:var(--gold)}
-
+ 
 /* ─── SCROLL AREA ─── */
 .body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px calc(14px + env(safe-area-inset-right,0px)) 100px calc(14px + env(safe-area-inset-left,0px));background:var(--bg)}
-
+ 
 /* ─── BOTTOM TABS ─── */
 .tabs{
   display:flex;background:var(--surf);border-top:1px solid var(--border);
@@ -80,11 +80,11 @@ html,body{
 }
 .tab.on{color:var(--gold)}
 .tab svg{width:21px;height:21px;stroke-width:2}
-
+ 
 /* ─── CARD ─── */
 .card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
 .card-hd{font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-
+ 
 /* ─── COUNTER ─── */
 .ctr{margin-bottom:10px}
 .ctr-lbl{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px}
@@ -105,7 +105,7 @@ input.ctr-num{
 input.ctr-num::-webkit-inner-spin-button,
 input.ctr-num::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 input.ctr-num:focus{border:none;box-shadow:inset 0 -2px 0 var(--gold)}
-
+ 
 /* ─── SLIDER INPUT ─── */
 .ctr-btns-row{display:flex;gap:1px}
 .ctr-slider-wrap{display:none;padding:6px 12px 12px}
@@ -132,7 +132,7 @@ body.slider-mode .ctr-slider-wrap{display:block}
 /* foul counters: always buttons, never slider, ±1 only */
 .ctr.foul .ctr-btns-row{display:flex!important}
 .ctr.foul .ctr-slider-wrap{display:none!important}
-
+ 
 /* ─── TAB BACKGROUND TINTS ─── */
 body.tab-auton #sc-match .body{background:rgba(74,143,232,.10)}
 body.tab-teleop #sc-match .body{background:rgba(232,83,74,.10)}
@@ -144,7 +144,7 @@ body.tab-auton #sc-match .tabs{border-top-color:rgba(74,143,232,.35)}
 body.tab-teleop #sc-match .tabs{border-top-color:rgba(232,83,74,.35)}
 body.tab-auton #sc-match .prog{background:rgba(74,143,232,.09)}
 body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
-
+ 
 /* ─── SHOOTER SPEED GRID ─── */
 .spd-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .spd-grid2-b{
@@ -154,21 +154,21 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
   font-family:inherit
 }
 .spd-grid2-b.on{border-color:var(--gold);background:var(--gold-d);color:var(--gold)}
-
+ 
 /* ─── RATE INLINE ─── */
 .rate-inline{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--surf3);border-radius:0 0 var(--r-sm) var(--r-sm);margin-top:-1px;margin-bottom:10px}
 .rate-bps{font-size:17px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--text);min-width:76px;white-space:nowrap}
-
+ 
 /* ─── PIT ARCHETYPE GRID ─── */
 .arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .arch-b{padding:13px 8px;background:var(--surf2);border:2px solid var(--border);border-radius:var(--r-sm);color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;text-align:center;line-height:1.35;transition:all .15s;touch-action:manipulation}
 .arch-b.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
-
+ 
 /* mode segment */
 .mode-seg{display:flex;background:var(--surf3);border-radius:var(--r-sm);padding:3px;gap:3px;margin-bottom:12px}
 .mode-seg-b{flex:1;padding:7px 6px;border:none;background:transparent;color:var(--text3);font-size:12px;font-weight:700;cursor:pointer;border-radius:6px;transition:all .15s;text-align:center;font-family:inherit;touch-action:manipulation}
 .mode-seg-b.on{background:var(--surf4);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.35)}
-
+ 
 /* ─── HOME BANNER ─── */
 .home-banner{
   background:linear-gradient(135deg,var(--surf) 0%,rgba(240,165,0,.07) 100%);
@@ -182,7 +182,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .banner-logo{flex-shrink:0}
 .banner-title{font-size:19px;font-weight:900;letter-spacing:-.3px;line-height:1.15}
 .banner-sub{font-size:11px;color:var(--text2);margin-top:3px;letter-spacing:.3px}
-
+ 
 /* ─── INFO SCREEN ─── */
 .info-section{margin-bottom:14px}
 .info-rule{display:flex;justify-content:space-between;align-items:baseline;
@@ -206,7 +206,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .ctr.foul .ctr-num{color:var(--red)}
 .ctr.foul .cb-big.plus{background:var(--red);color:#fff}
 .ctr.foul .cb-sm.p5{background:rgba(232,83,74,.2);color:var(--red)}
-
+ 
 /* ─── TOGGLE ROW ─── */
 .trow{
   display:flex;align-items:center;justify-content:space-between;
@@ -228,7 +228,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
   transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.35)
 }
 .tog.on::after{transform:translateX(21px)}
-
+ 
 /* ─── SEGMENT ─── */
 .seg{display:flex;background:var(--surf2);border-radius:var(--r-sm);padding:3px;gap:3px}
 .seg-b{
@@ -241,7 +241,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
 .seg-b.on.g{background:var(--gold);color:#000}
 .seg-b.on.r{background:var(--red);color:#fff}
 .seg-b.on.b{background:var(--blue);color:#fff}
-
+ 
 /* ─── FORM FIELDS ─── */
 .lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;
      color:var(--text2);margin-bottom:6px;margin-top:14px;display:block}
@@ -257,7 +257,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}
 input.big{font-size:26px;font-weight:800;text-align:center;padding:13px}
 textarea{resize:none;min-height:82px;line-height:1.5}
 select option{background:var(--surf2)}
-
+ 
 /* ─── ALLIANCE PICK ─── */
 .ally{display:flex;gap:10px}
 .ally-b{
@@ -269,7 +269,7 @@ select option{background:var(--surf2)}
 .ally-b:active{transform:scale(.97)}
 .ally-b.r.on{border-color:var(--red);background:var(--red-d);color:var(--red)}
 .ally-b.b.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
-
+ 
 /* ─── START POSITIONS ─── */
 .pos-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .pos-b{
@@ -279,7 +279,7 @@ select option{background:var(--surf2)}
   touch-action:manipulation;
 }
 .pos-b.on{border-color:var(--gold);background:var(--gold-d);color:var(--gold)}
-
+ 
 /* ─── SPEED GRID ─── */
 .spd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
 .spd-b{
@@ -291,7 +291,7 @@ select option{background:var(--surf2)}
 .spd-b .tier{font-size:15px;font-weight:900;color:var(--text);display:block;margin-bottom:2px}
 .spd-b.on{border-color:var(--gold);background:var(--gold-d);color:var(--gold)}
 .spd-b.on .tier{color:var(--gold)}
-
+ 
 /* ─── CHIPS ─── */
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
 .chip{
@@ -300,7 +300,7 @@ select option{background:var(--surf2)}
   cursor:pointer;transition:all .15s;touch-action:manipulation;
 }
 .chip.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
-
+ 
 /* ─── DRIVETRAIN GRID ─── */
 .dt-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .dt-b{
@@ -309,12 +309,12 @@ select option{background:var(--surf2)}
   cursor:pointer;text-align:center;transition:all .15s;touch-action:manipulation;
 }
 .dt-b.on{border-color:var(--blue);background:var(--blue-d);color:var(--blue)}
-
+ 
 /* ─── DATA SUMMARY ─── */
 .sum{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
 .sum-k{color:var(--text2);font-weight:500}
 .sum-v{font-weight:700;text-align:right}
-
+ 
 /* ─── BUTTONS ─── */
 .btn{
   width:100%;padding:15px;border:none;border-radius:var(--r);
@@ -328,7 +328,7 @@ select option{background:var(--surf2)}
 .btn-surf{background:var(--surf2);color:var(--text);border:1px solid var(--border)}
 .btn-blue{background:var(--blue);color:#fff}
 .btn-red{background:var(--red);color:#fff}
-
+ 
 /* ─── SAVED ITEM ─── */
 .si{
   display:flex;align-items:center;justify-content:space-between;
@@ -343,12 +343,12 @@ select option{background:var(--surf2)}
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
   font-family:inherit;touch-action:manipulation;
 }
-
+ 
 /* ─── QR AREA ─── */
 .qr-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0}
 .qr-box{background:#fff;padding:12px;border-radius:var(--r);display:inline-block}
 .qr-note{font-size:12px;color:var(--text2);text-align:center;max-width:260px;line-height:1.5}
-
+ 
 /* ─── MODAL ─── */
 .modal-bg{
   position:fixed;inset:0;background:rgba(0,0,0,.82);
@@ -365,7 +365,7 @@ select option{background:var(--surf2)}
 .modal-qr-inner{background:#fff;padding:12px;border-radius:var(--r-sm);
   display:inline-block;margin-bottom:12px}
 .modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.5}
-
+ 
 /* ─── TOAST ─── */
 .toast{
   position:fixed;bottom:84px;left:50%;
@@ -376,7 +376,7 @@ select option{background:var(--surf2)}
   white-space:nowrap;border:1px solid var(--border);box-shadow:var(--sh)
 }
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-
+ 
 /* ─── HOME ─── */
 .home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 calc(14px + env(safe-area-inset-right,0px)) max(20px,env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left,0px));background:var(--bg)}
 .hero{padding:28px 14px 10px;text-align:center}
@@ -410,7 +410,7 @@ select option{background:var(--surf2)}
 .ref-g{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;font-size:12px}
 .ref-k{color:var(--text2)}
 .ref-v{font-weight:700;color:var(--gold);text-align:right}
-
+ 
 /* ─── UTILITIES ─── */
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -418,7 +418,7 @@ select option{background:var(--surf2)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 .page{animation:fadeUp .18s ease}
 .dimmed{opacity:.32;pointer-events:none}
-
+ 
 /* ─── LANDSCAPE OPTIMIZATION ─── */
 @media (max-height:500px) and (orientation:landscape){
   .hdr{padding:5px 12px;padding-top:5px}
@@ -462,7 +462,7 @@ select option{background:var(--surf2)}
 </style>
 </head>
 <body>
-
+ 
 <!-- ═══════════════ HOME ═══════════════ -->
 <div class="screen active" id="sc-home">
   <div class="hdr" style="justify-content:center;flex-direction:column;text-align:center;gap:3px">
@@ -537,7 +537,7 @@ select option{background:var(--surf2)}
     <div style="text-align:center;padding:0 20px 28px;color:var(--text3);font-size:11px">⚡ Powered by Diet Coke</div>
   </div>
 </div>
-
+ 
 <!-- ═══════════════ MATCH SCOUT ═══════════════ -->
 <div class="screen" id="sc-match">
   <div class="hdr">
@@ -569,7 +569,7 @@ select option{background:var(--surf2)}
     </button>
   </div>
 </div>
-
+ 
 <!-- ═══════════════ PIT SCOUT ═══════════════ -->
 <div class="screen" id="sc-pit">
   <div class="hdr">
@@ -582,7 +582,7 @@ select option{background:var(--surf2)}
   </div>
   <div class="body" id="p-body"></div>
 </div>
-
+ 
 <!-- ═══════════════ INFO ═══════════════ -->
 <div class="screen" id="sc-info">
   <div class="hdr">
@@ -595,7 +595,7 @@ select option{background:var(--surf2)}
   </div>
   <div class="body" id="info-body"></div>
 </div>
-
+ 
 <!-- ═══════════════ HISTORY ═══════════════ -->
 <div class="screen" id="sc-history">
   <div class="hdr">
@@ -608,7 +608,7 @@ select option{background:var(--surf2)}
   </div>
   <div class="body" id="h-body"></div>
 </div>
-
+ 
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -633,7 +633,7 @@ var START_POS = [
   {id:'NM',label:'No Move'}
 ];
 var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
-
+ 
 /* ═══════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════ */
@@ -656,13 +656,13 @@ function blankP() {
     humanPlayerCount:'', hopperCapacity:'', notes:''
   };
 }
-
+ 
 var M = blankM();
 var P = blankP();
 var mTab = 0;
 var saved = [];
 try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) { saved = []; }
-
+ 
 /* ═══════════════════════════════════════════
    NAV + BADGE
 ═══════════════════════════════════════════ */
@@ -675,13 +675,13 @@ function goTo(id) {
 }
 function openMatch() { goTo('sc-match'); mGoTab(0); }
 function openPit()   { goTo('sc-pit'); renderPit(); }
-
+ 
 function refreshBadge() {
   try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) {}
   var el = document.getElementById('home-badge');
   if (el) el.textContent = saved.length;
 }
-
+ 
 /* ═══════════════════════════════════════════
    TOAST + HAPTIC
 ═══════════════════════════════════════════ */
@@ -696,21 +696,21 @@ function toast(msg) {
 function vibe(ms) {
   try { if (navigator.vibrate) navigator.vibrate(ms || 8); } catch(e) {}
 }
-
+ 
 /* ═══════════════════════════════════════════
    TBA API AUTOFILL
 ═══════════════════════════════════════════ */
 var TBA_KEY = 'mCWUnuS0o1swGST82WAUwFFhSXJLC52EadtStbwjKRwkE3EFuh5Mb8xMxdwUcc9H';
 var tbaCache = {};
 var tbaTimers = {};
-
+ 
 function scheduleTBALookup(val, scope) {
   if (tbaTimers[scope]) clearTimeout(tbaTimers[scope]);
   var num = parseInt(val);
   if (!num || num < 1 || num > 99999) { showTeamInfo(null, scope); return; }
   tbaTimers[scope] = setTimeout(function() { fetchTBA(num, scope); }, 400);
 }
-
+ 
 function fetchTBA(teamNum, scope) {
   if (tbaCache[teamNum]) { showTeamInfo(tbaCache[teamNum], scope); return; }
   fetch('https://www.thebluealliance.com/api/v3/team/frc' + teamNum, {
@@ -729,7 +729,7 @@ function fetchTBA(teamNum, scope) {
       }
     }).catch(function() { showTeamInfo(null, scope); });
 }
-
+ 
 function showTeamInfo(info, scope) {
   var el = document.getElementById(scope + '-team-info');
   if (!el) return;
@@ -740,7 +740,7 @@ function showTeamInfo(info, scope) {
     (info.loc ? '<span style="color:var(--text2);font-size:11px;margin-left:8px">' + info.loc + '</span>' : '');
   // (teamName field removed; TBA name shown inline only)
 }
-
+ 
 /* ═══════════════════════════════════════════
    GEO BACKGROUND
 ═══════════════════════════════════════════ */
@@ -777,7 +777,7 @@ function initGeoBg() {
     document.body.style.backgroundRepeat = 'repeat';
   } catch(e) {}
 }
-
+ 
 /* ═══════════════════════════════════════════
    COUNTER
 ═══════════════════════════════════════════ */
@@ -812,7 +812,7 @@ function mkCtr(field, label, isFoul) {
     '</div>' +
     '</div></div>';
 }
-
+ 
 function adj(field, delta) {
   var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
   var key = obj === P ? field.slice(2) : field;
@@ -837,7 +837,7 @@ function adj(field, delta) {
   }
   vibe(7);
 }
-
+ 
 function adjSet(field, val) {
   var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
   var key = obj === P ? field.slice(2) : field;
@@ -856,7 +856,7 @@ function adjSet(field, val) {
     updateRateDisplay();
   }
 }
-
+ 
 function adjSlide(field, val) {
   var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
   var key = obj === P ? field.slice(2) : field;
@@ -875,7 +875,7 @@ function adjSlide(field, val) {
   }
   vibe(4);
 }
-
+ 
 var ctrMode = 'buttons';
 function setCtrMode(m) {
   ctrMode = m;
@@ -888,14 +888,14 @@ function setCtrMode(m) {
     b.classList.toggle('on', b.getAttribute('data-mode') === m);
   });
 }
-
+ 
 function mkModeSeg() {
   return '<div class="mode-seg">' +
     '<button class="mode-seg-b' + (ctrMode==='buttons'?' on':'') + '" data-mode="buttons" onclick="setCtrMode(\'buttons\')">🔘 Buttons</button>' +
     '<button class="mode-seg-b' + (ctrMode==='slider'?' on':'') + '" data-mode="slider" onclick="setCtrMode(\'slider\')">🎚 Slider (0–500)</button>' +
     '</div>';
 }
-
+ 
 function syncCtrDisplay() {
   var fields = ['autonScored','autonMissed','autonFoul','teleScored','teleMissed','teleFoul'];
   fields.forEach(function(f) {
@@ -905,7 +905,7 @@ function syncCtrDisplay() {
     if (sl) sl.value = M[f] || 0;
   });
 }
-
+ 
 /* ═══════════════════════════════════════════
    TOGGLE
 ═══════════════════════════════════════════ */
@@ -923,7 +923,7 @@ function mkTog(field, label, desc, isDanger) {
     '<div class="tog' + onCls + danCls + '" id="t-' + field + '"></div>' +
     '</div>';
 }
-
+ 
 function togFn(field, isDanger) {
   var isPit = field.charAt(0) === 'p' && field.charAt(1) === '_';
   var obj = isPit ? P : M;
@@ -941,7 +941,7 @@ function togFn(field, isDanger) {
     if (bod) bod.className = M.noShow ? 'dimmed' : '';
   }
 }
-
+ 
 /* ═══════════════════════════════════════════
    MATCH TABS
 ═══════════════════════════════════════════ */
@@ -980,9 +980,9 @@ function mGoTab(t) {
   if (t === 2) updateRateDisplay();
   if (t === 3) setTimeout(buildMatchQR, 120);
 }
-
+ 
 function mNext() { if (mTab < 3) mGoTab(mTab + 1); }
-
+ 
 function updateMHeader() {
   var t = M.teamNum || '?';
   var m = M.matchNum || '?';
@@ -990,7 +990,7 @@ function updateMHeader() {
   document.getElementById('m-title').innerHTML =
     '<span style="color:' + clr + '">●</span> M' + m + ' · #' + t;
 }
-
+ 
 /* ─── SETUP ─── */
 function renderSetup() {
   return '<div class="page">' +
@@ -1013,7 +1013,7 @@ function renderSetup() {
   '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
   '</div>';
 }
-
+ 
 function setAlly(a) {
   M.alliance = a;
   document.querySelectorAll('.ally-b').forEach(function(b) {
@@ -1021,7 +1021,7 @@ function setAlly(a) {
   });
   updateMHeader();
 }
-
+ 
 /* ─── AUTON ─── */
 function renderAuton() {
   return '<div class="page">' +
@@ -1061,7 +1061,7 @@ function renderAuton() {
   '<button class="btn btn-gold" onclick="mGoTab(2)">Continue → Teleop</button>' +
   '</div>';
 }
-
+ 
 function setStartPos(id) {
   M.startPos = id;
   document.querySelectorAll('.pos-b').forEach(function(b) {
@@ -1069,7 +1069,7 @@ function setStartPos(id) {
     b.classList.toggle('on', onclick.indexOf("'" + id + "'") !== -1);
   });
 }
-
+ 
 /* ─── TELEOP ─── */
 function renderTeleop() {
   var climbMap = {L3:'L3 (30 pts)', L2:'L2 (20 pts)', L1:'L1 (10 pts)', none:'No Climb'};
@@ -1124,7 +1124,7 @@ function renderTeleop() {
   '<button class="btn btn-gold" onclick="saveAndExport()">Save &amp; Export →</button>' +
   '</div>';
 }
-
+ 
 function setSpeed(id) {
   M.shooterSpeed = id;
   document.querySelectorAll('.spd-grid2-b').forEach(function(b) {
@@ -1132,7 +1132,7 @@ function setSpeed(id) {
     b.classList.toggle('on', oc.indexOf("'" + id + "'") !== -1);
   });
 }
-
+ 
 function setClimb(c) {
   M.climbLevel = c;
   document.querySelectorAll('.seg-b').forEach(function(b) {
@@ -1142,10 +1142,10 @@ function setClimb(c) {
     b.classList.toggle('g', match);
   });
 }
-
+ 
 /* ─── EXPORT ─── */
 function saveAndExport() { saveMatchEntry(false); mGoTab(3); }
-
+ 
 function renderExport() {
   var ms = saved.filter(function(e) { return e.type === 'match'; });
   var total = (M.autonScored||0) + (M.teleScored||0);
@@ -1154,7 +1154,7 @@ function renderExport() {
   var cpts = {L3:30, L2:20, L1:10, none:0, '':0};
   var climbStr = M.climbLevel ? M.climbLevel + ' (' + (cpts[M.climbLevel]||0) + ' pts)' : '—';
   var allyClr = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--text2)';
-
+ 
   var savedRows = '';
   if (ms.length) {
     var items = ms.map(function(e) {
@@ -1177,7 +1177,7 @@ function renderExport() {
       '<button class="btn btn-blue" style="margin-top:6px" onclick="exportAllMatchQR()">📤 Export All Matches as QR</button>' +
       '</div>';
   }
-
+ 
   return '<div class="page">' +
   '<div class="card">' +
   '<div class="card-hd">QR Code — Current Match</div>' +
@@ -1207,7 +1207,7 @@ function renderExport() {
   savedRows +
   '</div>';
 }
-
+ 
 function mCSV(e) {
   var d = e || M;
   var ns = d.noShow ? 1 : 0;
@@ -1224,7 +1224,7 @@ function mCSV(e) {
     ns ? '' : (d.shooterSpeed||''), ns ? '' : (d.teleNotes||'').replace(/,/g,';')
   ].join(',');
 }
-
+ 
 function buildMatchQR() {
   var el = document.getElementById('qr-match');
   if (!el) return;
@@ -1240,7 +1240,7 @@ function buildMatchQR() {
     el.innerHTML = '<div style="color:var(--red);padding:10px;font-size:12px">QR error: ' + err.message + '</div>';
   }
 }
-
+ 
 function saveMatchEntry(notify) {
   var idx = -1;
   for (var i = 0; i < saved.length; i++) {
@@ -1262,7 +1262,7 @@ function saveMatchEntry(notify) {
     setTimeout(buildMatchQR, 80);
   }
 }
-
+ 
 function newMatch() {
   if (!confirm('Clear match data and start a new form?')) return;
   var scout = M.scoutName;
@@ -1275,7 +1275,7 @@ function newMatch() {
   mGoTab(0);
   toast('🗑 Form cleared — scout name & alliance kept');
 }
-
+ 
 function exportAllMatchQR() {
   var ms = saved.filter(function(e) { return e.type === 'match'; });
   if (!ms.length) { toast('No match data to export'); return; }
@@ -1283,7 +1283,7 @@ function exportAllMatchQR() {
   var csv = hdr + '\n' + ms.map(mCSV).join('\n');
   showQRModal('All Matches · ' + ms.length + ' entries', csv, ms.length + ' match entries — ' + new Date().toLocaleDateString());
 }
-
+ 
 function exportSingleMatchQR(i) {
   var e = saved[i];
   if (!e || e.type !== 'match') { toast('Entry not found'); return; }
@@ -1291,19 +1291,19 @@ function exportSingleMatchQR(i) {
   var csv = hdr + '\n' + mCSV(e);
   showQRModal('M' + e.matchNum + ' · Team #' + e.teamNum, csv, 'Match ' + e.matchNum + ' — ' + (e.scoutName||'unknown scout'));
 }
-
+ 
 /* ═══════════════════════════════════════════
    PIT SCOUT
 ═══════════════════════════════════════════ */
 function renderPit() {
   var psub = document.getElementById('p-sub');
   if (psub) psub.textContent = P.teamNum ? 'Team #' + P.teamNum : 'Robot Info';
-
+ 
   var ARCHETYPES = ['Turret','Big Dumper','Single Lane Fixed','Double Lane Fixed','Other'];
   var DRIVETRAINS = ['Swerve','Tank','H-Drive','Other'];
-
+ 
   var html = '<div class="page">' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">Team Info</div>' +
   '<label class="lbl">Scout\'s Name</label>' +
@@ -1314,7 +1314,7 @@ function renderPit() {
   '<label class="lbl">Drive Coach\'s Name</label>' +
   '<input type="text" placeholder="Drive coach" value="' + (P.driveCoach||'') + '" oninput="P.driveCoach=this.value">' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">Robot Info</div>' +
   '<label class="lbl">Drivetrain Type</label>' +
@@ -1336,23 +1336,23 @@ function renderPit() {
   '<label class="lbl" style="margin-top:14px">Hopper Capacity</label>' +
   '<input type="number" inputmode="numeric" placeholder="# of balls" value="' + (P.hopperCapacity||'') + '" oninput="P.hopperCapacity=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">Comments</div>' +
   '<textarea placeholder="Notes on the robot, strategy, capabilities…" style="min-height:100px" oninput="P.notes=this.value">' + (P.notes||'') + '</textarea>' +
   '</div>' +
-
+ 
   '<button class="btn btn-gold" onclick="savePitAndQR()">Save &amp; Generate QR →</button>' +
   '<button class="btn btn-surf" onclick="newPit()">＋ New Robot (Clear)</button>' +
   '</div>';
-
+ 
   document.getElementById('p-body').innerHTML = html;
   if (P.teamNum) scheduleTBALookup(P.teamNum, 'p');
 }
-
+ 
 function setPDT(d)    { P.drivetrain = d; renderPit(); }
 function setPArch(a)  { P.archetype = a; renderPit(); }
-
+ 
 function pCSV(e) {
   var d = e || P;
   return [
@@ -1362,7 +1362,7 @@ function pCSV(e) {
     (d.notes||'').replace(/,/g,';')
   ].join(',');
 }
-
+ 
 function savePit(notify) {
   var idx = -1;
   for (var i = 0; i < saved.length; i++) {
@@ -1378,20 +1378,20 @@ function savePit(notify) {
   refreshBadge();
   if (notify) toast('✅ Pit entry saved!');
 }
-
+ 
 function savePitAndQR() {
   savePit(true);
   showQRModal('Pit · Team #' + (P.teamNum||'?'), pCSV(),
     (P.teamName || 'Team ' + P.teamNum) + ' · ' + (P.drivetrain||'?') + ' · Climb ' + (P.climbLevel||'?'));
 }
-
+ 
 function newPit() {
   if (!confirm('Clear pit form for a new robot?')) return;
   P = blankP();
   renderPit();
   toast('🗑 Pit form cleared');
 }
-
+ 
 /* ═══════════════════════════════════════════
    HISTORY
 ═══════════════════════════════════════════ */
@@ -1402,7 +1402,7 @@ function renderHistory() {
   var hsub = document.getElementById('h-sub');
   if (hsub) hsub.textContent = saved.length + ' total entries';
   var html = '';
-
+ 
   if (ms.length) {
     html += '<div class="card"><div class="card-hd">Match Entries (' + ms.length + ')</div>';
     ms.forEach(function(e) {
@@ -1422,7 +1422,7 @@ function renderHistory() {
     });
     html += '<button class="btn btn-blue" style="margin-top:6px" onclick="exportAllMatchQR()">📤 Export All Match QR</button></div>';
   }
-
+ 
   if (ps.length) {
     html += '<div class="card"><div class="card-hd">Pit Entries (' + ps.length + ')</div>';
     ps.forEach(function(e) {
@@ -1437,7 +1437,7 @@ function renderHistory() {
     });
     html += '</div>';
   }
-
+ 
   if (!saved.length) {
     html = '<div style="text-align:center;padding:70px 20px;color:var(--text3)">' +
       '<div style="font-size:50px;margin-bottom:14px">📋</div>' +
@@ -1445,16 +1445,16 @@ function renderHistory() {
       '<div style="font-size:13px;margin-top:6px">Scout matches and robots to see data here.</div>' +
       '</div>';
   }
-
+ 
   document.getElementById('h-body').innerHTML = html;
 }
-
+ 
 function delEntry(i) {
   saved.splice(i, 1);
   localStorage.setItem('bh3310', JSON.stringify(saved));
   refreshBadge();
 }
-
+ 
 function clearAll() {
   if (!confirm('Delete ALL saved entries? This cannot be undone.')) return;
   saved = [];
@@ -1463,7 +1463,7 @@ function clearAll() {
   renderHistory();
   toast('🗑 All data cleared');
 }
-
+ 
 /* ═══════════════════════════════════════════
    QR MODAL
 ═══════════════════════════════════════════ */
@@ -1478,7 +1478,7 @@ function showQRModal(title, csvData, subtitle) {
     '</div>';
   bg.addEventListener('click', function() { bg.remove(); });
   document.body.appendChild(bg);
-
+ 
   setTimeout(function() {
     var el = document.getElementById('mqr');
     if (!el) return;
@@ -1495,15 +1495,15 @@ function showQRModal(title, csvData, subtitle) {
     }
   }, 80);
 }
-
+ 
 /* ═══════════════════════════════════════════
    INFO SCREEN
 ═══════════════════════════════════════════ */
 function renderInfo() {
   var html = '<div class="page">' +
-
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.0.0</div>' +
-
+ 
+  '<div style="text-align:center;padding:6px 0 10px;color:var(--text3);font-size:12px;font-weight:700;letter-spacing:1px">v1.0.0</div>' +
+ 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
   '<div class="info-rule"><span class="info-k">1. Pick a mode</span><span class="info-v" style="color:var(--text)">Match Scout or Pit Scout</span></div>' +
@@ -1517,7 +1517,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">No-show robot?</span><span class="info-v" style="color:var(--red)">Toggle No Show → all data zeroed</span></div>' +
   '<div class="info-rule"><span class="info-k">Qual # auto-advances</span><span class="info-v" style="color:var(--gold)">After each save +1</span></div>' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">⚽ Fuel Scoring</div>' +
   '<div class="info-rule"><span class="info-k">Auton fuel scored</span><span class="info-v">1 pt / ball</span></div>' +
@@ -1525,7 +1525,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">Max balls per match</span><span class="info-v">~500</span></div>' +
   '<div class="info-rule"><span class="info-k">Ball capacity (Hub)</span><span class="info-v">Unlimited</span></div>' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">🏆 Tower Climb</div>' +
   '<div class="info-rule"><span class="info-k">Auton Climb L1</span><span class="info-v">15 pts</span></div>' +
@@ -1534,7 +1534,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">Teleop Climb L3</span><span class="info-v">30 pts</span></div>' +
   '<div class="info-rule"><span class="info-k">Traversal RP threshold</span><span class="info-v">50+ tower pts</span></div>' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">🎯 Ranking Points</div>' +
   '<div class="info-rule"><span class="info-k">⚡ Energized RP</span><span class="info-v">100+ fuel scored</span></div>' +
@@ -1542,7 +1542,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">🗼 Traversal RP</span><span class="info-v">50+ tower pts</span></div>' +
   '<div class="info-rule"><span class="info-k">Win RP</span><span class="info-v">2 pts (win) / 1 pt (tie)</span></div>' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">🗺 Field Zones</div>' +
   '<div class="info-rule"><span class="info-k">Outpost Trench</span><span class="info-v">Low clearance zone</span></div>' +
@@ -1551,7 +1551,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">Depot Bump</span><span class="info-v">Elevated bump near depot</span></div>' +
   '<div class="info-rule"><span class="info-k">Depot Trench</span><span class="info-v">Low clearance near depot</span></div>' +
   '</div>' +
-
+ 
   '<div class="card">' +
   '<div class="card-hd">📱 Scouting Tips</div>' +
   '<div class="info-rule"><span class="info-k">Input mode</span><span class="info-v">Buttons or Slider</span></div>' +
@@ -1561,7 +1561,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">Qual auto-increments</span><span class="info-v">After each save</span></div>' +
   '<div class="info-rule"><span class="info-k">TBA lookup</span><span class="info-v">Auto-fills team name</span></div>' +
   '</div>' +
-
+ 
   '<div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:12px">Team 3310 Black Hawks · REBUILT™ 2026</div>' +
   '<div style="text-align:center;padding:0 20px 4px;color:var(--text3);font-size:11px;line-height:1.6">' +
   '<span style="color:var(--text2);font-weight:700;letter-spacing:.3px">HawkEye Scouting System</span><br>' +
@@ -1569,11 +1569,11 @@ function renderInfo() {
   '</div>' +
   '<div style="text-align:center;padding:0 20px 24px;color:var(--text3);font-size:11px">⚡ Powered by Diet Coke</div>' +
   '</div>';
-
+ 
   var el = document.getElementById('info-body');
   if (el) el.innerHTML = html;
 }
-
+ 
 /* ═══════════════════════════════════════════
    RATE CALCULATOR
    Logic: scout taps Start, then scores balls normally.
@@ -1591,7 +1591,7 @@ var rateState = {
   finalBps: 0,       // locked bps after finalization
   inactivityTimer: null
 };
-
+ 
 function rateToggle() {
   // Tapping when running is a no-op — session ends automatically
   if (rateState.running) return;
@@ -1604,12 +1604,12 @@ function rateToggle() {
   rateState.finalBps = 0;
   updateRateDisplay();
 }
-
+ 
 function scheduleRateFinalize() {
   if (rateState.inactivityTimer) clearTimeout(rateState.inactivityTimer);
   rateState.inactivityTimer = setTimeout(rateFinalizeSession, 2000);
 }
-
+ 
 function rateFinalizeSession() {
   if (!rateState.running) return;
   rateState.running = false;
@@ -1629,7 +1629,7 @@ function rateFinalizeSession() {
   }
   updateRateDisplay();
 }
-
+ 
 function updateRateDisplay() {
   var el  = document.getElementById('rate-display');
   var btn = document.getElementById('rate-toggle-btn');
@@ -1657,7 +1657,7 @@ function updateRateDisplay() {
     if (btn) { btn.textContent = '\u25b6 Start'; btn.disabled = false; btn.style.opacity = ''; }
   }
 }
-
+ 
 function rateToTier(bps) {
   if (bps <= 0) return null;
   if (bps > 30)  return SPEEDS[0];
@@ -1668,7 +1668,7 @@ function rateToTier(bps) {
   if (bps >= 1)  return SPEEDS[5];
   return SPEEDS[6];
 }
-
+ 
 function rateApply() {
   if (rateState.running) { toast('\u23f1 Still timing \u2014 score a ball first'); return; }
   if (rateState.finalBps === 0) { toast('\u25b6 Tap Start, then score balls to measure'); return; }
@@ -1677,13 +1677,13 @@ function rateApply() {
   setSpeed(tier.id);
   toast('\u2705 Speed set: ' + tier.label);
 }
-
+ 
 /* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
 refreshBadge();
 initGeoBg();
-
+ 
 // PWA Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(e) {
