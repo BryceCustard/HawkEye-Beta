@@ -816,6 +816,7 @@ function showTeamInfo(info, scope) {
 var matchesCache = { events:null, eventsAt:0, matches:{}, matchesAt:{}, rankings:{}, rankingsAt:{} };
 var matchesCurrentEvent = null;
 var matchesTab = 'schedule';
+var matchesFilter3310 = false;
 var matchesRefreshTimer = null;
 var CACHE_TTL = 30000; // 30s
 
@@ -875,6 +876,7 @@ function renderEventPills() {
 
 function selectEvent(key) {
   matchesCurrentEvent = key;
+  matchesFilter3310 = false; // reset filter on event change
   var events = matchesCache.events || [];
   var cur = events.find(function(e){ return e.key === key; });
   var sub = document.getElementById('matches-event-sub');
@@ -883,6 +885,12 @@ function selectEvent(key) {
     b.classList.toggle('on', b.textContent.trim() === ((cur && (cur.short_name||cur.name)) || ''));
   });
   loadMatchesForTab();
+}
+
+function toggleFilter3310() {
+  matchesFilter3310 = !matchesFilter3310;
+  var key = matchesCurrentEvent;
+  if (key && matchesCache.matches[key]) renderSchedule(matchesCache.matches[key], false);
 }
 
 function setMatchesTab(tab) {
@@ -960,7 +968,21 @@ function renderSchedule(matches, offline) {
     return ta - tb;
   });
 
-  var rows = sorted.map(function(m) {
+  // Apply 3310-only filter
+  var displayed = matchesFilter3310
+    ? sorted.filter(function(m) {
+        var red  = m.alliances.red.team_keys  || [];
+        var blue = m.alliances.blue.team_keys || [];
+        return red.indexOf(us) !== -1 || blue.indexOf(us) !== -1;
+      })
+    : sorted;
+
+  var filterBar = '<div style="display:flex;align-items:center;justify-content:flex-end;padding:8px 14px 4px">' +
+    '<button onclick="toggleFilter3310()" style="border:1px solid ' + (matchesFilter3310 ? 'var(--gold)' : 'var(--border)') + ';border-radius:20px;background:' + (matchesFilter3310 ? 'rgba(240,165,0,.15)' : 'var(--surf2)') + ';color:' + (matchesFilter3310 ? 'var(--gold)' : 'var(--text2)') + ';font-size:12px;font-weight:700;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .15s">' +
+    (matchesFilter3310 ? '● ' : '○ ') + '3310 only</button>' +
+    '</div>';
+
+  var rows = displayed.map(function(m) {
     var red = m.alliances.red.team_keys || [];
     var blue = m.alliances.blue.team_keys || [];
     var isRed  = red.indexOf(us) !== -1;
@@ -999,7 +1021,10 @@ function renderSchedule(matches, offline) {
   }).join('');
 
   var offlineBanner = offline ? '<div class="offline-banner">⚠ Offline — showing cached data</div>' : '';
-  setMatchesBody(offlineBanner + '<div class="card" style="padding:0;margin:10px 14px">' + rows + '</div>');
+  var emptyMsg = displayed.length === 0
+    ? '<div style="text-align:center;padding:28px 20px;color:var(--text3);font-size:14px">No matches found for Team 3310 yet.</div>'
+    : '';
+  setMatchesBody(offlineBanner + filterBar + (emptyMsg || '<div class="card" style="padding:0;margin:0 14px 10px">' + rows + '</div>'));
 }
 
 /* ─── RANKINGS ─── */
