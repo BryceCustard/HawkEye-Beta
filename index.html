@@ -23,16 +23,16 @@
   --border:rgba(255,255,255,.07);
   --r:14px; --r-sm:9px; --sh:0 4px 24px rgba(0,0,0,.5);
 }
-html{height:100%;height:-webkit-fill-available;background:var(--surf);overflow:hidden}
+html,body{height:100%;min-height:100vh;min-height:100dvh;min-height:-webkit-fill-available;overflow:hidden}
+html{background:var(--surf)}
 body{
-  height:100%;min-height:-webkit-fill-available;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--bg);color:var(--text);overflow:hidden;font-size:16px;
+  background:var(--surf);color:var(--text);font-size:16px;
   overscroll-behavior:none
 }
 
 /* ─── SCREENS ─── */
-.screen{position:fixed;top:0;left:0;right:0;bottom:0;height:100vh;height:100dvh;display:none;flex-direction:column;overflow:hidden}
+.screen{position:fixed;top:0;left:0;right:0;bottom:0;display:none;flex-direction:column;overflow:hidden}
 .screen.active{display:flex}
 
 /* ─── HEADER ─── */
@@ -603,7 +603,7 @@ select option{background:var(--surf2)}
       Setup
     </button>
     <button class="tab" id="mt1" onclick="mGoTab(1)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="2" x2="12" y2="5"/><circle cx="12" cy="2" r="1" fill="currentColor" stroke="none"/><rect x="7" y="5" width="10" height="7" rx="1.5"/><circle cx="9.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="8.5" r="1" fill="currentColor" stroke="All/><rect x="5" y="13" width="14" height="8" rx="1.5"/><line x1="5" y1="16" x2="2" y2="16"/><line x1="19" y1="16" x2="22" y2="16"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="2" x2="12" y2="5"/><circle cx="12" cy="2" r="1" fill="currentColor" stroke="none"/><rect x="7" y="5" width="10" height="7" rx="1.5"/><circle cx="9.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><circle cx="14.5" cy="8.5" r="1" fill="currentColor" stroke="none"/><rect x="5" y="13" width="14" height="8" rx="1.5"/><line x1="5" y1="16" x2="2" y2="16"/><line x1="19" y1="16" x2="22" y2="16"/></svg>
       Auton
     </button>
     <button class="tab" id="mt2" onclick="mGoTab(2)">
@@ -679,11 +679,12 @@ select option{background:var(--surf2)}
   </div>
   <!-- Filter bar (schedule only) -->
   <div id="mf-bar" style="display:flex;align-items:center;gap:6px;padding:8px calc(10px + env(safe-area-inset-right,0px)) 8px calc(10px + env(safe-area-inset-left,0px));background:var(--surf2);border-bottom:1px solid var(--border);flex-shrink:0">
-    <button id="mf-btn-3310" class="mf-btn on" onclick="mfSelect('3310')">3310</button>
+    <span style="font-size:11px;font-weight:700;color:var(--text3);white-space:nowrap;flex-shrink:0">Team Filter</span>
+    <button id="mf-btn-3310" class="mf-btn" onclick="mfSelect('3310')">3310</button>
     <input id="mf-input" type="number" inputmode="numeric" placeholder="Team #"
       style="flex:1;min-width:0;background:var(--surf3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;padding:7px 10px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;-moz-appearance:textfield"
       onfocus="mfSelect('team')" oninput="mfTeamInput(this.value)">
-    <button id="mf-btn-none" class="mf-btn" onclick="mfSelect('none')">All</button>
+    <button id="mf-btn-all" class="mf-btn on" onclick="mfSelect('all')">All</button>
     <button class="mf-btn mf-apply" onclick="mfApply()">Apply ›</button>
   </div>
   <!-- Content -->
@@ -831,9 +832,9 @@ function showTeamInfo(info, scope) {
 var matchesCache = { events:null, eventsAt:0, matches:{}, matchesAt:{}, rankings:{}, rankingsAt:{} };
 var matchesCurrentEvent = null;
 var matchesTab = 'schedule';
-var matchesPendMode = '3310'; // selected in filter bar: '3310' | 'team' | 'none'
-var matchesPendTeam = '';     // typed team number (digits only)
-var matchesApplMode = '3310'; // last applied mode
+var matchesPendMode = 'all'; // selected in filter bar: '3310' | 'team' | 'all'
+var matchesPendTeam = '';    // typed team number (digits only)
+var matchesApplMode = 'all'; // last applied mode
 var matchesApplTeam = '';     // last applied team
 var matchesRefreshTimer = null;
 var CACHE_TTL = 30000; // 30s
@@ -895,9 +896,9 @@ function renderEventPills() {
 
 function selectEvent(key) {
   matchesCurrentEvent = key;
-  // Reset filter to default (3310 selected & applied)
-  matchesPendMode = '3310'; matchesPendTeam = '';
-  matchesApplMode = '3310'; matchesApplTeam = '';
+  // Reset filter to default (All selected & applied)
+  matchesPendMode = 'all'; matchesPendTeam = '';
+  matchesApplMode = 'all'; matchesApplTeam = '';
   mfSyncUI();
   var events = matchesCache.events || [];
   var cur = events.find(function(e){ return e.key === key; });
@@ -922,10 +923,10 @@ function mfTeamInput(val) {
 }
 function mfSyncUI() {
   var b3 = document.getElementById('mf-btn-3310');
-  var bn = document.getElementById('mf-btn-none');
+  var ba = document.getElementById('mf-btn-all');
   var inp = document.getElementById('mf-input');
   if (b3)  b3.classList.toggle('on',  matchesPendMode === '3310');
-  if (bn)  bn.classList.toggle('on',  matchesPendMode === 'none');
+  if (ba)  ba.classList.toggle('on',  matchesPendMode === 'all');
   if (inp) {
     inp.style.borderColor = matchesPendMode === 'team' ? 'var(--gold)' : 'var(--border)';
     inp.style.color       = matchesPendMode === 'team' ? 'var(--gold)' : 'var(--text)';
@@ -1082,7 +1083,7 @@ function renderSchedule(matches, offline) {
     ? 'No matches found for Team ' + matchesApplTeam + '.'
     : matchesApplMode === '3310'
       ? 'No matches found for Team 3310 yet.'
-      : 'No matches scheduled yet.';
+      : 'No matches scheduled yet.'; // 'all' mode
   var emptyMsg = displayed.length === 0
     ? '<div style="text-align:center;padding:28px 20px;color:var(--text3);font-size:14px">' + emptyLabel + '</div>'
     : '';
@@ -1940,7 +1941,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.0.1</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.0.3</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
