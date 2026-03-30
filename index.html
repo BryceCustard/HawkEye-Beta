@@ -417,6 +417,12 @@ select option{background:var(--surf2)}
 .mtab{flex:1;border:none;background:none;color:var(--text3);font-size:13px;font-weight:700;
   padding:10px 4px;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;transition:all .15s}
 .mtab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.mf-btn{border:1px solid var(--border);border-radius:8px;background:var(--surf3);color:var(--text2);
+  font-size:13px;font-weight:700;padding:7px 13px;cursor:pointer;font-family:inherit;
+  white-space:nowrap;transition:all .15s;flex-shrink:0}
+.mf-btn.on{background:rgba(240,165,0,.15);border-color:var(--gold);color:var(--gold)}
+.mf-btn.mf-apply{background:var(--gold);color:#000;border-color:var(--gold)}
+.mf-btn.mf-apply:active{opacity:.75}
 .epill{border:1px solid var(--border);border-radius:20px;background:var(--surf2);color:var(--text2);
   font-size:12px;font-weight:700;padding:6px 13px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
 .epill.on{background:var(--gold);color:#000;border-color:var(--gold)}
@@ -671,6 +677,15 @@ select option{background:var(--surf2)}
     <button class="mtab on" id="mtab-schedule" onclick="setMatchesTab('schedule')">Schedule</button>
     <button class="mtab" id="mtab-rankings" onclick="setMatchesTab('rankings')">Rankings</button>
   </div>
+  <!-- Filter bar (schedule only) -->
+  <div id="mf-bar" style="display:flex;align-items:center;gap:6px;padding:8px calc(10px + env(safe-area-inset-right,0px)) 8px calc(10px + env(safe-area-inset-left,0px));background:var(--surf2);border-bottom:1px solid var(--border);flex-shrink:0">
+    <button id="mf-btn-3310" class="mf-btn on" onclick="mfSelect('3310')">3310</button>
+    <input id="mf-input" type="number" inputmode="numeric" placeholder="Team #"
+      style="flex:1;min-width:0;background:var(--surf3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;padding:7px 10px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;-moz-appearance:textfield"
+      onfocus="mfSelect('team')" oninput="mfTeamInput(this.value)">
+    <button id="mf-btn-none" class="mf-btn" onclick="mfSelect('none')">None</button>
+    <button class="mf-btn mf-apply" onclick="mfApply()">Apply ›</button>
+  </div>
   <!-- Content -->
   <div class="body" id="matches-body" style="padding-top:10px"></div>
 </div>
@@ -816,7 +831,10 @@ function showTeamInfo(info, scope) {
 var matchesCache = { events:null, eventsAt:0, matches:{}, matchesAt:{}, rankings:{}, rankingsAt:{} };
 var matchesCurrentEvent = null;
 var matchesTab = 'schedule';
-var matchesFilter3310 = false;
+var matchesPendMode = '3310'; // selected in filter bar: '3310' | 'team' | 'none'
+var matchesPendTeam = '';     // typed team number (digits only)
+var matchesApplMode = '3310'; // last applied mode
+var matchesApplTeam = '';     // last applied team
 var matchesRefreshTimer = null;
 var CACHE_TTL = 30000; // 30s
 
@@ -825,6 +843,7 @@ function initMatches() {
   document.querySelectorAll('.mtab').forEach(function(b) { b.classList.remove('on'); });
   var tb = document.getElementById('mtab-schedule');
   if (tb) tb.classList.add('on');
+  mfShowBar(true);
   setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">Loading events…</div>');
   loadEvents();
   if (matchesRefreshTimer) clearInterval(matchesRefreshTimer);
@@ -876,7 +895,10 @@ function renderEventPills() {
 
 function selectEvent(key) {
   matchesCurrentEvent = key;
-  matchesFilter3310 = false; // reset filter on event change
+  // Reset filter to default (3310 selected & applied)
+  matchesPendMode = '3310'; matchesPendTeam = '';
+  matchesApplMode = '3310'; matchesApplTeam = '';
+  mfSyncUI();
   var events = matchesCache.events || [];
   var cur = events.find(function(e){ return e.key === key; });
   var sub = document.getElementById('matches-event-sub');
@@ -887,10 +909,38 @@ function selectEvent(key) {
   loadMatchesForTab();
 }
 
-function toggleFilter3310() {
-  matchesFilter3310 = !matchesFilter3310;
+/* ─── FILTER BAR ─── */
+function mfSelect(mode) {
+  matchesPendMode = mode;
+  if (mode !== 'team') { var inp = document.getElementById('mf-input'); if (inp) inp.blur(); }
+  mfSyncUI();
+}
+function mfTeamInput(val) {
+  matchesPendTeam = val.replace(/\D/g,'');
+  matchesPendMode = 'team';
+  mfSyncUI();
+}
+function mfSyncUI() {
+  var b3 = document.getElementById('mf-btn-3310');
+  var bn = document.getElementById('mf-btn-none');
+  var inp = document.getElementById('mf-input');
+  if (b3)  b3.classList.toggle('on',  matchesPendMode === '3310');
+  if (bn)  bn.classList.toggle('on',  matchesPendMode === 'none');
+  if (inp) {
+    inp.style.borderColor = matchesPendMode === 'team' ? 'var(--gold)' : 'var(--border)';
+    inp.style.color       = matchesPendMode === 'team' ? 'var(--gold)' : 'var(--text)';
+    if (matchesPendMode !== 'team') inp.value = matchesPendTeam;
+  }
+}
+function mfApply() {
+  matchesApplMode = matchesPendMode;
+  matchesApplTeam = matchesPendTeam;
   var key = matchesCurrentEvent;
   if (key && matchesCache.matches[key]) renderSchedule(matchesCache.matches[key], false);
+}
+function mfShowBar(show) {
+  var bar = document.getElementById('mf-bar');
+  if (bar) bar.style.display = show ? 'flex' : 'none';
 }
 
 function setMatchesTab(tab) {
@@ -898,6 +948,7 @@ function setMatchesTab(tab) {
   document.querySelectorAll('.mtab').forEach(function(b) { b.classList.remove('on'); });
   var tb = document.getElementById('mtab-' + tab);
   if (tb) tb.classList.add('on');
+  mfShowBar(tab === 'schedule');
   loadMatchesForTab();
 }
 
@@ -968,19 +1019,19 @@ function renderSchedule(matches, offline) {
     return ta - tb;
   });
 
-  // Apply 3310-only filter
-  var displayed = matchesFilter3310
+  // Determine filter key and highlight key from applied state
+  var filterKey = matchesApplMode === '3310' ? us
+                : (matchesApplMode === 'team' && matchesApplTeam) ? 'frc' + matchesApplTeam
+                : null; // null = show all
+  var hlKey = (matchesApplMode === 'team' && matchesApplTeam) ? 'frc' + matchesApplTeam : null;
+
+  var displayed = filterKey
     ? sorted.filter(function(m) {
         var red  = m.alliances.red.team_keys  || [];
         var blue = m.alliances.blue.team_keys || [];
-        return red.indexOf(us) !== -1 || blue.indexOf(us) !== -1;
+        return red.indexOf(filterKey) !== -1 || blue.indexOf(filterKey) !== -1;
       })
     : sorted;
-
-  var filterBar = '<div style="display:flex;align-items:center;justify-content:flex-end;padding:8px 14px 4px">' +
-    '<button onclick="toggleFilter3310()" style="border:1px solid ' + (matchesFilter3310 ? 'var(--gold)' : 'var(--border)') + ';border-radius:20px;background:' + (matchesFilter3310 ? 'rgba(240,165,0,.15)' : 'var(--surf2)') + ';color:' + (matchesFilter3310 ? 'var(--gold)' : 'var(--text2)') + ';font-size:12px;font-weight:700;padding:5px 12px;cursor:pointer;font-family:inherit;transition:all .15s">' +
-    (matchesFilter3310 ? '● ' : '○ ') + '3310 only</button>' +
-    '</div>';
 
   var rows = displayed.map(function(m) {
     var red = m.alliances.red.team_keys || [];
@@ -988,14 +1039,19 @@ function renderSchedule(matches, offline) {
     var isRed  = red.indexOf(us) !== -1;
     var isBlue = blue.indexOf(us) !== -1;
     var isUs = isRed || isBlue;
-    var allyColor = isRed ? 'var(--red)' : isBlue ? 'var(--blue)' : '';
+    // Gold-row if 3310 is in match, OR if custom filter team is in match
+    var isHl = isUs || (hlKey && (red.indexOf(hlKey) !== -1 || blue.indexOf(hlKey) !== -1));
     var played = !!m.actual_time;
     var rs = m.alliances.red.score;
     var bs = m.alliances.blue.score;
     var badge = '';
-    if (played && isUs) {
-      var ourScore = isRed ? rs : bs;
-      var oppScore = isRed ? bs : rs;
+    // W/L badge relative to the focused team
+    var focusKey = hlKey || us;
+    var focusRed  = red.indexOf(focusKey) !== -1;
+    var focusBlue = blue.indexOf(focusKey) !== -1;
+    if (played && (focusRed || focusBlue)) {
+      var ourScore = focusRed ? rs : bs;
+      var oppScore = focusRed ? bs : rs;
       if (ourScore > oppScore) badge = '<span class="mrow-badge win">W</span>';
       else if (ourScore < oppScore) badge = '<span class="mrow-badge loss">L</span>';
       else badge = '<span class="mrow-badge tie">T</span>';
@@ -1006,11 +1062,12 @@ function renderSchedule(matches, offline) {
 
     function teamChip(key) {
       var num = key.replace('frc','');
-      var isOurs = key === us;
-      return '<span class="mrow-tm' + (isOurs?' gold':'') + '">' + num + '</span>';
+      var isOurs  = key === us;
+      var isFocus = hlKey && key === hlKey;
+      return '<span class="mrow-tm' + (isOurs || isFocus ? ' gold' : '') + '">' + num + '</span>';
     }
 
-    return '<div class="mrow' + (isUs?' gold-row':'') + '">' +
+    return '<div class="mrow' + (isHl ? ' gold-row' : '') + '">' +
       '<div class="mrow-num">' + fmtMatchName(m) + '</div>' +
       '<div class="mrow-teams">' +
         '<div class="mrow-ally" style="color:var(--red)">' + red.map(teamChip).join('') + '</div>' +
@@ -1021,10 +1078,15 @@ function renderSchedule(matches, offline) {
   }).join('');
 
   var offlineBanner = offline ? '<div class="offline-banner">⚠ Offline — showing cached data</div>' : '';
+  var emptyLabel = matchesApplMode === 'team' && matchesApplTeam
+    ? 'No matches found for Team ' + matchesApplTeam + '.'
+    : matchesApplMode === '3310'
+      ? 'No matches found for Team 3310 yet.'
+      : 'No matches scheduled yet.';
   var emptyMsg = displayed.length === 0
-    ? '<div style="text-align:center;padding:28px 20px;color:var(--text3);font-size:14px">No matches found for Team 3310 yet.</div>'
+    ? '<div style="text-align:center;padding:28px 20px;color:var(--text3);font-size:14px">' + emptyLabel + '</div>'
     : '';
-  setMatchesBody(offlineBanner + filterBar + (emptyMsg || '<div class="card" style="padding:0;margin:0 14px 10px">' + rows + '</div>'));
+  setMatchesBody(offlineBanner + (emptyMsg || '<div class="card" style="padding:0;margin:0 14px 10px">' + rows + '</div>'));
 }
 
 /* ─── RANKINGS ─── */
