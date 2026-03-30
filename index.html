@@ -26,7 +26,7 @@
 html,body{
   height:100%;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--bg);color:var(--text);overflow:hidden;font-size:16px
+  background:var(--surf);color:var(--text);overflow:hidden;font-size:16px
 }
 
 /* ─── SCREENS ─── */
@@ -62,7 +62,7 @@ html,body{
 .prog-pip.on{background:var(--gold)}
 
 /* ─── SCROLL AREA ─── */
-.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 100px;padding-left:max(14px,env(safe-area-inset-left,14px));padding-right:max(14px,env(safe-area-inset-right,14px))}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px max(14px,env(safe-area-inset-right,14px)) 100px max(14px,env(safe-area-inset-left,14px));background:var(--bg)}
 
 /* ─── BOTTOM TABS ─── */
 .tabs{
@@ -74,7 +74,7 @@ html,body{
 }
 .tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:11px 4px 8px;gap:4px;border:none;background:none;
+  padding:14px 4px 10px;gap:4px;border:none;background:none;
   color:var(--text3);font-size:10px;font-weight:700;letter-spacing:.6px;
   text-transform:uppercase;cursor:pointer;transition:color .2s;font-family:inherit
 }
@@ -378,7 +378,7 @@ select option{background:var(--surf2)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ─── HOME ─── */
-.home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 max(14px,env(safe-area-inset-left,14px)) max(20px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-right,14px))}
+.home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 max(14px,env(safe-area-inset-left,14px)) max(20px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-right,14px));background:var(--bg)}
 .hero{padding:28px 14px 10px;text-align:center}
 .hero-icon{font-size:52px;line-height:1;margin-bottom:8px}
 .hero-name{font-size:26px;font-weight:900;letter-spacing:-.5px}
