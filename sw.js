@@ -1,4 +1,4 @@
-const CACHE = '3310-scout-v1';
+const CACHE = '3310-scout-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -25,6 +25,10 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    fetch(e.request).then(response => {
+      const clone = response.clone();
+      caches.open(CACHE).then(cache => cache.put(e.request, clone));
+      return response;
+    }).catch(() => caches.match(e.request))
   );
 });
