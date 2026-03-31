@@ -1,6 +1,6 @@
 # HawkEye — Scouting System
 **FRC Team 3310 Black Hawks · REBUILT 2026**
-> Beta V1.0.3
+> Beta v1.0.3
 
 ## Live App
 **[Launch HawkEye →](https://brycecustard.github.io/HawkEye-Beta/)**
