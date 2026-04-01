@@ -515,9 +515,62 @@ select option{background:var(--surf2)}
   input.big{font-size:22px;padding:10px}
   .btn{padding:12px;font-size:14px}
 }
+
+/* ─── SPLASH ─── */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-direction:column}
+#splash-geo{position:absolute;inset:0;background-repeat:repeat;opacity:0;clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%)}
+#splash-glow{position:absolute;width:160vmax;height:160vmax;border-radius:50%;background:radial-gradient(circle,rgba(240,165,0,.09) 0%,rgba(240,165,0,.02) 45%,transparent 70%);opacity:0;transform:scale(0.1);pointer-events:none}
+#splash-ring{position:absolute;width:160px;height:160px;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.3);border:2px solid var(--gold);border-radius:50%;opacity:0;pointer-events:none;z-index:3}
+#splash-center{position:relative;display:flex;flex-direction:column;align-items:center;z-index:2}
+#splash-logo-img{height:86px;width:auto;max-width:260px;object-fit:contain;opacity:0;transform:scale(2.5);filter:blur(8px);position:relative;z-index:1;will-change:transform,opacity,filter}
+#splash-logo-fb{font-size:80px;line-height:1;display:none;opacity:0;transform:scale(2.5);filter:blur(8px);position:relative;z-index:1;will-change:transform,opacity,filter}
+#splash-text{font-size:13px;font-weight:900;letter-spacing:4px;color:var(--gold);text-transform:uppercase;opacity:0;transform:translateY(10px);margin-top:18px;position:relative;z-index:1}
+
+@keyframes splash-geo-reveal{
+  0%{clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%);opacity:0}
+  20%{opacity:1}
+  100%{clip-path:circle(150% at 50% 50%);-webkit-clip-path:circle(150% at 50% 50%);opacity:1}
+}
+@keyframes splash-glow-bloom{
+  from{opacity:0;transform:scale(0.1)}
+  to{opacity:1;transform:scale(1)}
+}
+@keyframes splash-logo-strike{
+  from{opacity:0;transform:scale(2.5);filter:blur(8px) drop-shadow(0 0 0px rgba(240,165,0,0))}
+  to{opacity:1;transform:scale(1);filter:blur(0px) drop-shadow(0 0 30px rgba(240,165,0,.45))}
+}
+@keyframes splash-ring-pulse{
+  0%{opacity:.8;transform:translate(-50%,-50%) scale(0.3)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(3.5)}
+}
+@keyframes splash-text-up{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes splash-logo-fly{
+  from{opacity:1;transform:scale(1);filter:blur(0px) drop-shadow(0 0 30px rgba(240,165,0,.45))}
+  to{opacity:0;transform:scale(0.3) translateY(-36vh);filter:blur(2px) drop-shadow(0 0 0px transparent)}
+}
+@keyframes splash-fadeout{
+  from{opacity:1}
+  to{opacity:0;pointer-events:none}
+}
 </style>
 </head>
 <body>
+
+<!-- ═══════════════ SPLASH ═══════════════ -->
+<div id="splash">
+  <div id="splash-geo"></div>
+  <div id="splash-glow"></div>
+  <div id="splash-ring"></div>
+  <div id="splash-center">
+    <img id="splash-logo-img" src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png" alt="Black Hawks"
+         onerror="this.style.display='none';document.getElementById('splash-logo-fb').style.display='block'">
+    <span id="splash-logo-fb">🦅</span>
+    <div id="splash-text">HAWKEYE</div>
+  </div>
+</div>
 
 <!-- ═══════════════ HOME ═══════════════ -->
 <div class="screen active" id="sc-home">
@@ -775,9 +828,173 @@ var setupTBAPos   = 0;        // selected position: 0=unset, 1/2/3
 try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) { saved = []; }
 
 /* ═══════════════════════════════════════════
+   SPLASH ANIMATION
+═══════════════════════════════════════════ */
+var SPLASH_KEY       = 'bh3310_lastActive';
+var SPLASH_THRESHOLD = 300000; // 5 minutes
+
+function markActive() {
+  try { localStorage.setItem(SPLASH_KEY, String(Date.now())); } catch(e) {}
+}
+
+function removeSplash() {
+  var s = document.getElementById('splash');
+  if (s && s.parentNode) { s.parentNode.removeChild(s); }
+}
+
+function createSplashDOM() {
+  var s = document.createElement('div');
+  s.id = 'splash';
+  s.innerHTML =
+    '<div id="splash-geo"></div>' +
+    '<div id="splash-glow"></div>' +
+    '<div id="splash-ring"></div>' +
+    '<div id="splash-center">' +
+    '<img id="splash-logo-img" src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png" alt="Black Hawks" ' +
+    'onerror="this.style.display=\'none\';var fb=document.getElementById(\'splash-logo-fb\');if(fb)fb.style.display=\'block\'">' +
+    '<span id="splash-logo-fb">🦅</span>' +
+    '<div id="splash-text">HAWKEYE</div>' +
+    '</div>';
+  document.body.insertBefore(s, document.body.firstChild);
+  return s;
+}
+
+window.playSplash = function() {
+  var s = document.getElementById('splash') || createSplashDOM();
+  s.style.cssText = '';  // reset any inline transitions from previous skip
+  s.style.opacity = '1';
+  s.style.animation = 'none';
+  s.style.pointerEvents = 'auto';
+
+  // Apply geo pattern to newly created geo div if needed
+  var geoEl = document.getElementById('splash-geo');
+  if (geoEl && window._geoUrl) geoEl.style.backgroundImage = 'url(' + window._geoUrl + ')';
+
+  // Phase 1 (0ms): geo ripple + glow bloom
+  var geo  = document.getElementById('splash-geo');
+  var glow = document.getElementById('splash-glow');
+  var ring = document.getElementById('splash-ring');
+  var lImg = document.getElementById('splash-logo-img');
+  var lFb  = document.getElementById('splash-logo-fb');
+  var txt  = document.getElementById('splash-text');
+
+  function reAnim(el, anim) {
+    if (!el) return;
+    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = anim;
+  }
+  reAnim(geo,  'splash-geo-reveal 0.65s ease-out forwards');
+  reAnim(glow, 'splash-glow-bloom 0.65s ease-out 0.15s both');
+
+  // Phase 2 (400ms): logo slam + ring shockwave
+  var t2 = setTimeout(function() {
+    var useImg = lImg && lImg.complete && lImg.naturalWidth > 0;
+    var active = useImg ? lImg : lFb;
+    if (!useImg) { if (lImg) lImg.style.display = 'none'; if (lFb) lFb.style.display = 'block'; }
+    reAnim(active, 'splash-logo-strike 0.55s cubic-bezier(0.16,1,0.3,1) forwards');
+    reAnim(ring,   'splash-ring-pulse 0.65s ease-out forwards');
+  }, 400);
+
+  // Phase 2b (620ms): HAWKEYE text rises
+  var t2b = setTimeout(function() {
+    reAnim(txt, 'splash-text-up 0.4s ease-out forwards');
+  }, 620);
+
+  // Phase 3 (1600ms): fly-up + fade overlay
+  var t3 = setTimeout(function() {
+    var useImg = lImg && lImg.complete && lImg.naturalWidth > 0;
+    var active = useImg ? lImg : lFb;
+    reAnim(active, 'splash-logo-fly 0.5s cubic-bezier(0.4,0,0.2,1) forwards');
+    if (txt)  { txt.style.transition  = 'opacity .3s'; txt.style.opacity  = '0'; }
+    if (glow) { glow.style.transition = 'opacity .3s'; glow.style.opacity = '0'; }
+    reAnim(s, 'splash-fadeout 0.5s ease-in 0.22s forwards');
+  }, 1600);
+
+  // Safety cleanup
+  var safetyTimer = setTimeout(removeSplash, 2600);
+
+  s.addEventListener('animationend', function handler(e) {
+    if (e.target === s && e.animationName === 'splash-fadeout') {
+      clearTimeout(safetyTimer);
+      s.removeEventListener('animationend', handler);
+      removeSplash();
+    }
+  });
+
+  // Tap-to-skip
+  function skipNow() {
+    s.removeEventListener('click', skipNow);
+    s.removeEventListener('touchstart', skipNow);
+    clearTimeout(t2); clearTimeout(t2b); clearTimeout(t3); clearTimeout(safetyTimer);
+    s.style.animation = 'none';
+    s.style.transition = 'opacity 0.2s ease';
+    s.style.opacity = '0';
+    setTimeout(removeSplash, 220);
+  }
+  s.addEventListener('click', skipNow);
+  s.addEventListener('touchstart', skipNow, { passive: true });
+};
+
+function checkSplash() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { removeSplash(); return; }
+  try {
+    var last = parseInt(localStorage.getItem(SPLASH_KEY) || '0');
+    if (!last || (Date.now() - last > SPLASH_THRESHOLD)) { window.playSplash(); }
+    else { removeSplash(); }
+  } catch(e) { removeSplash(); }
+}
+
+/* ═══════════════════════════════════════════
+   DEBUG TOOLS
+═══════════════════════════════════════════ */
+function dbgCopyJSON() {
+  var raw = localStorage.getItem('bh3310') || '[]';
+  var text;
+  try { text = JSON.stringify(JSON.parse(raw), null, 2); } catch(e) { text = raw; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(function() { toast('📋 JSON copied to clipboard'); }).catch(function() { dbgCopyFallback(text); });
+  } else { dbgCopyFallback(text); }
+}
+function dbgCopyFallback(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;width:1px;height:1px';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  toast('📋 JSON copied to clipboard');
+}
+function dbgClearTBA() {
+  tbaCache = {};
+  matchesCache = { events:null, eventsAt:0, matches:{}, matchesAt:{}, rankings:{}, rankingsAt:{} };
+  toast('🔄 TBA cache cleared');
+}
+function dbgStorageStats() {
+  var raw = localStorage.getItem('bh3310') || '[]';
+  var entries; try { entries = JSON.parse(raw); } catch(e) { entries = []; }
+  var mc = entries.filter(function(e){return e.type==='match';}).length;
+  var pc = entries.filter(function(e){return e.type==='pit';}).length;
+  var kb = (raw.length / 1024).toFixed(1);
+  var last = entries.length ? new Date((entries[entries.length-1].timestamp||0)).toLocaleString() : 'none';
+  toast(entries.length + ' entries (' + mc + ' match, ' + pc + ' pit) · ' + kb + ' KB · Last: ' + last);
+}
+function dbgDeviceInfo() {
+  var ua  = (navigator.userAgent || '').slice(0, 80);
+  var scr = screen.width + '×' + screen.height;
+  var win = window.innerWidth + '×' + window.innerHeight;
+  var pwa = (navigator.standalone === true || window.matchMedia('(display-mode:standalone)').matches) ? 'Yes' : 'No';
+  toast(ua + ' | ' + scr + ' | ' + win + ' | PWA:' + pwa);
+}
+function dbgNuclearReset() {
+  if (!confirm('Delete ALL app data and reset? This cannot be undone.')) return;
+  if (!confirm('Are you absolutely sure? This deletes everything.')) return;
+  localStorage.clear(); location.reload();
+}
+
+/* ═══════════════════════════════════════════
    NAV + BADGE
 ═══════════════════════════════════════════ */
 function goTo(id) {
+  markActive();
   // Stop matches timer if leaving that screen
   var wasMatches = document.getElementById('sc-matches') && document.getElementById('sc-matches').classList.contains('active');
   if (wasMatches && id !== 'sc-matches') leaveMatches();
@@ -1196,9 +1413,10 @@ function initGeoBg() {
       ctx.fill();
     });
     var url = c.toDataURL();
-    // Apply to body AND .screen so the texture shows through fixed-position screens
+    window._geoUrl = url; // stash for splash replay
+    // Apply to body, .screen, and #splash-geo
     var st = document.createElement('style');
-    st.textContent = 'body,.screen{background-image:url(' + url + ')!important;background-repeat:repeat!important}';
+    st.textContent = 'body,.screen,#splash-geo{background-image:url(' + url + ')!important;background-repeat:repeat!important}';
     document.head.appendChild(st);
   } catch(e) {}
 }
@@ -1373,6 +1591,7 @@ function togFn(field, isDanger) {
    MATCH TABS
 ═══════════════════════════════════════════ */
 function mGoTab(t) {
+  markActive();
   mTab = t;
   for (var i = 0; i < 4; i++) {
     var tb = document.getElementById('mt' + i);
@@ -1996,6 +2215,7 @@ function buildMatchQR() {
 }
 
 function saveMatchEntry(notify) {
+  markActive();
   var idx = -1;
   for (var i = 0; i < saved.length; i++) {
     if (saved[i].type === 'match' && saved[i].matchNum === M.matchNum && saved[i].teamNum === M.teamNum) {
@@ -2382,6 +2602,21 @@ function renderInfo() {
   'Created by Bryce Custer, Pavel Popoff, and Claude Cowork' +
   '</div>' +
   '<div style="text-align:center;padding:0 20px 24px;color:var(--text3);font-size:11px">⚡ Powered by Diet Coke</div>' +
+
+  // ── Debug Tools ──
+  '<div style="margin-top:30px;padding-bottom:24px">' +
+  '<div style="border-top:1px solid var(--border);margin-bottom:14px"></div>' +
+  '<div style="text-align:center;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:12px">🛠 Debug Tools</div>' +
+  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
+  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="window.playSplash()">▶ Play Intro</button>' +
+  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgCopyJSON()">📋 Copy Raw JSON</button>' +
+  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgClearTBA()">🔄 Clear TBA Cache</button>' +
+  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgStorageStats()">📊 Storage Stats</button>' +
+  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgDeviceInfo()">🔧 Device Info</button>' +
+  '<button class="btn btn-surf" style="font-size:12px;padding:10px;color:var(--red)" onclick="dbgNuclearReset()">🗑 Nuclear Reset</button>' +
+  '</div>' +
+  '</div>' +
+
   '</div>';
 
   var el = document.getElementById('info-body');
@@ -2824,6 +3059,12 @@ function syncOnOnline() {
 ═══════════════════════════════════════════ */
 refreshBadge();
 initGeoBg();
+checkSplash(); // show splash if inactive 5+ min (or first ever launch)
+
+// Track last-active timestamp for splash inactivity check
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) markActive();
+});
 
 // PWA Service Worker
 if ('serviceWorker' in navigator) {
