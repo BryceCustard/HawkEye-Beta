@@ -517,7 +517,7 @@ select option{background:var(--surf2)}
 }
 
 /* ─── SPLASH ─── */
-#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-direction:column}
+#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-direction:column;opacity:0}
 #splash-geo{position:absolute;inset:0;background-repeat:repeat;opacity:0;clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%)}
 #splash-glow{position:absolute;width:160vmax;height:160vmax;border-radius:50%;background:radial-gradient(circle,rgba(240,165,0,.09) 0%,rgba(240,165,0,.02) 45%,transparent 70%);opacity:0;transform:scale(0.1);pointer-events:none}
 #splash-ring{position:absolute;width:160px;height:160px;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.3);border:2px solid var(--gold);border-radius:50%;opacity:0;pointer-events:none;z-index:3}
@@ -526,6 +526,7 @@ select option{background:var(--surf2)}
 #splash-logo-fb{font-size:80px;line-height:1;display:none;opacity:0;transform:scale(2.5);filter:blur(8px);position:relative;z-index:1;will-change:transform,opacity,filter}
 #splash-text{font-size:13px;font-weight:900;letter-spacing:4px;color:var(--gold);text-transform:uppercase;opacity:0;transform:translateY(10px);margin-top:18px;position:relative;z-index:1}
 
+@keyframes splash-fadein{from{opacity:0}to{opacity:1}}
 @keyframes splash-geo-reveal{
   0%{clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%);opacity:0}
   20%{opacity:1}
@@ -882,24 +883,28 @@ window.playSplash = function() {
     if (!el) return;
     el.style.animation = 'none'; void el.offsetWidth; el.style.animation = anim;
   }
-  reAnim(geo,  'splash-geo-reveal 0.65s ease-out forwards');
-  reAnim(glow, 'splash-glow-bloom 0.65s ease-out 0.15s both');
+  // Phase 0 (0ms): fade in from black over 0.8s
+  reAnim(s, 'splash-fadein 0.8s ease-out forwards');
 
-  // Phase 2 (400ms): logo slam + ring shockwave
+  // Phase 1: geo ripple starts at 0.5s, glow at 0.65s — overlap tail of fade-in
+  reAnim(geo,  'splash-geo-reveal 0.65s ease-out 0.5s both');
+  reAnim(glow, 'splash-glow-bloom 0.65s ease-out 0.65s both');
+
+  // Phase 2 (1400ms): logo slam + ring shockwave
   var t2 = setTimeout(function() {
     var useImg = lImg && lImg.complete && lImg.naturalWidth > 0;
     var active = useImg ? lImg : lFb;
     if (!useImg) { if (lImg) lImg.style.display = 'none'; if (lFb) lFb.style.display = 'block'; }
     reAnim(active, 'splash-logo-strike 0.55s cubic-bezier(0.16,1,0.3,1) forwards');
     reAnim(ring,   'splash-ring-pulse 0.65s ease-out forwards');
-  }, 400);
+  }, 1400);
 
-  // Phase 2b (620ms): HAWKEYE text rises
+  // Phase 2b (1620ms): HAWKEYE text rises
   var t2b = setTimeout(function() {
     reAnim(txt, 'splash-text-up 0.4s ease-out forwards');
-  }, 620);
+  }, 1620);
 
-  // Phase 3 (1600ms): fly-up + fade overlay
+  // Phase 3 (2600ms): fly-up + fade overlay
   var t3 = setTimeout(function() {
     var useImg = lImg && lImg.complete && lImg.naturalWidth > 0;
     var active = useImg ? lImg : lFb;
@@ -907,10 +912,10 @@ window.playSplash = function() {
     if (txt)  { txt.style.transition  = 'opacity .3s'; txt.style.opacity  = '0'; }
     if (glow) { glow.style.transition = 'opacity .3s'; glow.style.opacity = '0'; }
     reAnim(s, 'splash-fadeout 0.5s ease-in 0.22s forwards');
-  }, 1600);
+  }, 2600);
 
   // Safety cleanup
-  var safetyTimer = setTimeout(removeSplash, 2600);
+  var safetyTimer = setTimeout(removeSplash, 3700);
 
   s.addEventListener('animationend', function handler(e) {
     if (e.target === s && e.animationName === 'splash-fadeout') {
