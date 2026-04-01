@@ -32,7 +32,7 @@ body{
 }
 
 /* ─── SCREENS ─── */
-.screen{position:fixed;top:0;left:0;right:0;bottom:0;display:none;flex-direction:column;overflow:hidden}
+.screen{position:fixed;top:0;left:0;right:0;bottom:0;display:none;flex-direction:column;overflow:hidden;background:var(--surf)}
 .screen.active{display:flex}
 
 /* ─── HEADER ─── */
@@ -69,14 +69,14 @@ body{
 /* ─── BOTTOM TABS ─── */
 .tabs{
   display:flex;background:var(--surf);border-top:1px solid var(--border);
-  padding-bottom:max(12px,env(safe-area-inset-bottom,12px));
   padding-left:calc(env(safe-area-inset-left,0px));
   padding-right:calc(env(safe-area-inset-right,0px));
   flex-shrink:0
 }
+/* Safe-area padding lives inside the button — no separate chin strip */
 .tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:14px 4px 10px;gap:4px;border:none;background:none;
+  padding:10px 4px calc(10px + env(safe-area-inset-bottom,12px));gap:4px;border:none;background:none;
   color:var(--text3);font-size:10px;font-weight:700;letter-spacing:.6px;
   text-transform:uppercase;cursor:pointer;transition:color .2s;font-family:inherit
 }
@@ -449,6 +449,19 @@ select option{background:var(--surf2)}
 .offline-banner{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);
   border-radius:8px;margin:10px 14px;padding:9px 12px;font-size:12px;color:var(--gold);font-weight:600}
 
+/* ─── GOOGLE SHEETS SYNC ─── */
+.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sync-dot.green{background:var(--green)}
+.sync-dot.yellow{background:var(--gold);animation:sdpulse .9s ease-in-out infinite}
+.sync-dot.red{background:var(--red);animation:sdpulse .9s ease-in-out infinite}
+.sync-dot.off{background:var(--text3)}
+@keyframes sdpulse{0%,100%{opacity:1}50%{opacity:.2}}
+/* Per-entry sync status pill in history/export */
+.sentry-pill{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:5px;flex-shrink:0}
+.sentry-pill.synced{background:rgba(76,175,125,.18);color:var(--green)}
+.sentry-pill.pending{background:rgba(240,165,0,.14);color:var(--gold)}
+.sentry-pill.failed{background:rgba(232,83,74,.14);color:var(--red)}
+
 /* ─── UTILITIES ─── */
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -471,7 +484,7 @@ select option{background:var(--surf2)}
   .ctr-lbl{font-size:12px;margin-bottom:4px}
   .cb-big{font-size:22px;padding:11px 0}
   .cb-sm{padding:7px 0;font-size:12px}
-  .tab{padding:5px 4px 3px;gap:2px;font-size:8px;letter-spacing:.4px}
+  .tab{padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px));gap:2px;font-size:8px;letter-spacing:.4px}
   .tab svg{width:17px;height:17px}
   .pos-grid{grid-template-columns:repeat(6,1fr)}
   .spd-grid{grid-template-columns:repeat(6,1fr)}
@@ -691,6 +704,12 @@ select option{background:var(--surf2)}
   <div class="body" id="matches-body" style="padding-top:10px"></div>
 </div>
 
+<!-- Floating sync indicator — appears on all screens when sync is active -->
+<div id="sync-indicator" style="position:fixed;top:calc(11px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));z-index:500;display:none;align-items:center;gap:4px;pointer-events:none">
+  <span id="sync-count-badge" style="font-size:10px;font-weight:800;color:var(--text2);display:none"></span>
+  <span class="sync-dot off" id="sync-dot-main"></span>
+</div>
+
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -743,6 +762,10 @@ var M = blankM();
 var P = blankP();
 var mTab = 0;
 var saved = [];
+// TBA Lookup mode for Setup tab
+var setupMode     = 'manual'; // 'manual' | 'tba'
+var setupTBAEvent = null;     // selected event key
+var setupTBAPos   = 0;        // selected position: 0=unset, 1/2/3
 try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) { saved = []; }
 
 /* ═══════════════════════════════════════════
@@ -1388,25 +1411,120 @@ function updateMHeader() {
 
 /* ─── SETUP ─── */
 function renderSetup() {
+  // Mode toggle strip (Manual / TBA Lookup β)
+  var modeSeg =
+    '<div class="mode-seg" style="margin-bottom:14px">' +
+    '<button class="mode-seg-b' + (setupMode==='manual'?' on':'') + '" data-mode="manual" onclick="setSetupMode(\'manual\')">📋 Manual</button>' +
+    '<button class="mode-seg-b' + (setupMode==='tba'?' on':'') + '" data-mode="tba" onclick="setSetupMode(\'tba\')">🔍 TBA Lookup <span style="font-size:9px;background:var(--gold);color:#000;border-radius:4px;padding:1px 4px;vertical-align:middle;letter-spacing:.3px">β</span></button>' +
+    '</div>';
+
+  // Match # input — in TBA mode also triggers auto-fill
+  var matchNumInput =
+    '<label class="lbl">Match Number</label>' +
+    '<input class="big" type="number" inputmode="numeric" placeholder="26" min="1" max="150" value="' + (M.matchNum||'') + '" ' +
+    'oninput="var v=parseInt(this.value)||0;if(v>150){this.value=150;v=150;}M.matchNum=String(v||this.value);updateMHeader();if(setupMode===\'tba\')tbaAutoFill()">';
+
+  /* ── MANUAL MODE ── */
+  if (setupMode === 'manual') {
+    return '<div class="page">' +
+      '<div class="card">' +
+      '<div class="card-hd">Match Info</div>' +
+      modeSeg +
+      matchNumInput +
+      '<label class="lbl">Team Number</label>' +
+      '<input class="big" type="number" inputmode="numeric" placeholder="3310" value="' + (M.teamNum||'') + '" ' +
+      'oninput="M.teamNum=this.value;updateMHeader();scheduleTBALookup(this.value,\'m\')">' +
+      '<div id="m-team-info" style="padding:6px 2px 2px;font-size:13px;display:none"></div>' +
+      '<label class="lbl">Scout Name</label>' +
+      '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
+      '</div>' +
+      '<div class="card">' +
+      '<div class="card-hd">Alliance</div>' +
+      '<div class="ally">' +
+      '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
+      '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
+      '</div></div>' +
+      '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
+      '</div>';
+  }
+
+  /* ── TBA LOOKUP MODE ── */
+  // Ensure events are loaded; trigger load if missing
+  var evts = matchesCache.events;
+  if (!evts) setupLoadEvents();
+
+  // Competition dropdown
+  var evtHtml = '';
+  if (!evts || !evts.length) {
+    evtHtml = '<div style="color:var(--text3);font-size:13px;padding:4px 0 8px">⏳ Loading events…</div>';
+  } else {
+    if (!setupTBAEvent) setupTBAEvent = evts[evts.length - 1].key;
+    evtHtml =
+      '<label class="lbl">Competition</label>' +
+      '<select oninput="setupTBAEvent=this.value;tbaAutoFill()">' +
+      evts.map(function(e) {
+        return '<option value="' + e.key + '"' + (e.key === setupTBAEvent ? ' selected' : '') + '>' +
+          (e.short_name || e.name) + '</option>';
+      }).join('') +
+      '</select>';
+  }
+
+  // Alliance selector (2 buttons)
+  var allyColor = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--gold)';
+  var allyHtml =
+    '<label class="lbl" style="margin-top:14px">Alliance</label>' +
+    '<div class="ally">' +
+    '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
+    '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
+    '</div>';
+
+  // Position selector (3 buttons)
+  var posHtml =
+    '<label class="lbl" style="margin-top:12px">Position</label>' +
+    '<div style="display:flex;gap:7px">' +
+    [1,2,3].map(function(p) {
+      var on = setupTBAPos === p;
+      var c  = on ? allyColor : 'var(--text2)';
+      var bc = on ? allyColor : 'var(--border)';
+      var bg = on ? (M.alliance==='red' ? 'var(--red-d)' : M.alliance==='blue' ? 'var(--blue-d)' : 'var(--gold-d)') : 'var(--surf2)';
+      return '<button id="pos-tba-' + p + '" ' +
+        'style="flex:1;padding:14px 4px;font-size:26px;font-weight:900;border:2px solid ' + bc + ';' +
+        'border-radius:var(--r-sm);background:' + bg + ';color:' + c + ';cursor:pointer;' +
+        'transition:all .15s;font-family:inherit;touch-action:manipulation" ' +
+        'onclick="setSetupPos(' + p + ')">' + p + '</button>';
+    }).join('') +
+    '</div>';
+
+  // Auto-filled team result
+  var resultHtml =
+    '<div style="margin-top:14px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center">' +
+    '<span id="tba-team-display" style="font-size:42px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--text);' +
+    (M.teamNum ? '' : 'display:none') + '">' +
+    (M.teamNum ? '#' + M.teamNum : '') + '</span>' +
+    '<div id="m-team-info" style="font-size:13px;text-align:center;padding:2px 0;display:none"></div>' +
+    '<div id="tba-fill-status" style="font-size:13px;color:var(--text3);text-align:center;' +
+    (M.teamNum ? 'display:none' : '') + '">' +
+    (!M.alliance || !setupTBAPos || !M.matchNum ? 'Select alliance, position &amp; match #' : '🔍 Looking up…') +
+    '</div>' +
+    '</div>';
+
   return '<div class="page">' +
-  '<div class="card">' +
-  '<div class="card-hd">Match Info</div>' +
-  '<label class="lbl">Match Number</label>' +
-  '<input class="big" type="number" inputmode="numeric" placeholder="26" min="1" max="150" value="' + (M.matchNum||'') + '" oninput="var v=parseInt(this.value)||0;if(v>150){this.value=150;v=150;}M.matchNum=String(v||this.value);updateMHeader()">' +
-  '<label class="lbl">Team Number</label>' +
-  '<input class="big" type="number" inputmode="numeric" placeholder="3310" value="' + (M.teamNum||'') + '" oninput="M.teamNum=this.value;updateMHeader();scheduleTBALookup(this.value,\'m\')">' +
-  '<div id="m-team-info" style="padding:6px 2px 2px;font-size:13px;display:none"></div>' +
-  '<label class="lbl">Scout Name</label>' +
-  '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
-  '</div>' +
-  '<div class="card">' +
-  '<div class="card-hd">Alliance</div>' +
-  '<div class="ally">' +
-  '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
-  '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
-  '</div></div>' +
-  '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
-  '</div>';
+    '<div class="card">' +
+    '<div class="card-hd">Match Info</div>' +
+    modeSeg +
+    matchNumInput +
+    evtHtml +
+    '<label class="lbl" style="margin-top:12px">Scout Name</label>' +
+    '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
+    '</div>' +
+    '<div class="card">' +
+    '<div class="card-hd">Alliance &amp; Position</div>' +
+    allyHtml +
+    posHtml +
+    resultHtml +
+    '</div>' +
+    '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
+    '</div>';
 }
 
 function setAlly(a) {
@@ -1415,6 +1533,139 @@ function setAlly(a) {
     b.classList.toggle('on', b.classList.contains(a === 'red' ? 'r' : 'b'));
   });
   updateMHeader();
+  // In TBA mode: refresh position button colors and re-trigger lookup
+  if (setupMode === 'tba') {
+    if (setupTBAPos) setSetupPos(setupTBAPos); else tbaAutoFill();
+  }
+}
+
+/* ─── TBA SETUP HELPERS ─── */
+
+// Switch between Manual and TBA Lookup modes
+function setSetupMode(mode) {
+  setupMode = mode;
+  if (mode === 'tba') {
+    // Pick latest event as default if not already set
+    if (!setupTBAEvent && matchesCache.events && matchesCache.events.length) {
+      setupTBAEvent = matchesCache.events[matchesCache.events.length - 1].key;
+    }
+    // Clear manually-typed team so the result area starts fresh
+    M.teamNum = '';
+    updateMHeader();
+  }
+  mGoTab(0);
+}
+
+// Select robot position (1, 2, or 3) and update button styles inline
+function setSetupPos(pos) {
+  setupTBAPos = pos;
+  var allyColor = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--gold)';
+  var allyBg    = M.alliance === 'red' ? 'var(--red-d)' : M.alliance === 'blue' ? 'var(--blue-d)' : 'var(--gold-d)';
+  for (var p = 1; p <= 3; p++) {
+    var btn = document.getElementById('pos-tba-' + p);
+    if (!btn) continue;
+    var on = p === pos;
+    btn.style.borderColor = on ? allyColor    : 'var(--border)';
+    btn.style.background  = on ? allyBg       : 'var(--surf2)';
+    btn.style.color       = on ? allyColor    : 'var(--text2)';
+  }
+  tbaAutoFill();
+}
+
+// Load 3310's events if not already cached, then re-render Setup
+function setupLoadEvents() {
+  if (matchesCache.events) {
+    if (!setupTBAEvent) setupTBAEvent = matchesCache.events[matchesCache.events.length - 1].key;
+    if (mTab === 0) mGoTab(0);
+    return;
+  }
+  tbaFetch('/team/frc3310/events/2026', function(data) {
+    if (data && data.length) {
+      matchesCache.events = data.sort(function(a,b){
+        return (a.start_date||'').localeCompare(b.start_date||'');
+      });
+      matchesCache.eventsAt = Date.now();
+      if (!setupTBAEvent) setupTBAEvent = matchesCache.events[matchesCache.events.length - 1].key;
+    }
+    if (mTab === 0) mGoTab(0); // re-render Setup with loaded events
+  });
+}
+
+// Trigger a TBA team lookup from current event + match# + alliance + position
+function tbaAutoFill() {
+  var statusEl  = document.getElementById('tba-fill-status');
+  var displayEl = document.getElementById('tba-team-display');
+  var infoEl    = document.getElementById('m-team-info');
+
+  // If any required field is missing, show prompt and clear result
+  if (!setupTBAEvent || !setupTBAPos || !M.alliance || !M.matchNum) {
+    if (M.teamNum) { M.teamNum = ''; updateMHeader(); }
+    if (displayEl) { displayEl.textContent = ''; displayEl.style.display = 'none'; }
+    if (infoEl)    { infoEl.innerHTML = ''; infoEl.style.display = 'none'; }
+    if (statusEl)  { statusEl.textContent = 'Select alliance, position & match #'; statusEl.style.display = ''; }
+    return;
+  }
+
+  // Show loading state
+  if (displayEl) displayEl.style.display = 'none';
+  if (infoEl)    { infoEl.innerHTML = ''; infoEl.style.display = 'none'; }
+  if (statusEl)  { statusEl.textContent = '🔍 Looking up\u2026'; statusEl.style.display = ''; }
+
+  var key = setupTBAEvent;
+  var now = Date.now();
+  if (matchesCache.matches[key] && (now - (matchesCache.matchesAt[key]||0)) < CACHE_TTL) {
+    tbaFillFromCache();
+    return;
+  }
+  // Fetch the match list for this event (reuses the matches cache)
+  tbaFetch('/event/' + key + '/matches', function(data) {
+    if (data) { matchesCache.matches[key] = data; matchesCache.matchesAt[key] = Date.now(); }
+    tbaFillFromCache();
+  });
+}
+
+// Resolve team from cached match list and populate M.teamNum + display
+function tbaFillFromCache() {
+  var statusEl  = document.getElementById('tba-fill-status');
+  var displayEl = document.getElementById('tba-team-display');
+
+  var matches = matchesCache.matches[setupTBAEvent];
+  if (!matches) {
+    if (statusEl) { statusEl.textContent = '\u26a0 Could not load match data'; statusEl.style.display = ''; }
+    return;
+  }
+
+  // Find the qualification match by number
+  var mn = parseInt(M.matchNum);
+  var match = null;
+  for (var i = 0; i < matches.length; i++) {
+    if (matches[i].comp_level === 'qm' && matches[i].match_number === mn) {
+      match = matches[i]; break;
+    }
+  }
+  if (!match) {
+    if (statusEl) { statusEl.textContent = 'Match ' + mn + ' not in schedule yet'; statusEl.style.display = ''; }
+    if (displayEl) displayEl.style.display = 'none';
+    return;
+  }
+
+  var teamKeys = (match.alliances[M.alliance] || {}).team_keys || [];
+  var teamKey  = teamKeys[setupTBAPos - 1];
+  if (!teamKey) {
+    if (statusEl) { statusEl.textContent = '\u2014 position not found'; statusEl.style.display = ''; }
+    return;
+  }
+
+  var teamNum = teamKey.replace('frc', '');
+  M.teamNum = teamNum;
+  updateMHeader();
+
+  // Update display without full re-render
+  if (displayEl) { displayEl.textContent = '#' + teamNum; displayEl.style.display = ''; }
+  if (statusEl)  statusEl.style.display = 'none';
+
+  // Kick off TBA team name lookup (populates #m-team-info)
+  scheduleTBALookup(teamNum, 'm');
 }
 
 /* ─── AUTON ─── */
@@ -1580,9 +1831,11 @@ function renderExport() {
     var items = ms.map(function(e) {
       var gi = saved.indexOf(e);
       var ec = e.alliance === 'red' ? 'var(--red)' : e.alliance === 'blue' ? 'var(--blue)' : 'var(--text)';
+      var sp = e.syncId ? '<span class="sentry-pill ' + (e.syncStatus||'pending') + '">' +
+        (e.syncStatus === 'synced' ? '☁✓' : e.syncStatus === 'failed' ? '✕' : '…') + '</span>' : '';
       return '<div class="si">' +
         '<div>' +
-        '<div class="si-name" style="color:' + ec + '">M' + e.matchNum + ' · Team #' + e.teamNum + '</div>' +
+        '<div class="si-name" style="color:' + ec + ';display:flex;align-items:center">M' + e.matchNum + ' · Team #' + e.teamNum + sp + '</div>' +
         '<div class="si-sub">⚽ ' + ((e.autonScored||0)+(e.teleScored||0)) + ' fuel · 🏆 ' + (e.climbLevel||'no climb') + '</div>' +
         '</div>' +
         '<div style="display:flex;gap:6px;align-items:center">' +
@@ -1675,9 +1928,19 @@ function saveMatchEntry(notify) {
   var now = new Date();
   entry.timestamp = (now.getMonth()+1) + '/' + now.getDate() + '/' + now.getFullYear() + ' ' +
     String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  // Assign a stable sync ID for dedup (keep existing one if re-saving same entry)
+  if (idx >= 0 && saved[idx].syncId) {
+    entry.syncId = saved[idx].syncId;
+    entry.syncStatus = saved[idx].syncStatus === 'synced' ? 'synced' : 'pending';
+  } else {
+    entry.syncId = syncGenId();
+    entry.syncStatus = 'pending';
+  }
   if (idx >= 0) saved[idx] = entry; else saved.push(entry);
   localStorage.setItem('bh3310', JSON.stringify(saved));
   refreshBadge();
+  // Queue for Google Sheets sync (non-blocking — never interrupts scouting)
+  if (entry.syncStatus !== 'synced') syncEnqueue(entry);
   if (notify) {
     toast('✅ Match entry saved!');
     M.matchNum = String((parseInt(M.matchNum) || 0) + 1);
@@ -1810,9 +2073,19 @@ function savePit(notify) {
   var now = new Date();
   entry.timestamp = (now.getMonth()+1) + '/' + now.getDate() + '/' + now.getFullYear() + ' ' +
     String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  // Assign a stable sync ID for dedup
+  if (idx >= 0 && saved[idx].syncId) {
+    entry.syncId = saved[idx].syncId;
+    entry.syncStatus = saved[idx].syncStatus === 'synced' ? 'synced' : 'pending';
+  } else {
+    entry.syncId = syncGenId();
+    entry.syncStatus = 'pending';
+  }
   if (idx >= 0) saved[idx] = entry; else saved.push(entry);
   localStorage.setItem('bh3310', JSON.stringify(saved));
   refreshBadge();
+  // Queue for Google Sheets sync (non-blocking)
+  if (entry.syncStatus !== 'synced') syncEnqueue(entry);
   if (notify) toast('✅ Pit entry saved!');
 }
 
@@ -1847,9 +2120,11 @@ function renderHistory() {
     ms.forEach(function(e) {
       var gi = saved.indexOf(e);
       var ec = e.alliance === 'red' ? 'var(--red)' : e.alliance === 'blue' ? 'var(--blue)' : 'var(--text)';
+      var sp = e.syncId ? '<span class="sentry-pill ' + (e.syncStatus||'pending') + '">' +
+        (e.syncStatus === 'synced' ? '☁✓' : e.syncStatus === 'failed' ? '✕' : '…') + '</span>' : '';
       html += '<div class="si">' +
         '<div>' +
-        '<div class="si-name" style="color:' + ec + '">M' + e.matchNum + ' · Team #' + e.teamNum + '</div>' +
+        '<div class="si-name" style="color:' + ec + ';display:flex;align-items:center">M' + e.matchNum + ' · Team #' + e.teamNum + sp + '</div>' +
         '<div class="si-sub">⚽ ' + ((e.autonScored||0)+(e.teleScored||0)) + ' fuel &nbsp;·&nbsp; 🏆 ' +
           (e.climbLevel||'no climb') + ' &nbsp;·&nbsp; ' + (e.scoutName||'—') + '</div>' +
         '</div>' +
@@ -1941,7 +2216,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.0.3</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.0.4</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -1999,6 +2274,11 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">Auto-saves alliance</span><span class="info-v">Persists between matches</span></div>' +
   '<div class="info-rule"><span class="info-k">Qual auto-increments</span><span class="info-v">After each save</span></div>' +
   '<div class="info-rule"><span class="info-k">TBA lookup</span><span class="info-v">Auto-fills team name</span></div>' +
+  '</div>' +
+
+  '<div class="card">' +
+  '<div class="card-hd">\u2601 GOOGLE SHEETS SYNC</div>' +
+  '<div id="sync-panel-wrap">' + syncBuildPanel() + '</div>' +
   '</div>' +
 
   '<div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:12px">Team 3310 Black Hawks · REBUILT™ 2026</div>' +
@@ -2118,6 +2398,332 @@ function rateApply() {
 }
 
 /* ═══════════════════════════════════════════
+   GOOGLE SHEETS SYNC
+   Architecture: Apps Script web app endpoint.
+   Entries are queued in localStorage and flushed
+   sequentially. Never blocks the scouting workflow.
+═══════════════════════════════════════════ */
+
+var SYNC_CFG_KEY   = 'hawkeye_sync_settings';
+var SYNC_QUEUE_KEY = 'hawkeye_sync_queue';
+
+/* ─── RUNTIME STATE ─── */
+var syncCfg   = { enabled: false, endpoint: '', passphrase: '' };
+var syncQueue = [];    // array of pending payload objects
+var syncFails = 0;     // consecutive send failures
+var syncTimer = null;  // back-off retry timer handle
+var syncBusy  = false; // true while a flush is in progress
+
+/* ─── SETTINGS PERSISTENCE ─── */
+function syncLoadCfg() {
+  try {
+    var s = JSON.parse(localStorage.getItem(SYNC_CFG_KEY) || '{}');
+    syncCfg.enabled    = s.enabled    !== undefined ? !!s.enabled    : false;
+    syncCfg.endpoint   = s.endpoint   || '';
+    syncCfg.passphrase = s.passphrase || '';
+  } catch(e) {}
+}
+function syncSaveCfg() {
+  localStorage.setItem(SYNC_CFG_KEY, JSON.stringify(syncCfg));
+}
+
+/* ─── QUEUE PERSISTENCE ─── */
+function syncLoadQueue() {
+  try { syncQueue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]'); } catch(e) { syncQueue = []; }
+}
+function syncSaveQueue() {
+  localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(syncQueue));
+}
+
+/* ─── UNIQUE ID FOR DEDUP ─── */
+function syncGenId() {
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+}
+
+/* ─── BUILD MATCH PAYLOAD ─── */
+function syncMatchPayload(e) {
+  return {
+    syncId:          e.syncId,
+    entryType:       'match',
+    timestamp:       e.timestamp || '',
+    matchNumber:     e.matchNum          || '',
+    teamNumber:      e.teamNum           || '',
+    alliance:        e.alliance          || '',
+    scoutName:       e.scoutName         || '',
+    noShow:          !!e.noShow,
+    startPos:        e.startPos          || '',
+    autonScored:     e.autonScored        || 0,
+    autonMissed:     e.autonMissed        || 0,
+    autonFoul:       e.autonFoul          || 0,
+    autonPassed:     !!e.autonPassed,
+    autonClimbed:    !!e.autonClimbed,
+    autonNotes:      e.autonNotes         || '',
+    teleScored:      e.teleScored         || 0,
+    teleMissed:      e.teleMissed         || 0,
+    teleFoul:        e.teleFoul           || 0,
+    telePassed:      !!e.telePassed,
+    teleDefense:     !!e.teleDefense,
+    teleStuck:       !!e.teleStuck,
+    teleBroke:       !!e.teleBroke,
+    climbLevel:      e.climbLevel         || '',
+    wentOverBump:    !!e.wentOverBump,
+    wentUnderTrench: !!e.wentUnderTrench,
+    shooterSpeed:    e.shooterSpeed       || '',
+    teleNotes:       e.teleNotes          || ''
+  };
+}
+
+/* ─── BUILD PIT PAYLOAD ─── */
+function syncPitPayload(e) {
+  return {
+    syncId:           e.syncId,
+    entryType:        'pit',
+    timestamp:        e.timestamp         || '',
+    teamNumber:       e.teamNum           || '',
+    scoutName:        e.scoutName         || '',
+    driveCoach:       e.driveCoach        || '',
+    drivetrain:       e.drivetrain        || '',
+    batteryCount:     e.batteryCount      || '',
+    archetype:        e.archetype         || '',
+    humanPlayerCount: e.humanPlayerCount  || '',
+    hopperCapacity:   e.hopperCapacity    || '',
+    notes:            e.notes             || ''
+  };
+}
+
+/* ─── STATUS INDICATOR UI ─── */
+function syncUpdateStatus() {
+  var indicator = document.getElementById('sync-indicator');
+  var dot       = document.getElementById('sync-dot-main');
+  var badge     = document.getElementById('sync-count-badge');
+  if (!dot) return;
+  // Hide entirely when sync is not configured
+  if (!syncCfg.enabled || !syncCfg.endpoint) {
+    if (indicator) indicator.style.display = 'none';
+    return;
+  }
+  if (indicator) indicator.style.display = 'flex';
+  if (syncBusy) {
+    dot.className = 'sync-dot yellow';
+    if (badge) badge.style.display = 'none';
+  } else if (syncQueue.length > 0) {
+    dot.className = syncFails >= 5 ? 'sync-dot red' : 'sync-dot yellow';
+    if (badge) { badge.textContent = syncQueue.length; badge.style.display = ''; }
+  } else {
+    dot.className = 'sync-dot green';
+    if (badge) badge.style.display = 'none';
+  }
+  // Keep settings panel count in sync if open
+  var qc = document.getElementById('sync-qcount');
+  if (qc) qc.textContent = syncQueue.length;
+}
+
+/* ─── SEND ONE ENTRY (async, 10s timeout) ─── */
+async function syncSend(payload) {
+  var ctrl  = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, 10000) : null;
+  try {
+    var r = await fetch(syncCfg.endpoint, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ passphrase: syncCfg.passphrase, data: payload }),
+      signal:  ctrl ? ctrl.signal : undefined
+    });
+    if (timer) clearTimeout(timer);
+    if (!r.ok) return false;
+    var j = await r.json();
+    return !!(j && j.status === 'ok');
+  } catch(e) {
+    if (timer) clearTimeout(timer);
+    return false;
+  }
+}
+
+/* ─── FLUSH QUEUE SEQUENTIALLY ─── */
+async function syncFlush() {
+  if (syncBusy || !syncCfg.enabled || !syncCfg.endpoint || syncQueue.length === 0) return;
+  syncBusy = true;
+  syncUpdateStatus();
+  while (syncQueue.length > 0) {
+    var item = syncQueue[0];
+    var ok = await syncSend(item);
+    if (ok) {
+      syncQueue.shift();
+      syncSaveQueue();
+      syncFails = 0;
+      syncMarkSaved(item.syncId, 'synced');
+    } else {
+      syncFails++;
+      break;
+    }
+  }
+  syncBusy = false;
+  syncUpdateStatus();
+  // Schedule back-off retry if queue still has items
+  if (syncQueue.length > 0) {
+    var ms = syncFails >= 5 ? 120000 : 30000;
+    if (syncTimer) clearTimeout(syncTimer);
+    syncTimer = setTimeout(syncFlush, ms);
+    if (syncFails === 5) toast('\u26a0\ufe0f Sync error \u2014 ' + syncQueue.length + ' entries queued');
+  }
+}
+
+/* ─── UPDATE SYNC STATUS IN BH3310 STORAGE ─── */
+function syncMarkSaved(syncId, status) {
+  try {
+    var arr = JSON.parse(localStorage.getItem('bh3310') || '[]');
+    var dirty = false;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i].syncId === syncId) { arr[i].syncStatus = status; dirty = true; break; }
+    }
+    if (dirty) { localStorage.setItem('bh3310', JSON.stringify(arr)); saved = arr; }
+  } catch(e) {}
+}
+
+/* ─── ENQUEUE AND ATTEMPT IMMEDIATE FLUSH ─── */
+function syncEnqueue(entry) {
+  if (!syncCfg.enabled || !syncCfg.endpoint) return;
+  var payload = entry.type === 'pit' ? syncPitPayload(entry) : syncMatchPayload(entry);
+  // Avoid duplicate queue entries
+  for (var i = 0; i < syncQueue.length; i++) {
+    if (syncQueue[i].syncId === payload.syncId) return;
+  }
+  syncQueue.push(payload);
+  syncSaveQueue();
+  syncUpdateStatus();
+  syncFlush(); // non-blocking
+}
+
+/* ─── FORCE SYNC (manual button) ─── */
+function syncForceNow() {
+  if (!syncCfg.enabled || !syncCfg.endpoint) { toast('\u26a0\ufe0f Sync not configured \u2014 see Game Info'); return; }
+  if (syncQueue.length === 0) { toast('\u2705 Queue empty \u2014 all entries synced'); return; }
+  syncFails = 0;
+  if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+  syncFlush();
+  toast('\u21bb Syncing ' + syncQueue.length + ' entr' + (syncQueue.length === 1 ? 'y' : 'ies') + '\u2026');
+}
+
+/* ─── TEST CONNECTION ─── */
+async function syncTestConn() {
+  var ep = syncCfg.endpoint;
+  if (!ep) { toast('\u26a0\ufe0f Enter endpoint URL first'); return; }
+  var btn = document.getElementById('sync-test-btn');
+  if (btn) { btn.textContent = 'Testing\u2026'; btn.disabled = true; }
+  var ctrl  = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, 10000) : null;
+  try {
+    var r = await fetch(ep, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ passphrase: syncCfg.passphrase, type: 'ping' }),
+      signal: ctrl ? ctrl.signal : undefined
+    });
+    if (timer) clearTimeout(timer);
+    var j = await r.json();
+    if (j && j.status === 'ok') {
+      toast('\u2705 Connection OK \u2014 pong received!');
+      if (btn) { btn.textContent = '\u2705 OK'; btn.disabled = false; }
+    } else {
+      toast('\u274c Server error: ' + (j && j.message ? j.message : 'unknown'));
+      if (btn) { btn.textContent = 'Test Again'; btn.disabled = false; }
+    }
+  } catch(ex) {
+    if (timer) clearTimeout(timer);
+    toast('\u274c Connection failed \u2014 check URL');
+    if (btn) { btn.textContent = 'Test Again'; btn.disabled = false; }
+  }
+}
+
+/* ─── CLEAR QUEUE ─── */
+function syncClearQueue() {
+  if (!confirm('Remove ' + syncQueue.length + ' entries from the sync queue?\nThey will NOT be sent to Google Sheets.')) return;
+  syncQueue = [];
+  syncSaveQueue();
+  syncFails = 0;
+  if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+  syncUpdateStatus();
+  var wrap = document.getElementById('sync-panel-wrap');
+  if (wrap) wrap.innerHTML = syncBuildPanel();
+  toast('\ud83d\uddd1 Sync queue cleared');
+}
+
+/* ─── SAVE SETTINGS FROM UI INPUTS ─── */
+function syncSaveUI() {
+  var urlEl  = document.getElementById('sync-url-input');
+  var passEl = document.getElementById('sync-pass-input');
+  var togEl  = document.getElementById('sync-enable-tog');
+  if (urlEl)  syncCfg.endpoint   = urlEl.value.trim();
+  if (passEl) syncCfg.passphrase = passEl.value;
+  if (togEl)  syncCfg.enabled    = togEl.classList.contains('on');
+  syncSaveCfg();
+  syncUpdateStatus();
+  toast('\u2705 Sync settings saved');
+  var wrap = document.getElementById('sync-panel-wrap');
+  if (wrap) wrap.innerHTML = syncBuildPanel();
+  // Attempt flush if we just enabled with a pending queue
+  if (syncCfg.enabled && syncCfg.endpoint && syncQueue.length > 0) {
+    syncFails = 0;
+    syncFlush();
+  }
+}
+
+/* ─── BUILD SETTINGS PANEL HTML ─── */
+function syncBuildPanel() {
+  var qlen    = syncQueue.length;
+  var stColor = !syncCfg.enabled    ? 'var(--text3)'  :
+                qlen === 0          ? 'var(--green)'   :
+                syncFails >= 5      ? 'var(--red)'     : 'var(--gold)';
+  var stText  = !syncCfg.enabled    ? 'Disabled'                        :
+                qlen === 0          ? 'All synced \u2713'                :
+                syncFails >= 5      ? qlen + ' pending (errors)'         :
+                                      qlen + ' pending';
+  return '' +
+    // Enable toggle
+    '<div class="trow" onclick="var t=document.getElementById(\'sync-enable-tog\');t.classList.toggle(\'on\');syncSaveUI()">' +
+    '<div><div class="trow-lbl">Enable Sheets Sync</div>' +
+    '<div class="trow-sub">Auto-send entries to Google Sheets</div></div>' +
+    '<div class="tog' + (syncCfg.enabled ? ' on' : '') + '" id="sync-enable-tog"></div>' +
+    '</div>' +
+    // Apps Script URL
+    '<label class="lbl">Apps Script URL</label>' +
+    '<input type="url" id="sync-url-input" placeholder="https://script.google.com/macros/s/\u2026/exec" ' +
+    'value="' + (syncCfg.endpoint || '').replace(/"/g, '&quot;') + '" ' +
+    'oninput="syncCfg.endpoint=this.value" style="font-size:12px;padding:9px 11px">' +
+    // Passphrase
+    '<label class="lbl">Passphrase</label>' +
+    '<input type="password" id="sync-pass-input" placeholder="Shared passphrase" ' +
+    'value="' + (syncCfg.passphrase || '').replace(/"/g, '&quot;') + '" ' +
+    'oninput="syncCfg.passphrase=this.value" style="font-size:13px;padding:9px 11px">' +
+    // Buttons
+    '<div style="display:flex;gap:7px;margin-top:12px">' +
+    '<button class="btn btn-gold" style="margin:0;flex:1;padding:11px;font-size:13px" onclick="syncSaveUI()">Save</button>' +
+    '<button class="btn btn-surf" id="sync-test-btn" style="margin:0;flex:1;padding:11px;font-size:13px" onclick="syncTestConn()">\u2197 Test</button>' +
+    '</div>' +
+    // Status display
+    '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">' +
+    '<div class="info-rule"><span class="info-k">Status</span>' +
+    '<span style="font-weight:700;color:' + stColor + '">' + stText + '</span></div>' +
+    '<div class="info-rule" style="border:none"><span class="info-k">Queued entries</span>' +
+    '<span style="font-weight:700" id="sync-qcount">' + qlen + '</span></div>' +
+    '</div>' +
+    // Queue controls
+    '<div style="display:flex;gap:7px;margin-top:6px">' +
+    '<button class="btn btn-blue" style="margin:0;flex:1;padding:10px;font-size:13px" onclick="syncForceNow()">\u21bb Force Sync</button>' +
+    (qlen > 0 ? '<button class="btn btn-red" style="margin:0;flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="syncClearQueue()">\ud83d\uddd1 Clear</button>' : '') +
+    '</div>';
+}
+
+/* ─── RETRY ON VISIBILITY/ONLINE EVENTS ─── */
+function syncOnOnline() {
+  if ((syncQueue.length > 0 || syncFails > 0) && syncCfg.enabled && syncCfg.endpoint) {
+    syncFails = Math.min(syncFails, 1); // reduce back-off when network returns
+    if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
+    syncFlush();
+  }
+}
+
+/* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
 refreshBadge();
@@ -2128,6 +2734,21 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(e) {
     console.log('SW registration failed:', e);
   });
+}
+
+// Google Sheets Sync — load persisted state and start listeners
+syncLoadCfg();
+syncLoadQueue();
+syncUpdateStatus();
+// Retry when app comes back to foreground
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) syncOnOnline();
+});
+// Retry when network returns
+window.addEventListener('online', syncOnOnline);
+// Flush any leftover queue from previous session
+if (syncQueue.length > 0 && syncCfg.enabled && syncCfg.endpoint) {
+  syncFlush();
 }
 </script>
 </body>
