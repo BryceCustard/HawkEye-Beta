@@ -1195,8 +1195,11 @@ function initGeoBg() {
       ctx.arc(pt[0], pt[1], 1.4, 0, Math.PI*2);
       ctx.fill();
     });
-    document.body.style.backgroundImage = 'url(' + c.toDataURL() + ')';
-    document.body.style.backgroundRepeat = 'repeat';
+    var url = c.toDataURL();
+    // Apply to body AND .screen so the texture shows through fixed-position screens
+    var st = document.createElement('style');
+    st.textContent = 'body,.screen{background-image:url(' + url + ')!important;background-repeat:repeat!important}';
+    document.head.appendChild(st);
   } catch(e) {}
 }
 
@@ -1398,9 +1401,7 @@ function mGoTab(t) {
   var renders = [renderSetup, renderAuton, renderTeleop, renderExport];
   var body = document.getElementById('m-body');
   body.innerHTML = renders[t]();
-  body.style.scrollBehavior = 'auto';
   body.scrollTop = 0;
-  body.style.scrollBehavior = '';
   syncCtrDisplay();
   if (t === 0) {
     if (setupMode === 'tba') setTimeout(tbaAutoFill, 50);
@@ -1819,17 +1820,27 @@ function setClimb(c) {
 }
 
 /* ─── VALIDATION ─── */
+// Scroll `el` to center inside `container` smoothly using viewport-relative math
+function scrollToCenter(el, container) {
+  var elRect = el.getBoundingClientRect();
+  var cRect  = container.getBoundingClientRect();
+  var target = container.scrollTop + (elRect.top - cRect.top) - (container.clientHeight - elRect.height) / 2;
+  container.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+}
+
+function shakeReq(el) {
+  el.classList.add('req-err');
+  el.classList.remove('req-shake');
+  void el.offsetWidth;
+  el.classList.add('req-shake');
+}
+
 function autonNext() {
   if (!M.noShow && !M.startPos) {
     var el = document.getElementById('req-startPos');
     if (el) {
-      el.classList.add('req-err');
-      el.classList.remove('req-shake');
-      void el.offsetWidth;
-      el.classList.add('req-shake');
-      var body = document.getElementById('m-body');
-      var target = el.offsetTop - Math.max(0, (body.clientHeight - el.offsetHeight) / 2);
-      body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+      shakeReq(el);
+      scrollToCenter(el, document.getElementById('m-body'));
     }
     toast('⚠️ Select a starting position first');
     return;
@@ -1851,26 +1862,20 @@ function validateAndSave(onPass) {
   var firstTab = missing[0].tab;
   mGoTab(firstTab);
 
+  // Wait for render, then highlight and smooth-scroll to first missing card
   setTimeout(function() {
+    var body = document.getElementById('m-body');
     var firstEl = null;
     missing.forEach(function(m) {
       if (m.tab === firstTab) {
         var el = document.getElementById('req-' + m.field);
         if (el) {
-          el.classList.add('req-err');
-          // Re-trigger shake animation
-          el.classList.remove('req-shake');
-          void el.offsetWidth; // reflow
-          el.classList.add('req-shake');
+          shakeReq(el);
           if (!firstEl) firstEl = el;
         }
       }
     });
-    if (firstEl) {
-      var body = document.getElementById('m-body');
-      var target = firstEl.offsetTop - Math.max(0, (body.clientHeight - firstEl.offsetHeight) / 2);
-      body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
-    }
+    if (firstEl) scrollToCenter(firstEl, body);
     toast('⚠️ Fill in highlighted fields first');
   }, 60);
 }
