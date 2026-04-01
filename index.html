@@ -86,6 +86,11 @@ body{
 /* ─── CARD ─── */
 .card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
 .card-hd{font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+/* Required field validation */
+.req-err{box-shadow:0 0 0 2px var(--red)!important;transition:box-shadow .15s}
+.req-err .card-hd{color:var(--red)!important}
+@keyframes reqShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.req-shake{animation:reqShake .35s ease}
 
 /* ─── COUNTER ─── */
 .ctr{margin-bottom:10px}
@@ -743,7 +748,7 @@ function blankM() {
     matchNum:'', teamNum:'', alliance:'', scoutName:'',
     noShow:false, startPos:'',
     autonScored:0, autonMissed:0, autonFoul:0,
-    autonPassed:false, autonClimbed:false, autonNotes:'',
+    autonNoMove:false, autonPassed:false, autonClimbed:false, autonNotes:'',
     teleScored:0, teleMissed:0, teleFoul:0,
     telePassed:false, teleDefense:false, teleStuck:false, teleBroke:false,
     climbLevel:'', wentOverBump:false, wentUnderTrench:false,
@@ -1680,7 +1685,7 @@ function renderAuton() {
   mkTog('noShow', 'No Show', 'Robot did not appear on field', true) +
   '</div>' +
   '<div id="auton-rest" class="' + (M.noShow ? 'dimmed' : '') + '">' +
-  '<div class="card">' +
+  '<div class="card" id="req-startPos">' +
   '<div class="card-hd">Starting Position</div>' +
   '<div class="pos-grid">' +
   START_POS.map(function(p) {
@@ -1697,6 +1702,7 @@ function renderAuton() {
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
+  mkTog('autonNoMove', 'No Move', 'Robot did not leave starting zone', false) +
   mkTog('autonPassed', 'Passed?', 'Robot crossed the field boundary', false) +
   mkTog('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
@@ -1718,6 +1724,8 @@ function setStartPos(id) {
     var onclick = b.getAttribute('onclick') || '';
     b.classList.toggle('on', onclick.indexOf("'" + id + "'") !== -1);
   });
+  var rEl = document.getElementById('req-startPos');
+  if (rEl) { rEl.classList.remove('req-err'); rEl.classList.remove('req-shake'); }
 }
 
 /* ─── TELEOP ─── */
@@ -1736,7 +1744,7 @@ function renderTeleop() {
   '<div style="font-size:11px;color:var(--text3);padding:3px 12px 8px;line-height:1.5">Needs 3+ balls. If it doesn\'t work, pick a speed below and ignore the timer.</div>' +
   mkCtr('teleMissed', '❌ Missed', false) +
   '</div>' +
-  '<div class="card">' +
+  '<div class="card" id="req-shooterSpeed">' +
   '<div class="card-hd">Shooter Speed</div>' +
   '<div class="spd-grid2">' +
   SPEEDS.map(function(s, i) {
@@ -1754,7 +1762,7 @@ function renderTeleop() {
     return '<button class="spd-grid2-b' + (M.shooterSpeed===s.id?' on':'') + '" style="' + tintStyle + '" onclick="setSpeed(\'' + s.id + '\')">' + s.label + '</button>';
   }).join('') +
   '</div></div>' +
-  '<div class="card">' +
+  '<div class="card" id="req-climbLevel">' +
   '<div class="card-hd">End-game Climb</div>' +
   '<div class="seg">' +
   ['L3','L2','L1','none'].map(function(c) {
@@ -1792,6 +1800,8 @@ function setSpeed(id) {
     var oc = b.getAttribute('onclick') || '';
     b.classList.toggle('on', oc.indexOf("'" + id + "'") !== -1);
   });
+  var rEl = document.getElementById('req-shooterSpeed');
+  if (rEl) { rEl.classList.remove('req-err'); rEl.classList.remove('req-shake'); }
 }
 
 function setClimb(c) {
@@ -1802,23 +1812,66 @@ function setClimb(c) {
     b.classList.toggle('on', match);
     b.classList.toggle('g', match);
   });
+  var rEl = document.getElementById('req-climbLevel');
+  if (rEl) { rEl.classList.remove('req-err'); rEl.classList.remove('req-shake'); }
+}
+
+/* ─── VALIDATION ─── */
+function validateAndSave(onPass) {
+  // noShow bypasses field validation
+  if (M.noShow) { saveMatchEntry(false); onPass && onPass(); return; }
+
+  var missing = [];
+  if (!M.startPos)     missing.push({field:'startPos',    tab:1});
+  if (!M.shooterSpeed) missing.push({field:'shooterSpeed', tab:2});
+  if (!M.climbLevel)   missing.push({field:'climbLevel',  tab:2});
+
+  if (!missing.length) { saveMatchEntry(false); onPass && onPass(); return; }
+
+  // Navigate to the tab containing the first missing field
+  var firstTab = missing[0].tab;
+  mGoTab(firstTab);
+
+  setTimeout(function() {
+    var firstEl = null;
+    missing.forEach(function(m) {
+      if (m.tab === firstTab) {
+        var el = document.getElementById('req-' + m.field);
+        if (el) {
+          el.classList.add('req-err');
+          // Re-trigger shake animation
+          el.classList.remove('req-shake');
+          void el.offsetWidth; // reflow
+          el.classList.add('req-shake');
+          if (!firstEl) firstEl = el;
+        }
+      }
+    });
+    if (firstEl) {
+      var body = document.getElementById('m-body');
+      var target = firstEl.offsetTop - Math.max(0, (body.clientHeight - firstEl.offsetHeight) / 2);
+      body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    }
+    toast('⚠️ Fill in highlighted fields first');
+  }, 60);
 }
 
 /* ─── EXPORT ─── */
-function saveAndExport() { saveMatchEntry(false); mGoTab(3); }
+function saveAndExport() { validateAndSave(function() { mGoTab(3); }); }
 
 function saveAndClear() {
-  var num = M.matchNum || '?';
-  saveMatchEntry(false);
-  var scout = M.scoutName;
-  var ally   = M.alliance;
-  var nextNum = String((parseInt(M.matchNum) || 0) + 1);
-  M = blankM();
-  M.scoutName = scout;
-  M.alliance  = ally;
-  M.matchNum  = nextNum;
-  mGoTab(0);
-  toast('✅ Saved M' + num + ' — form cleared');
+  validateAndSave(function() {
+    var num = M.matchNum || '?';
+    var scout = M.scoutName;
+    var ally   = M.alliance;
+    var nextNum = String((parseInt(M.matchNum) || 0) + 1);
+    M = blankM();
+    M.scoutName = scout;
+    M.alliance  = ally;
+    M.matchNum  = nextNum;
+    mGoTab(0);
+    toast('✅ Saved M' + num + ' — form cleared');
+  });
 }
 
 function renderExport() {
@@ -1891,7 +1944,7 @@ function mCSV(e) {
     d.matchNum, d.teamNum, d.alliance, d.scoutName,
     ns, ns ? '' : (d.startPos||''),
     ns ? 0 : (d.autonScored||0), ns ? 0 : (d.autonMissed||0), ns ? 0 : (d.autonFoul||0),
-    ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
+    ns ? 0 : (d.autonNoMove?1:0), ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
     ns ? '' : (d.autonNotes||'').replace(/,/g,';'),
     ns ? 0 : (d.teleScored||0), ns ? 0 : (d.teleMissed||0), ns ? 0 : (d.teleFoul||0),
     ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
@@ -2234,7 +2287,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.1</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.1.2</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -2473,6 +2526,7 @@ function syncMatchPayload(e) {
     autonScored:     e.autonScored        || 0,
     autonMissed:     e.autonMissed        || 0,
     autonFoul:       e.autonFoul          || 0,
+    autonNoMove:     !!e.autonNoMove,
     autonPassed:     !!e.autonPassed,
     autonClimbed:    !!e.autonClimbed,
     autonNotes:      e.autonNotes         || '',
