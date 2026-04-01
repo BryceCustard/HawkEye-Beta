@@ -1926,7 +1926,6 @@ function renderAuton() {
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
-  mkTog('autonNoMove', 'No Move', 'Robot did not leave starting zone', false) +
   mkTog('autonPassed', 'Passed?', 'Robot crossed the field boundary', false) +
   mkTog('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
@@ -2195,7 +2194,7 @@ function mCSV(e) {
     ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
     ns ? 0 : (d.teleStuck?1:0), ns ? 0 : (d.teleBroke?1:0),
     ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump?1:0), ns ? 0 : (d.wentUnderTrench?1:0),
-    ns ? '' : (d.shooterSpeed||''), ns ? '' : (d.teleNotes||'').replace(/,/g,';'),
+    ns ? '' : ((d.shooterSpeed||'').replace('T','')), ns ? '' : (d.teleNotes||'').replace(/,/g,';'),
     d.timestamp || ''
   ].join(',');
 }
@@ -2801,7 +2800,7 @@ function syncMatchPayload(e) {
     climbLevel:      e.climbLevel         || '',
     wentOverBump:    !!e.wentOverBump,
     wentUnderTrench: !!e.wentUnderTrench,
-    shooterSpeed:    e.shooterSpeed       || '',
+    shooterSpeed:    (e.shooterSpeed || '').replace('T', ''),
     teleNotes:       e.teleNotes          || ''
   };
 }
