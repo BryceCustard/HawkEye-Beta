@@ -64,7 +64,7 @@ body{
 .prog-pip.on{background:var(--gold)}
 
 /* ─── SCROLL AREA ─── */
-.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px calc(14px + env(safe-area-inset-right,0px)) 100px calc(14px + env(safe-area-inset-left,0px))}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;padding:14px calc(14px + env(safe-area-inset-right,0px)) 100px calc(14px + env(safe-area-inset-left,0px))}
 
 /* ─── BOTTOM TABS ─── */
 .tabs{
@@ -1398,7 +1398,9 @@ function mGoTab(t) {
   var renders = [renderSetup, renderAuton, renderTeleop, renderExport];
   var body = document.getElementById('m-body');
   body.innerHTML = renders[t]();
+  body.style.scrollBehavior = 'auto';
   body.scrollTop = 0;
+  body.style.scrollBehavior = '';
   syncCtrDisplay();
   if (t === 0) {
     if (setupMode === 'tba') setTimeout(tbaAutoFill, 50);
@@ -1714,7 +1716,7 @@ function renderAuton() {
   '<div class="card-hd">Comments</div>' +
   '<textarea placeholder="Notes on auton performance…" oninput="M.autonNotes=this.value">' + (M.autonNotes||'') + '</textarea>' +
   '</div></div>' +
-  '<button class="btn btn-gold" onclick="mGoTab(2)">Continue → Teleop</button>' +
+  '<button class="btn btn-gold" onclick="autonNext()">Continue → Teleop</button>' +
   '</div>';
 }
 
@@ -1817,12 +1819,29 @@ function setClimb(c) {
 }
 
 /* ─── VALIDATION ─── */
+function autonNext() {
+  if (!M.noShow && !M.startPos) {
+    var el = document.getElementById('req-startPos');
+    if (el) {
+      el.classList.add('req-err');
+      el.classList.remove('req-shake');
+      void el.offsetWidth;
+      el.classList.add('req-shake');
+      var body = document.getElementById('m-body');
+      var target = el.offsetTop - Math.max(0, (body.clientHeight - el.offsetHeight) / 2);
+      body.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+    }
+    toast('⚠️ Select a starting position first');
+    return;
+  }
+  mGoTab(2);
+}
+
 function validateAndSave(onPass) {
   // noShow bypasses field validation
   if (M.noShow) { saveMatchEntry(false); onPass && onPass(); return; }
 
   var missing = [];
-  if (!M.startPos)     missing.push({field:'startPos',    tab:1});
   if (!M.shooterSpeed) missing.push({field:'shooterSpeed', tab:2});
   if (!M.climbLevel)   missing.push({field:'climbLevel',  tab:2});
 
