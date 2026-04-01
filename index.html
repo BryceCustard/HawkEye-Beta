@@ -753,7 +753,8 @@ function blankM() {
 function blankP() {
   return {
     teamNum:'', scoutName:'', driveCoach:'',
-    drivetrain:'', batteryCount:'', archetype:'',
+    drivetrain:'', drivetrainOther:'', batteryCount:'',
+    archetype:'', archetypeOther:'',
     humanPlayerCount:'', hopperCapacity:'', notes:''
   };
 }
@@ -1394,7 +1395,10 @@ function mGoTab(t) {
   body.innerHTML = renders[t]();
   body.scrollTop = 0;
   syncCtrDisplay();
-  if (t === 0 && M.teamNum) scheduleTBALookup(M.teamNum, 'm');
+  if (t === 0) {
+    if (setupMode === 'tba') setTimeout(tbaAutoFill, 50);
+    else if (M.teamNum) scheduleTBALookup(M.teamNum, 'm');
+  }
   if (t === 2) updateRateDisplay();
   if (t === 3) setTimeout(buildMatchQR, 120);
 }
@@ -2009,6 +2013,8 @@ function renderPit() {
     return '<div class="dt-b' + (P.drivetrain===d?' on':'') + '" onclick="setPDT(\'' + d + '\')">' + d + '</div>';
   }).join('') +
   '</div>' +
+  '<div id="dt-other-wrap" style="margin-top:8px;display:' + (P.drivetrain==='Other'?'block':'none') + '">' +
+  '<input type="text" placeholder="Describe drivetrain…" value="' + (P.drivetrainOther||'') + '" oninput="P.drivetrainOther=this.value"></div>' +
   '<label class="lbl" style="margin-top:14px">Battery Count</label>' +
   '<input type="number" inputmode="numeric" placeholder="e.g. 5" value="' + (P.batteryCount||'') + '" oninput="P.batteryCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
   '<label class="lbl" style="margin-top:14px">Robot Archetype</label>' +
@@ -2017,6 +2023,8 @@ function renderPit() {
     return '<div class="arch-b' + (P.archetype===a?' on':'') + '" onclick="setPArch(\'' + a + '\')">' + a + '</div>';
   }).join('') +
   '</div>' +
+  '<div id="arch-other-wrap" style="margin-top:8px;display:' + (P.archetype==='Other'?'block':'none') + '">' +
+  '<input type="text" placeholder="Describe archetype…" value="' + (P.archetypeOther||'') + '" oninput="P.archetypeOther=this.value"></div>' +
   '<label class="lbl" style="margin-top:14px">Human Player Count</label>' +
   '<input type="number" inputmode="numeric" placeholder="e.g. 1" value="' + (P.humanPlayerCount||'') + '" oninput="P.humanPlayerCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
   '<label class="lbl" style="margin-top:14px">Hopper Capacity</label>' +
@@ -2041,19 +2049,29 @@ function setPDT(d) {
   document.querySelectorAll('.dt-b').forEach(function(b) {
     b.classList.toggle('on', b.textContent.trim() === d);
   });
+  var dtWrap = document.getElementById('dt-other-wrap');
+  if (dtWrap) dtWrap.style.display = d === 'Other' ? 'block' : 'none';
+  if (d !== 'Other') { P.drivetrainOther = ''; }
+  else { setTimeout(function() { var i = document.querySelector('#dt-other-wrap input'); if(i) i.focus(); }, 50); }
 }
 function setPArch(a) {
   P.archetype = a;
   document.querySelectorAll('.arch-b').forEach(function(b) {
     b.classList.toggle('on', b.textContent.trim() === a);
   });
+  var archWrap = document.getElementById('arch-other-wrap');
+  if (archWrap) archWrap.style.display = a === 'Other' ? 'block' : 'none';
+  if (a !== 'Other') { P.archetypeOther = ''; }
+  else { setTimeout(function() { var i = document.querySelector('#arch-other-wrap input'); if(i) i.focus(); }, 50); }
 }
 
 function pCSV(e) {
   var d = e || P;
+  var dt = (d.drivetrain === 'Other' && d.drivetrainOther) ? d.drivetrainOther : (d.drivetrain||'');
+  var arch = (d.archetype === 'Other' && d.archetypeOther) ? d.archetypeOther : (d.archetype||'');
   return [
     d.teamNum, d.scoutName, d.driveCoach,
-    d.drivetrain, d.batteryCount||'', d.archetype||'',
+    dt, d.batteryCount||'', arch,
     d.humanPlayerCount||'', d.hopperCapacity||'',
     (d.notes||'').replace(/,/g,';'),
     d.timestamp || ''
@@ -2216,7 +2234,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.0.4</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.1</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -2482,9 +2500,9 @@ function syncPitPayload(e) {
     teamNumber:       e.teamNum           || '',
     scoutName:        e.scoutName         || '',
     driveCoach:       e.driveCoach        || '',
-    drivetrain:       e.drivetrain        || '',
+    drivetrain:       (e.drivetrain === 'Other' && e.drivetrainOther ? e.drivetrainOther : e.drivetrain) || '',
     batteryCount:     e.batteryCount      || '',
-    archetype:        e.archetype         || '',
+    archetype:        (e.archetype === 'Other' && e.archetypeOther ? e.archetypeOther : e.archetype) || '',
     humanPlayerCount: e.humanPlayerCount  || '',
     hopperCapacity:   e.hopperCapacity    || '',
     notes:            e.notes             || ''
