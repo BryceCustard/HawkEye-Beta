@@ -789,8 +789,7 @@ var START_POS = [
   {id:'OB',label:'Outpost\nBump'},
   {id:'CE',label:'Center'},
   {id:'DB',label:'Depot\nBump'},
-  {id:'DT',label:'Depot\nTrench'},
-  {id:'NM',label:'No Move'}
+  {id:'DT',label:'Depot\nTrench'}
 ];
 var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
 
@@ -1926,6 +1925,7 @@ function renderAuton() {
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
+  mkTog('autonNoMove', 'No Move', 'Robot did not leave starting zone', false) +
   mkTog('autonPassed', 'Passed?', 'Robot crossed the field boundary', false) +
   mkTog('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
@@ -2532,7 +2532,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v1.2.0</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.3.10</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
