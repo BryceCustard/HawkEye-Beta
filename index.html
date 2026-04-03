@@ -2420,6 +2420,16 @@ function newPit() {
   toast('🗑 Pit form cleared — scout name kept');
 }
 
+function loadPitEntry(i) {
+  var e = saved[i];
+  if (!e || e.type !== 'pit') return;
+  P = blankP();
+  Object.keys(e).forEach(function(k) { if (k in P) P[k] = e[k]; });
+  goTo('sc-pit');
+  renderPit();
+  toast('📥 Loaded Team #' + (P.teamNum||'?') + ' — edit and re-save');
+}
+
 /* ═══════════════════════════════════════════
    HISTORY
 ═══════════════════════════════════════════ */
@@ -2457,12 +2467,17 @@ function renderHistory() {
     html += '<div class="card"><div class="card-hd">Pit Entries (' + ps.length + ')</div>';
     ps.forEach(function(e) {
       var gi = saved.indexOf(e);
+      var sp = e.syncId ? '<span class="sentry-pill ' + (e.syncStatus||'pending') + '">' +
+        (e.syncStatus === 'synced' ? '☁✓' : e.syncStatus === 'failed' ? '✕' : '…') + '</span>' : '';
       html += '<div class="si">' +
         '<div>' +
-        '<div class="si-name">Team #' + e.teamNum + (e.teamName ? ' — ' + e.teamName : '') + '</div>' +
+        '<div class="si-name" style="display:flex;align-items:center">Team #' + e.teamNum + (e.teamName ? ' — ' + e.teamName : '') + sp + '</div>' +
         '<div class="si-sub">🔧 ' + (e.drivetrain||'?') + ' &nbsp;·&nbsp; 🏆 ' + (e.climbLevel||'none') + ' &nbsp;·&nbsp; 🎯 ' + (e.shooterSpeed||'none') + '</div>' +
         '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center">' +
+        '<button class="si-del" style="background:var(--blue-d);border-color:var(--blue);color:var(--blue)" onclick="loadPitEntry(' + gi + ')">📥</button>' +
         '<button class="si-del" onclick="delEntry(' + gi + ');renderHistory()">✕</button>' +
+        '</div>' +
         '</div>';
     });
     html += '</div>';
@@ -2532,7 +2547,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.0.1</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.3.10</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
