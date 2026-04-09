@@ -556,6 +556,30 @@ select option{background:var(--surf2)}
   from{opacity:1}
   to{opacity:0;pointer-events:none}
 }
+
+/* ─── MATCH TIMER ─── */
+.tmr-clock{font-size:88px;font-weight:900;font-family:'SF Mono','Courier New',monospace;text-align:center;letter-spacing:-2px;line-height:1;padding:8px 0 4px;transition:color .4s}
+.tmr-phase-lbl{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-align:center;color:var(--text2);margin-bottom:3px}
+.tmr-phase-name{font-size:22px;font-weight:900;letter-spacing:1px;text-align:center;margin-bottom:10px;transition:color .4s}
+.tmr-pips{display:flex;gap:6px;justify-content:center;margin:12px 0 16px}
+.tmr-pip{width:32px;height:6px;border-radius:3px;background:var(--surf4);transition:background .3s,box-shadow .3s}
+.tmr-pip.on{background:var(--gold)}
+.tmr-pip.cur{background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.tmr-hub-row{display:flex;gap:10px;margin:4px 0 12px}
+.tmr-hub{flex:1;border-radius:var(--r-sm);padding:12px 8px;text-align:center;border:2px solid transparent;transition:background .3s,border-color .3s}
+.tmr-hub-lbl{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
+.tmr-hub-state{font-size:13px;font-weight:700}
+.tmr-hub.active{border-color:var(--green);background:rgba(76,175,125,.12)}
+.tmr-hub.inactive{border-color:var(--red);background:rgba(232,83,74,.12)}
+@keyframes tmr-hub-warn{0%,100%{opacity:1}50%{opacity:.15}}
+.tmr-hub.warning{animation:tmr-hub-warn .33s ease-in-out infinite}
+@keyframes tmr-end-pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.tmr-endgame{animation:tmr-end-pulse 1s ease-in-out infinite}
+.tmr-ctrl-row{display:flex;gap:10px;margin-top:12px}
+.tmr-ctrl-btn{flex:1;padding:16px;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
+.tmr-ctrl-btn:active{opacity:.7}
+@keyframes tmr-flash{0%{background:rgba(255,255,255,.25)}100%{background:transparent}}
+.tmr-over{position:absolute;inset:0;background:rgba(11,11,22,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:50;border-radius:var(--r)}
 </style>
 </head>
 <body>
@@ -627,6 +651,14 @@ select option{background:var(--surf2)}
         <div>
           <div class="hcard-title">Game Info</div>
           <div class="hcard-desc">REBUILT™ rules, scoring &amp; field guide</div>
+        </div>
+        <div class="hcard-arr">›</div>
+      </div>
+      <div class="hcard" style="border-color:rgba(240,165,74,.3)" onclick="openTimer()">
+        <div class="hcard-icon">⏱️</div>
+        <div>
+          <div class="hcard-title">Match Timer</div>
+          <div class="hcard-desc">Live FRC 2026 REBUILT match clock</div>
         </div>
         <div class="hcard-arr">›</div>
       </div>
@@ -761,6 +793,19 @@ select option{background:var(--surf2)}
   </div>
   <!-- Content -->
   <div class="body" id="matches-body" style="padding-top:10px"></div>
+</div>
+
+<!-- ═══════════════ MATCH TIMER ═══════════════ -->
+<div class="screen" id="sc-timer">
+  <div class="hdr">
+    <button class="hdr-btn" onclick="timerGoHome()">‹ Home</button>
+    <div class="hdr-mid">
+      <div class="hdr-title">Match Timer</div>
+      <div class="hdr-sub">REBUILT 2026</div>
+    </div>
+    <button class="hdr-btn" onclick="timerReset()" id="tmr-reset-btn" style="visibility:hidden">Reset</button>
+  </div>
+  <div class="body" id="tmr-body" style="position:relative"></div>
 </div>
 
 <!-- Floating sync indicator — appears on all screens when sync is active -->
@@ -2206,9 +2251,9 @@ function buildMatchQR() {
   try {
     new QRCode(el, {
       text: mCSV() || 'empty',
-      width: 220, height: 220,
+      width: 256, height: 256,
       colorDark:'#000000', colorLight:'#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
+      correctLevel: QRCode.CorrectLevel.L
     });
   } catch(err) {
     el.innerHTML = '<div style="color:var(--red);padding:10px;font-size:12px">QR error: ' + err.message + '</div>';
@@ -2527,16 +2572,10 @@ function showQRModal(title, csvData, subtitle) {
   setTimeout(function() {
     var el = document.getElementById('mqr');
     if (!el) return;
-    var lvl = QRCode.CorrectLevel.M;
     try {
-      new QRCode(el, { text: csvData || 'empty', width:210, height:210, colorDark:'#000000', colorLight:'#ffffff', correctLevel: lvl });
-    } catch(e1) {
-      el.innerHTML = '';
-      try {
-        new QRCode(el, { text: csvData || 'empty', width:210, height:210, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.L });
-      } catch(e2) {
-        el.innerHTML = '<div style="color:var(--red);padding:14px;font-size:12px;max-width:180px">⚠️ Too much data for one QR. Export individual entries.</div>';
-      }
+      new QRCode(el, { text: csvData || 'empty', width:256, height:256, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.L });
+    } catch(e2) {
+      el.innerHTML = '<div style="color:var(--red);padding:14px;font-size:12px;max-width:200px">⚠️ Too much data for one QR — shorten your notes or export individually.</div>';
     }
   }, 80);
 }
@@ -2547,7 +2586,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.3.10</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.1.2</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -3083,6 +3122,423 @@ document.addEventListener('visibilitychange', function() {
 });
 
 // PWA Service Worker
+/* ═══════════════════════════════════════════
+   MATCH TIMER — FRC 2026 REBUILT
+═══════════════════════════════════════════ */
+var TMR = {
+  ally:'', wonAuto:'', vol:0.7,
+  running:false, paused:false,
+  startWall:0, elapsedAtPause:0, elapsed:0,
+  tickRaf:0, audioCtx:null, gainNode:null,
+  _lastPhaseIdx:-1
+};
+
+// Phases: {n: name, d: duration seconds, pause: silent transition}
+var TMR_PHASES = [
+  {n:'AUTO',       d:20, pause:false},
+  {n:'PAUSE',      d:3,  pause:true },
+  {n:'TRANSITION', d:10, pause:false},
+  {n:'SHIFT 1',    d:25, pause:false},
+  {n:'SHIFT 2',    d:25, pause:false},
+  {n:'SHIFT 3',    d:25, pause:false},
+  {n:'SHIFT 4',    d:25, pause:false},
+  {n:'END GAME',   d:30, pause:false}
+];
+var TMR_TOTAL = 163;
+var TMR_VIS_PHASES = ['AUTO','TRANSITION','SHIFT 1','SHIFT 2','SHIFT 3','SHIFT 4','END GAME'];
+
+// Pre-compute cumulative start times for each phase
+var TMR_PHASE_STARTS = (function(){
+  var arr = [], t = 0;
+  for(var i=0; i<TMR_PHASES.length; i++){ arr.push(t); t += TMR_PHASES[i].d; }
+  return arr;
+})();
+// TMR_PHASE_STARTS = [0, 20, 23, 33, 58, 83, 108, 133]
+
+function tmrPhaseAt(elapsed) {
+  var t = elapsed;
+  for(var i=0; i<TMR_PHASES.length; i++){
+    if(t < TMR_PHASES[i].d || i === TMR_PHASES.length - 1)
+      return {idx:i, rem:Math.max(0, TMR_PHASES[i].d - t)};
+    t -= TMR_PHASES[i].d;
+  }
+  return {idx:TMR_PHASES.length-1, rem:0};
+}
+
+function openTimer() {
+  goTo('sc-timer');
+  TMR._lastPhaseIdx = -1;
+  renderTimerPre();
+}
+
+function timerGoHome() {
+  timerStop();
+  goTo('sc-home');
+}
+
+function timerStop() {
+  cancelAnimationFrame(TMR.tickRaf);
+  TMR.running = false;
+}
+
+function timerReset() {
+  timerStop();
+  TMR.elapsed = 0;
+  TMR.elapsedAtPause = 0;
+  TMR.paused = false;
+  TMR._lastPhaseIdx = -1;
+  // Cancel all scheduled audio
+  if(TMR.audioCtx) { try{ TMR.audioCtx.close(); }catch(e){} TMR.audioCtx = null; TMR.gainNode = null; }
+  var rb = document.getElementById('tmr-reset-btn');
+  if(rb) rb.style.visibility = 'hidden';
+  renderTimerPre();
+}
+
+function tmrSetAlly(a)    { TMR.ally = a;    renderTimerPre(); }
+function tmrSetWonAuto(a) { TMR.wonAuto = a; renderTimerPre(); }
+
+/* ─── PRE-MATCH CONFIG ─── */
+function renderTimerPre() {
+  var el = document.getElementById('tmr-body');
+  if(!el) return;
+  var rb = document.getElementById('tmr-reset-btn');
+  if(rb) rb.style.visibility = 'hidden';
+  el.style.background = '';
+
+  function abtn(val, color, label) {
+    var on = TMR.ally === val;
+    return '<button onclick="tmrSetAlly(\''+val+'\')" style="flex:1;padding:14px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
+  }
+  function wbtn(val, color, label) {
+    var on = TMR.wonAuto === val;
+    return '<button onclick="tmrSetWonAuto(\''+val+'\')" style="flex:1;padding:10px 4px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
+  }
+
+  var canStart = !!TMR.ally;
+  el.innerHTML =
+    '<div style="max-width:420px;margin:0 auto">' +
+    '<div class="card">' +
+      '<div class="card-hd">YOUR ALLIANCE</div>' +
+      '<div style="display:flex;gap:10px">' +
+        abtn('red','var(--red)','🔴 Red') +
+        abtn('blue','var(--blue)','🔵 Blue') +
+      '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="card-hd">AUTO BONUS WON BY</div>' +
+      '<div style="display:flex;gap:8px">' +
+        wbtn('red','var(--red)','🔴 Red') +
+        wbtn('blue','var(--blue)','🔵 Blue') +
+        wbtn('neither','var(--surf4)','— Tie/NA') +
+      '</div>' +
+      '<div style="font-size:11px;color:var(--text2);margin-top:10px">Sets which hub goes inactive during Shifts 1 &amp; 3</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="card-hd" id="tmr-vol-lbl">SOUND VOLUME <span style="color:var(--text2);font-size:10px;font-weight:600">'+Math.round(TMR.vol*100)+'%</span></div>' +
+      '<input type="range" min="0" max="1" step="0.05" value="'+TMR.vol+'" ' +
+        'oninput="TMR.vol=parseFloat(this.value);var sp=document.getElementById(\'tmr-vol-lbl\');if(sp)sp.innerHTML=\'SOUND VOLUME <span style=\\\"color:var(--text2);font-size:10px;font-weight:600\\\">\'+Math.round(TMR.vol*100)+\'%</span>\'" ' +
+        'style="width:100%;accent-color:var(--gold);margin-top:6px">' +
+    '</div>' +
+    '<button onclick="timerStart()" style="width:100%;padding:18px;background:'+(canStart?'var(--gold)':'var(--surf3)')+';color:'+(canStart?'#000':'var(--text3)')+';border:none;border-radius:var(--r);font-size:17px;font-weight:800;cursor:'+(canStart?'pointer':'default')+';font-family:inherit;letter-spacing:.5px;transition:all .2s;pointer-events:'+(canStart?'auto':'none')+'">▶  START MATCH</button>' +
+    (!canStart ? '<div style="text-align:center;font-size:12px;color:var(--text2);margin-top:10px">Select your alliance to continue</div>' : '') +
+    '</div>';
+}
+
+/* ─── AUDIO ─── */
+function tmrInitAudio() {
+  if(TMR.audioCtx) return;
+  try {
+    TMR.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    TMR.gainNode = TMR.audioCtx.createGain();
+    TMR.gainNode.gain.setValueAtTime(1, TMR.audioCtx.currentTime);
+    TMR.gainNode.connect(TMR.audioCtx.destination);
+  } catch(e) { TMR.audioCtx = null; }
+}
+
+function tmrTone(freq, t0, dur, vol, waveType, vibratoDepth, vibratoRate) {
+  if(!TMR.audioCtx || !TMR.gainNode) return;
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var ctx = TMR.audioCtx;
+  var v = (vol || 0.7) * TMR.vol;
+  if(v <= 0) return;
+  var osc = ctx.createOscillator();
+  var g   = ctx.createGain();
+  osc.type = waveType || 'sine';
+  osc.frequency.setValueAtTime(freq, t0);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(v, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  if(vibratoDepth && vibratoRate) {
+    var lfo = ctx.createOscillator();
+    var lg  = ctx.createGain();
+    lfo.frequency.setValueAtTime(vibratoRate, t0);
+    lg.gain.setValueAtTime(vibratoDepth, t0);
+    lfo.connect(lg);
+    lg.connect(osc.frequency);
+    lfo.start(t0);
+    lfo.stop(t0 + dur + 0.1);
+  }
+  osc.connect(g);
+  g.connect(TMR.gainNode);
+  osc.start(t0);
+  osc.stop(t0 + dur + 0.1);
+}
+
+function tmrScheduleSounds() {
+  if(!TMR.audioCtx) return;
+  var now = TMR.audioCtx.currentTime;
+
+  // 1. MATCH START HORN (t=0) — ascending 3-blast
+  tmrTone(294, now+0.00, 0.22, 0.85, 'sawtooth');
+  tmrTone(392, now+0.22, 0.22, 0.85, 'sawtooth');
+  tmrTone(523, now+0.44, 0.55, 0.90, 'sawtooth');
+
+  // 2. AUTO END CHIMES (t=20) — 3-note descending
+  tmrTone(880, now+20.0, 0.40, 0.60, 'sine');
+  tmrTone(660, now+20.5, 0.40, 0.60, 'sine');
+  tmrTone(440, now+21.0, 0.55, 0.65, 'sine');
+
+  // 3. PRE-SHIFT 1 WARNING BEEPS (warn at t=30, shift at t=33)
+  tmrTone(1050, now+30, 0.10, 0.50, 'square');
+  tmrTone(1050, now+31, 0.10, 0.50, 'square');
+  tmrTone(1050, now+32, 0.10, 0.50, 'square');
+  // 4. SHIFT 1 BUZZ (t=33)
+  tmrTone(330, now+33.0, 0.14, 0.70, 'sawtooth');
+  tmrTone(330, now+33.2, 0.14, 0.70, 'sawtooth');
+
+  // PRE-SHIFT 2 WARNING (warn t=55, shift t=58)
+  tmrTone(1050, now+55, 0.10, 0.50, 'square');
+  tmrTone(1050, now+56, 0.10, 0.50, 'square');
+  tmrTone(1050, now+57, 0.10, 0.50, 'square');
+  // SHIFT 2 BUZZ (t=58)
+  tmrTone(330, now+58.0, 0.14, 0.70, 'sawtooth');
+  tmrTone(330, now+58.2, 0.14, 0.70, 'sawtooth');
+
+  // PRE-SHIFT 3 WARNING (warn t=80, shift t=83)
+  tmrTone(1050, now+80, 0.10, 0.50, 'square');
+  tmrTone(1050, now+81, 0.10, 0.50, 'square');
+  tmrTone(1050, now+82, 0.10, 0.50, 'square');
+  // SHIFT 3 BUZZ (t=83)
+  tmrTone(330, now+83.0, 0.14, 0.70, 'sawtooth');
+  tmrTone(330, now+83.2, 0.14, 0.70, 'sawtooth');
+
+  // PRE-SHIFT 4 WARNING (warn t=105, shift t=108)
+  tmrTone(1050, now+105, 0.10, 0.50, 'square');
+  tmrTone(1050, now+106, 0.10, 0.50, 'square');
+  tmrTone(1050, now+107, 0.10, 0.50, 'square');
+  // SHIFT 4 BUZZ (t=108)
+  tmrTone(330, now+108.0, 0.14, 0.70, 'sawtooth');
+  tmrTone(330, now+108.2, 0.14, 0.70, 'sawtooth');
+
+  // PRE-END-GAME WARNING (warn t=130, endgame t=133)
+  tmrTone(1050, now+130, 0.10, 0.50, 'square');
+  tmrTone(1050, now+131, 0.10, 0.50, 'square');
+  tmrTone(1050, now+132, 0.10, 0.50, 'square');
+  // 5. END GAME ASCENDING CHORD (t=133)
+  tmrTone(440, now+133.0, 0.40, 0.60, 'sine');
+  tmrTone(554, now+133.3, 0.40, 0.60, 'sine');
+  tmrTone(659, now+133.6, 0.45, 0.65, 'sine');
+  tmrTone(880, now+134.0, 0.60, 0.70, 'sine');
+
+  // 6. FINAL COUNTDOWN BEEPS (t=160,161,162)
+  tmrTone(1100, now+160, 0.12, 0.65, 'square');
+  tmrTone(1100, now+161, 0.12, 0.65, 'square');
+  tmrTone(1100, now+162, 0.12, 0.65, 'square');
+
+  // 7. END BUZZER WITH VIBRATO (t=163) — long rich buzz
+  tmrTone(220, now+163, 1.6, 0.90, 'sawtooth', 18, 8);
+  tmrTone(330, now+163, 1.6, 0.70, 'sawtooth', 12, 6);
+  tmrTone(440, now+163, 1.2, 0.50, 'square',   8,  5);
+}
+
+/* ─── TIMER START / TICK ─── */
+function timerStart() {
+  if(!TMR.ally) { toast('⚠️ Select your alliance first'); return; }
+  tmrInitAudio();
+  if(TMR.audioCtx && TMR.audioCtx.state === 'suspended') TMR.audioCtx.resume();
+  TMR.running = true;
+  TMR.paused = false;
+  TMR.elapsed = 0;
+  TMR.elapsedAtPause = 0;
+  TMR.startWall = performance.now();
+  TMR._lastPhaseIdx = -1;
+  var rb = document.getElementById('tmr-reset-btn');
+  if(rb) rb.style.visibility = 'visible';
+  tmrScheduleSounds();
+  renderTimerActive();
+  timerTick();
+}
+
+function timerTick() {
+  if(!TMR.running || TMR.paused) return;
+  TMR.elapsed = TMR.elapsedAtPause + (performance.now() - TMR.startWall) / 1000;
+  if(TMR.elapsed >= TMR_TOTAL) {
+    TMR.elapsed = TMR_TOTAL;
+    timerUpdateDisplay();
+    timerStop();
+    if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
+    setTimeout(timerShowOver, 1800);
+    return;
+  }
+  timerUpdateDisplay();
+  TMR.tickRaf = requestAnimationFrame(timerTick);
+}
+
+function timerTogglePause() {
+  if(TMR.paused) {
+    TMR.startWall = performance.now();
+    TMR.paused = false;
+    TMR.running = true;
+    timerTick();
+  } else {
+    TMR.elapsedAtPause = TMR.elapsed;
+    TMR.paused = true;
+    cancelAnimationFrame(TMR.tickRaf);
+  }
+  var btn = document.getElementById('tmr-pause-btn');
+  if(btn) btn.textContent = TMR.paused ? '▶  Resume' : '⏸  Pause';
+}
+
+/* ─── HUB STATE ─── */
+function tmrHubState(elapsed) {
+  var ph = tmrPhaseAt(elapsed);
+  var pname = TMR_PHASES[ph.idx].n;
+  var ia = (TMR.wonAuto && TMR.wonAuto !== 'neither') ? TMR.wonAuto : null;
+  var redActive = true, blueActive = true;
+  if(ia && (pname === 'SHIFT 1' || pname === 'SHIFT 3')) {
+    if(ia === 'red') redActive = false; else blueActive = false;
+  }
+  // Warning zone: 3s before Shift 1 (t=30) and Shift 3 (t=80)
+  var s1 = TMR_PHASE_STARTS[3]; // 33
+  var s3 = TMR_PHASE_STARTS[5]; // 83
+  var warnRed  = ia === 'red'  && ((elapsed >= s1-3 && elapsed < s1) || (elapsed >= s3-3 && elapsed < s3));
+  var warnBlue = ia === 'blue' && ((elapsed >= s1-3 && elapsed < s1) || (elapsed >= s3-3 && elapsed < s3));
+  return {redActive:redActive, blueActive:blueActive, warnRed:warnRed, warnBlue:warnBlue};
+}
+
+function tmrFmt(sec) {
+  var s = Math.ceil(sec); if(s < 0) s = 0;
+  var m = Math.floor(s / 60), ss = s % 60;
+  return m + ':' + (ss < 10 ? '0' : '') + ss;
+}
+
+/* ─── ACTIVE TIMER SCREEN ─── */
+function renderTimerActive() {
+  var el = document.getElementById('tmr-body');
+  if(!el) return;
+  var allyColor = TMR.ally === 'red' ? 'var(--red)' : 'var(--blue)';
+
+  el.innerHTML =
+    '<div style="max-width:420px;margin:0 auto;padding-bottom:20px">' +
+    '<div class="tmr-phase-lbl" id="tmr-phase-lbl">PHASE</div>' +
+    '<div class="tmr-phase-name" id="tmr-phase-name">—</div>' +
+    '<div class="tmr-clock" id="tmr-clock" style="color:var(--gold)">0:20</div>' +
+    '<div class="tmr-pips" id="tmr-pips">' +
+      TMR_VIS_PHASES.map(function(n,i){ return '<div class="tmr-pip" id="tmr-pip-'+i+'" title="'+n+'"></div>'; }).join('') +
+    '</div>' +
+    '<div class="tmr-hub-row">' +
+      '<div class="tmr-hub" id="tmr-hub-red">' +
+        '<div class="tmr-hub-lbl" style="color:var(--red)">🔴 RED HUB</div>' +
+        '<div class="tmr-hub-state" id="tmr-hub-red-state">✅ Active</div>' +
+      '</div>' +
+      '<div class="tmr-hub" id="tmr-hub-blue">' +
+        '<div class="tmr-hub-lbl" style="color:var(--blue)">🔵 BLUE HUB</div>' +
+        '<div class="tmr-hub-state" id="tmr-hub-blue-state">✅ Active</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="font-size:11px;color:var(--text2);text-align:center;margin:-6px 0 12px">Hub status · '+TMR.ally.toUpperCase()+' alliance' + (TMR.wonAuto && TMR.wonAuto!=='neither'?' · '+TMR.wonAuto.toUpperCase()+' won auto':'')+' </div>' +
+    '<div class="tmr-ctrl-row">' +
+      '<button id="tmr-pause-btn" class="tmr-ctrl-btn" onclick="timerTogglePause()" style="background:var(--surf3);color:var(--text);flex:2">⏸  Pause</button>' +
+      '<button class="tmr-ctrl-btn" onclick="timerReset()" style="background:var(--surf2);color:var(--text2);flex:1">↺  Reset</button>' +
+    '</div>' +
+    '</div>';
+
+  timerUpdateDisplay();
+}
+
+function timerUpdateDisplay() {
+  var elapsed = TMR.elapsed;
+  var ph = tmrPhaseAt(elapsed);
+  var pname = TMR_PHASES[ph.idx].n;
+  var isPause = TMR_PHASES[ph.idx].pause;
+  var displayName = isPause ? 'AUTO END' : pname;
+  var displayRem  = isPause ? 0 : ph.rem;
+
+  // Phase label + name
+  var lblEl  = document.getElementById('tmr-phase-lbl');
+  var nameEl = document.getElementById('tmr-phase-name');
+  if(lblEl)  lblEl.textContent  = isPause ? 'FIELD RESET' : 'PHASE';
+  if(nameEl) {
+    nameEl.textContent = displayName;
+    nameEl.className = 'tmr-phase-name' + (pname==='END GAME' ? ' tmr-endgame' : '');
+  }
+
+  // Clock — color by phase
+  var clockEl = document.getElementById('tmr-clock');
+  if(clockEl) {
+    clockEl.textContent = tmrFmt(displayRem);
+    if(pname==='AUTO')         clockEl.style.color = 'var(--blue)';
+    else if(pname==='END GAME') clockEl.style.color = (TMR.ally==='red'?'var(--red)':'var(--blue)');
+    else                        clockEl.style.color = 'var(--gold)';
+  }
+
+  // Pips — skip PAUSE in visible list
+  var visIdx = TMR_VIS_PHASES.indexOf(pname);
+  for(var i=0; i<7; i++) {
+    var pip = document.getElementById('tmr-pip-'+i);
+    if(!pip) continue;
+    if(i < visIdx)       pip.className = 'tmr-pip on';
+    else if(i===visIdx)  pip.className = 'tmr-pip cur';
+    else                 pip.className = 'tmr-pip';
+  }
+
+  // Hub state
+  var hub = tmrHubState(elapsed);
+  var rHub  = document.getElementById('tmr-hub-red');
+  var bHub  = document.getElementById('tmr-hub-blue');
+  var rSt   = document.getElementById('tmr-hub-red-state');
+  var bSt   = document.getElementById('tmr-hub-blue-state');
+  if(rHub && rSt) {
+    rHub.className = 'tmr-hub ' + (hub.redActive ? 'active' : 'inactive') + (hub.warnRed ? ' warning' : '');
+    rSt.textContent = hub.redActive ? '✅ Active' : '🚫 Inactive';
+  }
+  if(bHub && bSt) {
+    bHub.className = 'tmr-hub ' + (hub.blueActive ? 'active' : 'inactive') + (hub.warnBlue ? ' warning' : '');
+    bSt.textContent = hub.blueActive ? '✅ Active' : '🚫 Inactive';
+  }
+
+  // Background tint on body
+  var body = document.getElementById('tmr-body');
+  if(body) {
+    if(pname==='AUTO')          body.style.background = 'rgba(74,143,232,.06)';
+    else if(pname==='END GAME') body.style.background = TMR.ally==='red'?'rgba(232,83,74,.06)':'rgba(74,143,232,.06)';
+    else                        body.style.background = '';
+  }
+
+  // Vibration on phase change
+  if(TMR._lastPhaseIdx !== ph.idx) {
+    TMR._lastPhaseIdx = ph.idx;
+    if(!isPause && navigator.vibrate) {
+      if(pname==='END GAME') navigator.vibrate([100,50,100,50,150]);
+      else                   navigator.vibrate(70);
+    }
+  }
+}
+
+function timerShowOver() {
+  var body = document.getElementById('tmr-body');
+  if(!body) return;
+  var over = document.createElement('div');
+  over.className = 'tmr-over';
+  over.style.animation = 'tmr-flash .25s ease 3';
+  over.innerHTML =
+    '<div style="font-size:52px;margin-bottom:4px">🏁</div>' +
+    '<div style="font-size:26px;font-weight:900;letter-spacing:1.5px">MATCH OVER</div>' +
+    '<div style="font-size:12px;color:var(--text2);letter-spacing:.5px">All 163 seconds complete</div>' +
+    '<button onclick="timerReset()" style="margin-top:16px;padding:16px 44px;background:var(--gold);color:#000;border:none;border-radius:var(--r);font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.3px">▶  New Match</button>';
+  body.appendChild(over);
+}
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(e) {
     console.log('SW registration failed:', e);
