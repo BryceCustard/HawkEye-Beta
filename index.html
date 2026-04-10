@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,16 +23,14 @@
   --border:rgba(255,255,255,.07);
   --r:14px; --r-sm:9px; --sh:0 4px 24px rgba(0,0,0,.5);
 }
-html,body{height:100%;min-height:100vh;min-height:100dvh;min-height:-webkit-fill-available;overflow:hidden}
-html{background:var(--surf)}
-body{
+html,body{
+  height:100%;
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
-  background:var(--surf);color:var(--text);font-size:16px;
-  overscroll-behavior:none
+  background:var(--bg);color:var(--text);overflow:hidden;font-size:16px
 }
 
 /* ─── SCREENS ─── */
-.screen{position:fixed;top:0;left:0;right:0;bottom:0;display:none;flex-direction:column;overflow:hidden;background:var(--surf)}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;overflow:hidden}
 .screen.active{display:flex}
 
 /* ─── HEADER ─── */
@@ -40,8 +38,6 @@ body{
   display:flex;align-items:center;justify-content:space-between;
   padding:12px 14px;
   padding-top:max(14px,env(safe-area-inset-top,14px));
-  padding-left:calc(14px + env(safe-area-inset-left,0px));
-  padding-right:calc(14px + env(safe-area-inset-right,0px));
   background:var(--surf);border-bottom:1px solid var(--border);
   flex-shrink:0;z-index:20;gap:8px
 }
@@ -59,24 +55,21 @@ body{
 .hdr-btn.red-btn{background:var(--red);color:#fff;border-color:var(--red)}
 
 /* ─── PROGRESS BAR ─── */
-.prog{display:flex;gap:5px;padding:9px calc(14px + env(safe-area-inset-right,0px)) 9px calc(14px + env(safe-area-inset-left,0px));background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
+.prog{display:flex;gap:5px;padding:9px 14px;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0}
 .prog-pip{flex:1;height:3px;background:var(--surf4);border-radius:2px;transition:background .3s}
 .prog-pip.on{background:var(--gold)}
 
 /* ─── SCROLL AREA ─── */
-.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;padding:14px calc(14px + env(safe-area-inset-right,0px)) 100px calc(14px + env(safe-area-inset-left,0px))}
+.body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 100px}
 
 /* ─── BOTTOM TABS ─── */
 .tabs{
   display:flex;background:var(--surf);border-top:1px solid var(--border);
-  padding-left:calc(env(safe-area-inset-left,0px));
-  padding-right:calc(env(safe-area-inset-right,0px));
-  flex-shrink:0
+  padding-bottom:max(8px,env(safe-area-inset-bottom,8px));flex-shrink:0
 }
-/* Safe-area padding lives inside the button — no separate chin strip */
 .tab{
   flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:10px 4px calc(10px + env(safe-area-inset-bottom,12px));gap:4px;border:none;background:none;
+  padding:8px 4px 6px;gap:4px;border:none;background:none;
   color:var(--text3);font-size:10px;font-weight:700;letter-spacing:.6px;
   text-transform:uppercase;cursor:pointer;transition:color .2s;font-family:inherit
 }
@@ -86,11 +79,6 @@ body{
 /* ─── CARD ─── */
 .card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
 .card-hd{font-size:10px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
-/* Required field validation */
-.req-err{box-shadow:0 0 0 2px var(--red)!important;transition:box-shadow .15s}
-.req-err .card-hd{color:var(--red)!important}
-@keyframes reqShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
-.req-shake{animation:reqShake .35s ease}
 
 /* ─── COUNTER ─── */
 .ctr{margin-bottom:10px}
@@ -182,9 +170,7 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
   border-bottom:1px solid rgba(240,165,0,.22);
   padding:14px 20px 12px;display:flex;align-items:center;
   justify-content:center;gap:14px;flex-shrink:0;
-  padding-top:max(16px,env(safe-area-inset-top,16px));
-  padding-left:calc(20px + env(safe-area-inset-left,0px));
-  padding-right:calc(20px + env(safe-area-inset-right,0px))
+  padding-top:max(16px,env(safe-area-inset-top,16px))
 }
 .banner-logo{flex-shrink:0}
 .banner-title{font-size:19px;font-weight:900;letter-spacing:-.3px;line-height:1.15}
@@ -205,10 +191,10 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
   touch-action:manipulation;
 }
 .cb:active{filter:brightness(.7)}
-.cb-big{font-size:26px;padding:15px 0;background:var(--surf3);color:var(--text2);flex:1.5}
-.cb-big.plus{background:var(--gold);color:#000}
-.cb-big.plus.p5{background:rgba(240,165,0,.85);color:#000}
-.cb-sm{font-size:13px;padding:10px 0;background:var(--surf4);color:var(--text3);flex:0.7}
+.cb-big{font-size:26px;padding:15px 0;background:var(--surf3);color:var(--text2)}
+.cb-big.plus{background:var(--gold);color:#000;flex:2.5}
+.cb-sm{font-size:13px;padding:10px 0;background:var(--surf4);color:var(--text3)}
+.cb-sm.p5{background:rgba(240,165,0,.18);color:var(--gold)}
 /* foul variant */
 .ctr.foul .ctr-num{color:var(--red)}
 .ctr.foul .cb-big.plus{background:var(--red);color:#fff}
@@ -385,7 +371,7 @@ select option{background:var(--surf2)}
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ─── HOME ─── */
-.home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 calc(14px + env(safe-area-inset-right,0px)) max(20px,env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left,0px))}
+.home-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(20px,env(safe-area-inset-bottom))}
 .hero{padding:28px 14px 10px;text-align:center}
 .hero-icon{font-size:52px;line-height:1;margin-bottom:8px}
 .hero-name{font-size:26px;font-weight:900;letter-spacing:-.5px}
@@ -418,55 +404,6 @@ select option{background:var(--surf2)}
 .ref-k{color:var(--text2)}
 .ref-v{font-weight:700;color:var(--gold);text-align:right}
 
-/* ─── MATCHES SCREEN ─── */
-.mtab{flex:1;border:none;background:none;color:var(--text3);font-size:13px;font-weight:700;
-  padding:10px 4px;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;transition:all .15s}
-.mtab.on{color:var(--gold);border-bottom-color:var(--gold)}
-.mf-btn{border:1px solid var(--border);border-radius:8px;background:var(--surf3);color:var(--text2);
-  font-size:13px;font-weight:700;padding:7px 13px;cursor:pointer;font-family:inherit;
-  white-space:nowrap;transition:all .15s;flex-shrink:0}
-.mf-btn.on{background:rgba(240,165,0,.15);border-color:var(--gold);color:var(--gold)}
-.mf-btn.mf-apply{background:var(--gold);color:#000;border-color:var(--gold)}
-.mf-btn.mf-apply:active{opacity:.75}
-.epill{border:1px solid var(--border);border-radius:20px;background:var(--surf2);color:var(--text2);
-  font-size:12px;font-weight:700;padding:6px 13px;cursor:pointer;white-space:nowrap;font-family:inherit;transition:all .15s}
-.epill.on{background:var(--gold);color:#000;border-color:var(--gold)}
-.mrow{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);font-size:13px}
-.mrow:last-child{border-bottom:none}
-.mrow.gold-row{background:rgba(240,165,0,.06);border-left:3px solid var(--gold);padding-left:11px}
-.mrow-num{font-weight:800;color:var(--text2);min-width:58px;font-size:12px}
-.mrow-teams{flex:1;min-width:0}
-.mrow-ally{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px}
-.mrow-tm{font-size:12px;font-weight:700;padding:2px 6px;border-radius:4px;background:var(--surf3)}
-.mrow-tm.gold{background:rgba(240,165,0,.2);color:var(--gold)}
-.mrow-score{text-align:right;font-size:13px;font-weight:800;min-width:38px}
-.mrow-badge{font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px}
-.mrow-badge.win{background:rgba(76,175,125,.2);color:var(--green)}
-.mrow-badge.loss{background:rgba(232,83,74,.15);color:var(--red)}
-.mrow-badge.tie{background:rgba(240,165,0,.15);color:var(--gold)}
-.mrow-time{font-size:11px;color:var(--text3);text-align:right;min-width:54px}
-.rank-row{display:grid;grid-template-columns:32px 60px 1fr 1fr 1fr;gap:6px;
-  align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);font-size:13px}
-.rank-row.gold-row{background:rgba(240,165,0,.06);border-left:3px solid var(--gold);padding-left:11px}
-.rank-row.hd{color:var(--text3);font-size:11px;font-weight:700;padding:7px 14px}
-.rank-r{font-weight:900;color:var(--text2);font-size:14px}
-.rank-tm{font-weight:800}
-.offline-banner{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);
-  border-radius:8px;margin:10px 14px;padding:9px 12px;font-size:12px;color:var(--gold);font-weight:600}
-
-/* ─── GOOGLE SHEETS SYNC ─── */
-.sync-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
-.sync-dot.green{background:var(--green)}
-.sync-dot.yellow{background:var(--gold);animation:sdpulse .9s ease-in-out infinite}
-.sync-dot.red{background:var(--red);animation:sdpulse .9s ease-in-out infinite}
-.sync-dot.off{background:var(--text3)}
-@keyframes sdpulse{0%,100%{opacity:1}50%{opacity:.2}}
-/* Per-entry sync status pill in history/export */
-.sentry-pill{font-size:10px;font-weight:700;padding:1px 6px;border-radius:8px;margin-left:5px;flex-shrink:0}
-.sentry-pill.synced{background:rgba(76,175,125,.18);color:var(--green)}
-.sentry-pill.pending{background:rgba(240,165,0,.14);color:var(--gold)}
-.sentry-pill.failed{background:rgba(232,83,74,.14);color:var(--red)}
-
 /* ─── UTILITIES ─── */
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -477,11 +414,11 @@ select option{background:var(--surf2)}
 
 /* ─── LANDSCAPE OPTIMIZATION ─── */
 @media (max-height:500px) and (orientation:landscape){
-  .hdr{padding-top:5px;padding-bottom:5px;padding-left:calc(12px + env(safe-area-inset-left,0px));padding-right:calc(12px + env(safe-area-inset-right,0px))}
+  .hdr{padding:5px 12px;padding-top:5px}
   .hdr-title{font-size:13px}
   .hdr-sub{display:none}
-  .prog{padding:5px calc(12px + env(safe-area-inset-right,0px)) 5px calc(12px + env(safe-area-inset-left,0px))}
-  .body{padding:9px calc(10px + env(safe-area-inset-right,0px)) 74px calc(10px + env(safe-area-inset-left,0px))}
+  .prog{padding:5px 12px}
+  .body{padding:9px 10px 74px}
   .card{padding:11px;margin-bottom:7px}
   .card-hd{margin-bottom:9px;font-size:9px}
   .ctr{margin-bottom:7px}
@@ -489,15 +426,15 @@ select option{background:var(--surf2)}
   .ctr-lbl{font-size:12px;margin-bottom:4px}
   .cb-big{font-size:22px;padding:11px 0}
   .cb-sm{padding:7px 0;font-size:12px}
-  .tab{padding:5px 4px calc(5px + env(safe-area-inset-bottom,0px));gap:2px;font-size:8px;letter-spacing:.4px}
+  .tab{padding:5px 4px 3px;gap:2px;font-size:8px;letter-spacing:.4px}
   .tab svg{width:17px;height:17px}
   .pos-grid{grid-template-columns:repeat(6,1fr)}
   .spd-grid{grid-template-columns:repeat(6,1fr)}
-  .hero{padding:12px calc(14px + env(safe-area-inset-right,0px)) 4px calc(14px + env(safe-area-inset-left,0px))}
+  .hero{padding:12px 14px 4px}
   .hero-icon{font-size:32px;margin-bottom:4px}
   .hero-name{font-size:18px}
   .hero-sub{font-size:11px}
-  .hcards{gap:7px;padding:8px calc(8px + env(safe-area-inset-right,0px)) 8px calc(8px + env(safe-area-inset-left,0px))}
+  .hcards{gap:7px;padding:8px}
   .hcard{padding:11px}
   .hcard-title{font-size:15px}
   .hcard-icon{font-size:28px}
@@ -515,92 +452,14 @@ select option{background:var(--surf2)}
   input.big{font-size:22px;padding:10px}
   .btn{padding:12px;font-size:14px}
 }
-
-/* ─── SPLASH ─── */
-#splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-direction:column}
-#splash-geo{position:absolute;inset:0;background-repeat:repeat;opacity:0;clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%)}
-#splash-glow{position:absolute;width:160vmax;height:160vmax;border-radius:50%;background:radial-gradient(circle,rgba(240,165,0,.09) 0%,rgba(240,165,0,.02) 45%,transparent 70%);opacity:0;transform:scale(0.1);pointer-events:none}
-#splash-ring{position:absolute;width:160px;height:160px;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.3);border:2px solid var(--gold);border-radius:50%;opacity:0;pointer-events:none;z-index:3}
-#splash-center{position:relative;display:flex;flex-direction:column;align-items:center;z-index:2}
-#splash-logo-img{height:86px;width:auto;max-width:260px;object-fit:contain;opacity:0;transform:scale(2.5);filter:blur(8px);position:relative;z-index:1;will-change:transform,opacity,filter}
-#splash-logo-fb{font-size:80px;line-height:1;display:none;opacity:0;transform:scale(2.5);filter:blur(8px);position:relative;z-index:1;will-change:transform,opacity,filter}
-#splash-text{font-size:13px;font-weight:900;letter-spacing:4px;color:var(--gold);text-transform:uppercase;opacity:0;transform:translateY(10px);margin-top:18px;position:relative;z-index:1}
-
-@keyframes splash-fadein{from{opacity:0}to{opacity:1}}
-@keyframes splash-geo-reveal{
-  0%{clip-path:circle(0% at 50% 50%);-webkit-clip-path:circle(0% at 50% 50%);opacity:0}
-  20%{opacity:1}
-  100%{clip-path:circle(150% at 50% 50%);-webkit-clip-path:circle(150% at 50% 50%);opacity:1}
-}
-@keyframes splash-glow-bloom{
-  from{opacity:0;transform:scale(0.1)}
-  to{opacity:1;transform:scale(1)}
-}
-@keyframes splash-logo-strike{
-  from{opacity:0;transform:scale(2.5);filter:blur(8px) drop-shadow(0 0 0px rgba(240,165,0,0))}
-  to{opacity:1;transform:scale(1);filter:blur(0px) drop-shadow(0 0 30px rgba(240,165,0,.45))}
-}
-@keyframes splash-ring-pulse{
-  0%{opacity:.8;transform:translate(-50%,-50%) scale(0.3)}
-  100%{opacity:0;transform:translate(-50%,-50%) scale(3.5)}
-}
-@keyframes splash-text-up{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
-}
-@keyframes splash-logo-fly{
-  from{opacity:1;transform:scale(1);filter:blur(0px) drop-shadow(0 0 30px rgba(240,165,0,.45))}
-  to{opacity:0;transform:scale(0.3) translateY(-36vh);filter:blur(2px) drop-shadow(0 0 0px transparent)}
-}
-@keyframes splash-fadeout{
-  from{opacity:1}
-  to{opacity:0;pointer-events:none}
-}
-
-/* ─── MATCH TIMER ─── */
-.tmr-clock{font-size:88px;font-weight:900;font-family:'SF Mono','Courier New',monospace;text-align:center;letter-spacing:-2px;line-height:1;padding:8px 0 4px;transition:color .4s}
-.tmr-phase-lbl{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-align:center;color:var(--text2);margin-bottom:3px}
-.tmr-phase-name{font-size:22px;font-weight:900;letter-spacing:1px;text-align:center;margin-bottom:10px;transition:color .4s}
-.tmr-pips{display:flex;gap:6px;justify-content:center;margin:12px 0 16px}
-.tmr-pip{width:32px;height:6px;border-radius:3px;background:var(--surf4);transition:background .3s,box-shadow .3s}
-.tmr-pip.on{background:var(--gold)}
-.tmr-pip.cur{background:var(--gold);box-shadow:0 0 8px var(--gold)}
-.tmr-hub-row{display:flex;gap:10px;margin:4px 0 12px}
-.tmr-hub{flex:1;border-radius:var(--r-sm);padding:12px 8px;text-align:center;border:2px solid transparent;transition:background .3s,border-color .3s}
-.tmr-hub-lbl{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
-.tmr-hub-state{font-size:13px;font-weight:700}
-.tmr-hub.active{border-color:var(--green);background:rgba(76,175,125,.12)}
-.tmr-hub.inactive{border-color:var(--red);background:rgba(232,83,74,.12)}
-@keyframes tmr-hub-warn{0%,100%{opacity:1}50%{opacity:.15}}
-.tmr-hub.warning{animation:tmr-hub-warn .33s ease-in-out infinite}
-@keyframes tmr-end-pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.tmr-endgame{animation:tmr-end-pulse 1s ease-in-out infinite}
-.tmr-ctrl-row{display:flex;gap:10px;margin-top:12px}
-.tmr-ctrl-btn{flex:1;padding:16px;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
-.tmr-ctrl-btn:active{opacity:.7}
-@keyframes tmr-flash{0%{background:rgba(255,255,255,.25)}100%{background:transparent}}
-.tmr-over{position:absolute;inset:0;background:rgba(11,11,22,.93);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:50;border-radius:var(--r)}
 </style>
 </head>
 <body>
 
-<!-- ═══════════════ SPLASH ═══════════════ -->
-<div id="splash">
-  <div id="splash-geo"></div>
-  <div id="splash-glow"></div>
-  <div id="splash-ring"></div>
-  <div id="splash-center">
-    <img id="splash-logo-img" src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png" alt="Black Hawks"
-         onerror="this.style.display='none';document.getElementById('splash-logo-fb').style.display='block'">
-    <span id="splash-logo-fb">🦅</span>
-    <div id="splash-text">HAWKEYE</div>
-  </div>
-</div>
-
 <!-- ═══════════════ HOME ═══════════════ -->
 <div class="screen active" id="sc-home">
   <div class="hdr" style="justify-content:center;flex-direction:column;text-align:center;gap:3px">
-    <div class="hdr-title">Team 3310 HawkEye</div>
+    <div class="hdr-title">Team 3310 "HawkEye"</div>
     <div class="hdr-sub">REBUILT 2026</div>
   </div>
   <div class="home-scroll">
@@ -638,27 +497,11 @@ select option{background:var(--surf2)}
         </div>
         <div class="hcard-arr">›</div>
       </div>
-      <div class="hcard" style="border-color:rgba(138,107,232,.3)" onclick="goTo('sc-matches');initMatches()">
-        <div class="hcard-icon">📊</div>
-        <div>
-          <div class="hcard-title">Matches</div>
-          <div class="hcard-desc">Schedule, results &amp; rankings</div>
-        </div>
-        <div class="hcard-arr">›</div>
-      </div>
       <div class="hcard" style="border-color:rgba(138,107,232,.3)" onclick="goTo('sc-info')">
         <div class="hcard-icon">⚡</div>
         <div>
           <div class="hcard-title">Game Info</div>
           <div class="hcard-desc">REBUILT™ rules, scoring &amp; field guide</div>
-        </div>
-        <div class="hcard-arr">›</div>
-      </div>
-      <div class="hcard" style="border-color:rgba(240,165,74,.3)" onclick="openTimer()">
-        <div class="hcard-icon">⏱️</div>
-        <div>
-          <div class="hcard-title">Match Timer</div>
-          <div class="hcard-desc">Live FRC 2026 REBUILT match clock</div>
         </div>
         <div class="hcard-arr">›</div>
       </div>
@@ -676,7 +519,6 @@ select option{background:var(--surf2)}
           <span class="ref-k">🎯 Energized RP</span><span class="ref-v">100+ fuel</span>
           <span class="ref-k">⚡ Supercharged RP</span><span class="ref-v">360+ fuel</span>
           <span class="ref-k">🗼 Traversal RP</span><span class="ref-v">50+ tower pts</span>
-          <span class="ref-k">🏅 Win RP</span><span class="ref-v">3 pts (win) / 1 pt (tie)</span>
         </div>
       </div>
     </div>
@@ -760,60 +602,6 @@ select option{background:var(--surf2)}
   <div class="body" id="h-body"></div>
 </div>
 
-<!-- ═══════════════ MATCHES ═══════════════ -->
-<div class="screen" id="sc-matches">
-  <div class="hdr">
-    <button class="hdr-btn" onclick="leaveMatches();goTo('sc-home')">‹ Home</button>
-    <div class="hdr-mid">
-      <div class="hdr-title">Matches</div>
-      <div class="hdr-sub" id="matches-event-sub">Team 3310</div>
-    </div>
-    <button class="hdr-btn" onclick="refreshMatchesData()">↻</button>
-  </div>
-  <!-- Event selector -->
-  <div id="matches-event-bar" style="overflow-x:auto;-webkit-overflow-scrolling:touch;flex-shrink:0;background:var(--surf);border-bottom:1px solid var(--border);padding:8px 0 8px calc(10px + env(safe-area-inset-left,0px))">
-    <div id="matches-event-pills" style="display:flex;gap:7px;padding-right:calc(10px + env(safe-area-inset-right,0px))">
-      <span style="color:var(--text3);font-size:13px;align-self:center;padding:0 2px">Loading events…</span>
-    </div>
-  </div>
-  <!-- Sub-tab bar -->
-  <div style="display:flex;background:var(--surf);border-bottom:1px solid var(--border);flex-shrink:0;padding-left:calc(env(safe-area-inset-left,0px));padding-right:calc(env(safe-area-inset-right,0px))">
-    <button class="mtab on" id="mtab-schedule" onclick="setMatchesTab('schedule')">Schedule</button>
-    <button class="mtab" id="mtab-rankings" onclick="setMatchesTab('rankings')">Rankings</button>
-  </div>
-  <!-- Filter bar (schedule only) -->
-  <div id="mf-bar" style="display:flex;align-items:center;gap:6px;padding:8px calc(10px + env(safe-area-inset-right,0px)) 8px calc(10px + env(safe-area-inset-left,0px));background:var(--surf2);border-bottom:1px solid var(--border);flex-shrink:0">
-    <span style="font-size:11px;font-weight:700;color:var(--text3);white-space:nowrap;flex-shrink:0">Team Filter</span>
-    <button id="mf-btn-3310" class="mf-btn" onclick="mfSelect('3310')">3310</button>
-    <input id="mf-input" type="number" inputmode="numeric" placeholder="Team #"
-      style="flex:1;min-width:0;background:var(--surf3);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;padding:7px 10px;font-family:inherit;outline:none;-webkit-appearance:none;appearance:none;-moz-appearance:textfield"
-      onfocus="mfSelect('team')" oninput="mfTeamInput(this.value)">
-    <button id="mf-btn-all" class="mf-btn on" onclick="mfSelect('all')">All</button>
-    <button class="mf-btn mf-apply" onclick="mfApply()">Apply ›</button>
-  </div>
-  <!-- Content -->
-  <div class="body" id="matches-body" style="padding-top:10px"></div>
-</div>
-
-<!-- ═══════════════ MATCH TIMER ═══════════════ -->
-<div class="screen" id="sc-timer">
-  <div class="hdr">
-    <button class="hdr-btn" onclick="timerGoHome()">‹ Home</button>
-    <div class="hdr-mid">
-      <div class="hdr-title">Match Timer</div>
-      <div class="hdr-sub">REBUILT 2026</div>
-    </div>
-    <button class="hdr-btn" onclick="timerReset()" id="tmr-reset-btn" style="visibility:hidden">Reset</button>
-  </div>
-  <div class="body" id="tmr-body" style="position:relative"></div>
-</div>
-
-<!-- Floating sync indicator — appears on all screens when sync is active -->
-<div id="sync-indicator" style="position:fixed;top:calc(11px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));z-index:500;display:none;align-items:center;gap:4px;pointer-events:none">
-  <span id="sync-count-badge" style="font-size:10px;font-weight:800;color:var(--text2);display:none"></span>
-  <span class="sync-dot off" id="sync-dot-main"></span>
-</div>
-
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -822,7 +610,7 @@ select option{background:var(--surf2)}
 ═══════════════════════════════════════════ */
 var SPEEDS = [
   {id:'T0',label:'Tier 0 — >30 b/s'},
-  {id:'T1',label:'Tier 1 — 20 b/s'},
+  {id:'T1',label:'Tier 1 — >20 b/s'},
   {id:'T2',label:'Tier 2 — 15 b/s'},
   {id:'T3',label:'Tier 3 — 10 b/s'},
   {id:'T4',label:'Tier 4 — 5 b/s'},
@@ -834,7 +622,8 @@ var START_POS = [
   {id:'OB',label:'Outpost\nBump'},
   {id:'CE',label:'Center'},
   {id:'DB',label:'Depot\nBump'},
-  {id:'DT',label:'Depot\nTrench'}
+  {id:'DT',label:'Depot\nTrench'},
+  {id:'NM',label:'No Move'}
 ];
 var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
 
@@ -843,10 +632,10 @@ var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
 ═══════════════════════════════════════════ */
 function blankM() {
   return {
-    matchNum:'', teamNum:'', alliance:'', scoutName:'',
+    matchNum:'26', teamNum:'', alliance:'', scoutName:'',
     noShow:false, startPos:'',
     autonScored:0, autonMissed:0, autonFoul:0,
-    autonNoMove:false, autonPassed:false, autonClimbed:false, autonNotes:'',
+    autonPassed:false, autonClimbed:false, autonNotes:'',
     teleScored:0, teleMissed:0, teleFoul:0,
     telePassed:false, teleDefense:false, teleStuck:false, teleBroke:false,
     climbLevel:'', wentOverBump:false, wentUnderTrench:false,
@@ -856,8 +645,7 @@ function blankM() {
 function blankP() {
   return {
     teamNum:'', scoutName:'', driveCoach:'',
-    drivetrain:'', drivetrainOther:'', batteryCount:'',
-    archetype:'', archetypeOther:'',
+    drivetrain:'', batteryCount:'', archetype:'',
     humanPlayerCount:'', hopperCapacity:'', notes:''
   };
 }
@@ -866,184 +654,12 @@ var M = blankM();
 var P = blankP();
 var mTab = 0;
 var saved = [];
-// TBA Lookup mode for Setup tab
-var setupMode     = 'manual'; // 'manual' | 'tba'
-var setupTBAEvent = null;     // selected event key
-var setupTBAPos   = 0;        // selected position: 0=unset, 1/2/3
 try { saved = JSON.parse(localStorage.getItem('bh3310') || '[]'); } catch(e) { saved = []; }
-
-/* ═══════════════════════════════════════════
-   SPLASH ANIMATION
-═══════════════════════════════════════════ */
-var SPLASH_KEY       = 'bh3310_lastActive';
-var SPLASH_THRESHOLD = 300000; // 5 minutes
-
-function markActive() {
-  try { localStorage.setItem(SPLASH_KEY, String(Date.now())); } catch(e) {}
-}
-
-function removeSplash() {
-  var s = document.getElementById('splash');
-  if (s && s.parentNode) { s.parentNode.removeChild(s); }
-}
-
-function createSplashDOM() {
-  var s = document.createElement('div');
-  s.id = 'splash';
-  s.innerHTML =
-    '<div id="splash-geo"></div>' +
-    '<div id="splash-glow"></div>' +
-    '<div id="splash-ring"></div>' +
-    '<div id="splash-center">' +
-    '<img id="splash-logo-img" src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png" alt="Black Hawks" ' +
-    'onerror="this.style.display=\'none\';var fb=document.getElementById(\'splash-logo-fb\');if(fb)fb.style.display=\'block\'">' +
-    '<span id="splash-logo-fb">🦅</span>' +
-    '<div id="splash-text">HAWKEYE</div>' +
-    '</div>';
-  document.body.insertBefore(s, document.body.firstChild);
-  return s;
-}
-
-window.playSplash = function() {
-  var s = document.getElementById('splash') || createSplashDOM();
-  s.style.cssText = '';  // reset any inline transitions from previous skip
-  s.style.opacity = '1';
-  s.style.animation = 'none';
-  s.style.pointerEvents = 'auto';
-
-  // Apply geo pattern to newly created geo div if needed
-  var geoEl = document.getElementById('splash-geo');
-  if (geoEl && window._geoUrl) geoEl.style.backgroundImage = 'url(' + window._geoUrl + ')';
-
-  // Phase 1 (0ms): geo ripple + glow bloom
-  var geo  = document.getElementById('splash-geo');
-  var glow = document.getElementById('splash-glow');
-  var ring = document.getElementById('splash-ring');
-  var lImg = document.getElementById('splash-logo-img');
-  var lFb  = document.getElementById('splash-logo-fb');
-  var txt  = document.getElementById('splash-text');
-
-  function reAnim(el, anim) {
-    if (!el) return;
-    el.style.animation = 'none'; void el.offsetWidth; el.style.animation = anim;
-  }
-  // Phase 1: geo ripple starts at 0.5s, glow at 0.65s — emerge from black background
-  reAnim(geo,  'splash-geo-reveal 0.65s ease-out 0.5s both');
-  reAnim(glow, 'splash-glow-bloom 0.65s ease-out 0.65s both');
-
-  // Phase 2 (1820ms): logo slam + ring shockwave  [+30%: 1400→1820]
-  var t2 = setTimeout(function() {
-    var useImg = lImg && lImg.complete && lImg.naturalWidth > 0;
-    var active = useImg ? lImg : lFb;
-    if (!useImg) { if (lImg) lImg.style.display = 'none'; if (lFb) lFb.style.display = 'block'; }
-    reAnim(active, 'splash-logo-strike 0.72s cubic-bezier(0.16,1,0.3,1) forwards');
-    reAnim(ring,   'splash-ring-pulse 0.85s ease-out forwards');
-  }, 1820);
-
-  // Phase 2b (2100ms): HAWKEYE text rises  [+30%: 1620→2100]
-  var t2b = setTimeout(function() {
-    reAnim(txt, 'splash-text-up 0.52s ease-out forwards');
-  }, 2100);
-
-  // Phase 3 (3380ms): fly-up + fade overlay  [+30%: 2600→3380]
-  var t3 = setTimeout(function() {
-    var useImg = lImg && lImg.complete && lImg.naturalWidth > 0;
-    var active = useImg ? lImg : lFb;
-    reAnim(active, 'splash-logo-fly 0.65s cubic-bezier(0.4,0,0.2,1) forwards');
-    if (txt)  { txt.style.transition  = 'opacity .3s'; txt.style.opacity  = '0'; }
-    if (glow) { glow.style.transition = 'opacity .3s'; glow.style.opacity = '0'; }
-    reAnim(s, 'splash-fadeout 0.65s ease-in 0.29s forwards');
-  }, 3380);
-
-  // Safety cleanup
-  var safetyTimer = setTimeout(removeSplash, 4800);
-
-  s.addEventListener('animationend', function handler(e) {
-    if (e.target === s && e.animationName === 'splash-fadeout') {
-      clearTimeout(safetyTimer);
-      s.removeEventListener('animationend', handler);
-      removeSplash();
-    }
-  });
-
-  // Tap-to-skip
-  function skipNow() {
-    s.removeEventListener('click', skipNow);
-    s.removeEventListener('touchstart', skipNow);
-    clearTimeout(t2); clearTimeout(t2b); clearTimeout(t3); clearTimeout(safetyTimer);
-    s.style.animation = 'none';
-    s.style.transition = 'opacity 0.2s ease';
-    s.style.opacity = '0';
-    setTimeout(removeSplash, 220);
-  }
-  s.addEventListener('click', skipNow);
-  s.addEventListener('touchstart', skipNow, { passive: true });
-};
-
-function checkSplash() {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { removeSplash(); return; }
-  try {
-    var last = parseInt(localStorage.getItem(SPLASH_KEY) || '0');
-    if (!last || (Date.now() - last > SPLASH_THRESHOLD)) { window.playSplash(); }
-    else { removeSplash(); }
-  } catch(e) { removeSplash(); }
-}
-
-/* ═══════════════════════════════════════════
-   DEBUG TOOLS
-═══════════════════════════════════════════ */
-function dbgCopyJSON() {
-  var raw = localStorage.getItem('bh3310') || '[]';
-  var text;
-  try { text = JSON.stringify(JSON.parse(raw), null, 2); } catch(e) { text = raw; }
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(function() { toast('📋 JSON copied to clipboard'); }).catch(function() { dbgCopyFallback(text); });
-  } else { dbgCopyFallback(text); }
-}
-function dbgCopyFallback(text) {
-  var ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0;width:1px;height:1px';
-  document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); } catch(e) {}
-  document.body.removeChild(ta);
-  toast('📋 JSON copied to clipboard');
-}
-function dbgClearTBA() {
-  tbaCache = {};
-  matchesCache = { events:null, eventsAt:0, matches:{}, matchesAt:{}, rankings:{}, rankingsAt:{} };
-  toast('🔄 TBA cache cleared');
-}
-function dbgStorageStats() {
-  var raw = localStorage.getItem('bh3310') || '[]';
-  var entries; try { entries = JSON.parse(raw); } catch(e) { entries = []; }
-  var mc = entries.filter(function(e){return e.type==='match';}).length;
-  var pc = entries.filter(function(e){return e.type==='pit';}).length;
-  var kb = (raw.length / 1024).toFixed(1);
-  var last = entries.length ? new Date((entries[entries.length-1].timestamp||0)).toLocaleString() : 'none';
-  toast(entries.length + ' entries (' + mc + ' match, ' + pc + ' pit) · ' + kb + ' KB · Last: ' + last);
-}
-function dbgDeviceInfo() {
-  var ua  = (navigator.userAgent || '').slice(0, 80);
-  var scr = screen.width + '×' + screen.height;
-  var win = window.innerWidth + '×' + window.innerHeight;
-  var pwa = (navigator.standalone === true || window.matchMedia('(display-mode:standalone)').matches) ? 'Yes' : 'No';
-  toast(ua + ' | ' + scr + ' | ' + win + ' | PWA:' + pwa);
-}
-function dbgNuclearReset() {
-  if (!confirm('Delete ALL app data and reset? This cannot be undone.')) return;
-  if (!confirm('Are you absolutely sure? This deletes everything.')) return;
-  localStorage.clear(); location.reload();
-}
 
 /* ═══════════════════════════════════════════
    NAV + BADGE
 ═══════════════════════════════════════════ */
 function goTo(id) {
-  markActive();
-  // Stop matches timer if leaving that screen
-  var wasMatches = document.getElementById('sc-matches') && document.getElementById('sc-matches').classList.contains('active');
-  if (wasMatches && id !== 'sc-matches') leaveMatches();
   document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   if (id === 'sc-history') renderHistory();
@@ -1119,314 +735,6 @@ function showTeamInfo(info, scope) {
 }
 
 /* ═══════════════════════════════════════════
-   MATCHES — TBA POWERED
-═══════════════════════════════════════════ */
-var matchesCache = { events:null, eventsAt:0, matches:{}, matchesAt:{}, rankings:{}, rankingsAt:{} };
-var matchesCurrentEvent = null;
-var matchesTab = 'schedule';
-var matchesPendMode = 'all'; // selected in filter bar: '3310' | 'team' | 'all'
-var matchesPendTeam = '';    // typed team number (digits only)
-var matchesApplMode = 'all'; // last applied mode
-var matchesApplTeam = '';     // last applied team
-var matchesRefreshTimer = null;
-var CACHE_TTL = 30000; // 30s
-
-function initMatches() {
-  matchesTab = 'schedule';
-  document.querySelectorAll('.mtab').forEach(function(b) { b.classList.remove('on'); });
-  var tb = document.getElementById('mtab-schedule');
-  if (tb) tb.classList.add('on');
-  mfShowBar(true);
-  setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">Loading events…</div>');
-  loadEvents();
-  if (matchesRefreshTimer) clearInterval(matchesRefreshTimer);
-  matchesRefreshTimer = setInterval(function() {
-    if (document.getElementById('sc-matches').classList.contains('active')) refreshMatchesData();
-  }, 60000);
-}
-
-function leaveMatches() {
-  if (matchesRefreshTimer) { clearInterval(matchesRefreshTimer); matchesRefreshTimer = null; }
-}
-
-function tbaFetch(path, cb) {
-  fetch('https://www.thebluealliance.com/api/v3' + path, { headers: { 'X-TBA-Auth-Key': TBA_KEY } })
-    .then(function(r) { return r.json(); })
-    .then(cb)
-    .catch(function() { cb(null); });
-}
-
-function loadEvents() {
-  var now = Date.now();
-  if (matchesCache.events && (now - matchesCache.eventsAt) < CACHE_TTL) {
-    renderEventPills(); return;
-  }
-  tbaFetch('/team/frc3310/events/2026', function(data) {
-    if (data) { matchesCache.events = data.sort(function(a,b){ return (a.start_date||'').localeCompare(b.start_date||''); }); matchesCache.eventsAt = Date.now(); }
-    renderEventPills();
-  });
-}
-
-function renderEventPills() {
-  var pills = document.getElementById('matches-event-pills');
-  var sub   = document.getElementById('matches-event-sub');
-  if (!pills) return;
-  var events = matchesCache.events;
-  if (!events || !events.length) {
-    pills.innerHTML = '<span style="color:var(--text3);font-size:13px;padding:0 4px">No events found for 2026</span>';
-    return;
-  }
-  if (!matchesCurrentEvent) matchesCurrentEvent = events[0].key;
-  pills.innerHTML = events.map(function(e) {
-    var on = e.key === matchesCurrentEvent ? ' on' : '';
-    return '<button class="epill' + on + '" onclick="selectEvent(\'' + e.key + '\')">' + (e.short_name || e.name) + '</button>';
-  }).join('');
-  var cur = events.find(function(e){ return e.key === matchesCurrentEvent; });
-  if (sub && cur) sub.textContent = cur.short_name || cur.name;
-  loadMatchesForTab();
-}
-
-function selectEvent(key) {
-  matchesCurrentEvent = key;
-  // Reset filter to default (All selected & applied)
-  matchesPendMode = 'all'; matchesPendTeam = '';
-  matchesApplMode = 'all'; matchesApplTeam = '';
-  mfSyncUI();
-  var events = matchesCache.events || [];
-  var cur = events.find(function(e){ return e.key === key; });
-  var sub = document.getElementById('matches-event-sub');
-  if (sub && cur) sub.textContent = cur.short_name || cur.name;
-  document.querySelectorAll('.epill').forEach(function(b) {
-    b.classList.toggle('on', b.textContent.trim() === ((cur && (cur.short_name||cur.name)) || ''));
-  });
-  loadMatchesForTab();
-}
-
-/* ─── FILTER BAR ─── */
-function mfSelect(mode) {
-  matchesPendMode = mode;
-  if (mode !== 'team') { var inp = document.getElementById('mf-input'); if (inp) inp.blur(); }
-  mfSyncUI();
-}
-function mfTeamInput(val) {
-  matchesPendTeam = val.replace(/\D/g,'');
-  matchesPendMode = 'team';
-  mfSyncUI();
-}
-function mfSyncUI() {
-  var b3 = document.getElementById('mf-btn-3310');
-  var ba = document.getElementById('mf-btn-all');
-  var inp = document.getElementById('mf-input');
-  if (b3)  b3.classList.toggle('on',  matchesPendMode === '3310');
-  if (ba)  ba.classList.toggle('on',  matchesPendMode === 'all');
-  if (inp) {
-    inp.style.borderColor = matchesPendMode === 'team' ? 'var(--gold)' : 'var(--border)';
-    inp.style.color       = matchesPendMode === 'team' ? 'var(--gold)' : 'var(--text)';
-    if (matchesPendMode !== 'team') inp.value = matchesPendTeam;
-  }
-}
-function mfApply() {
-  matchesApplMode = matchesPendMode;
-  matchesApplTeam = matchesPendTeam;
-  var key = matchesCurrentEvent;
-  if (key && matchesCache.matches[key]) renderSchedule(matchesCache.matches[key], false);
-}
-function mfShowBar(show) {
-  var bar = document.getElementById('mf-bar');
-  if (bar) bar.style.display = show ? 'flex' : 'none';
-}
-
-function setMatchesTab(tab) {
-  matchesTab = tab;
-  document.querySelectorAll('.mtab').forEach(function(b) { b.classList.remove('on'); });
-  var tb = document.getElementById('mtab-' + tab);
-  if (tb) tb.classList.add('on');
-  mfShowBar(tab === 'schedule');
-  loadMatchesForTab();
-}
-
-function loadMatchesForTab() {
-  if (!matchesCurrentEvent) { setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">Select an event above.</div>'); return; }
-  if (matchesTab === 'schedule') loadSchedule();
-  else loadRankings();
-}
-
-function refreshMatchesData() {
-  if (!matchesCurrentEvent) return;
-  if (matchesTab === 'schedule') {
-    delete matchesCache.matchesAt[matchesCurrentEvent];
-    loadSchedule();
-  } else {
-    delete matchesCache.rankingsAt[matchesCurrentEvent];
-    loadRankings();
-  }
-}
-
-function setMatchesBody(html) {
-  var b = document.getElementById('matches-body');
-  if (b) b.innerHTML = html;
-}
-
-/* ─── SCHEDULE ─── */
-function loadSchedule() {
-  var key = matchesCurrentEvent;
-  var now = Date.now();
-  if (matchesCache.matches[key] && (now - (matchesCache.matchesAt[key]||0)) < CACHE_TTL) {
-    renderSchedule(matchesCache.matches[key], false); return;
-  }
-  setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">Loading schedule…</div>');
-  tbaFetch('/event/' + key + '/matches', function(data) {
-    if (data) { matchesCache.matches[key] = data; matchesCache.matchesAt[key] = Date.now(); renderSchedule(data, false); }
-    else if (matchesCache.matches[key]) { renderSchedule(matchesCache.matches[key], true); }
-    else setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">📅 Unable to load data. Check connection.</div>');
-  });
-}
-
-function fmtMatchName(m) {
-  var ct = m.comp_level;
-  var labels = { qm:'Qual', ef:'Elim', qf:'QF', sf:'SF', f:'Final' };
-  var base = (labels[ct] || ct.toUpperCase()) + ' ' + m.match_number;
-  if (ct !== 'qm') base += '-' + m.set_number;
-  return base;
-}
-
-function fmtTime(ts) {
-  if (!ts) return '';
-  var d = new Date(ts * 1000);
-  var h = d.getHours(), mn = d.getMinutes();
-  var ap = h >= 12 ? 'PM' : 'AM';
-  h = h % 12 || 12;
-  return h + ':' + String(mn).padStart(2,'0') + ' ' + ap;
-}
-
-function renderSchedule(matches, offline) {
-  if (!matches || !matches.length) {
-    setMatchesBody('<div style="text-align:center;padding:48px 20px;font-size:28px">📅<div style="font-size:16px;color:var(--text2);margin-top:12px;font-weight:700">Schedule not out yet</div></div>');
-    return;
-  }
-  var us = 'frc3310';
-  // Sort chronologically
-  var sorted = matches.slice().sort(function(a,b) {
-    var ta = a.actual_time || a.predicted_time || a.time || 0;
-    var tb = b.actual_time || b.predicted_time || b.time || 0;
-    return ta - tb;
-  });
-
-  // Determine filter key and highlight key from applied state
-  var filterKey = matchesApplMode === '3310' ? us
-                : (matchesApplMode === 'team' && matchesApplTeam) ? 'frc' + matchesApplTeam
-                : null; // null = show all
-  var hlKey = (matchesApplMode === 'team' && matchesApplTeam) ? 'frc' + matchesApplTeam : null;
-
-  var displayed = filterKey
-    ? sorted.filter(function(m) {
-        var red  = m.alliances.red.team_keys  || [];
-        var blue = m.alliances.blue.team_keys || [];
-        return red.indexOf(filterKey) !== -1 || blue.indexOf(filterKey) !== -1;
-      })
-    : sorted;
-
-  var rows = displayed.map(function(m) {
-    var red = m.alliances.red.team_keys || [];
-    var blue = m.alliances.blue.team_keys || [];
-    var isRed  = red.indexOf(us) !== -1;
-    var isBlue = blue.indexOf(us) !== -1;
-    var isUs = isRed || isBlue;
-    // Gold-row if 3310 is in match, OR if custom filter team is in match
-    var isHl = isUs || (hlKey && (red.indexOf(hlKey) !== -1 || blue.indexOf(hlKey) !== -1));
-    var played = !!m.actual_time;
-    var rs = m.alliances.red.score;
-    var bs = m.alliances.blue.score;
-    var badge = '';
-    // W/L badge relative to the focused team
-    var focusKey = hlKey || us;
-    var focusRed  = red.indexOf(focusKey) !== -1;
-    var focusBlue = blue.indexOf(focusKey) !== -1;
-    if (played && (focusRed || focusBlue)) {
-      var ourScore = focusRed ? rs : bs;
-      var oppScore = focusRed ? bs : rs;
-      if (ourScore > oppScore) badge = '<span class="mrow-badge win">W</span>';
-      else if (ourScore < oppScore) badge = '<span class="mrow-badge loss">L</span>';
-      else badge = '<span class="mrow-badge tie">T</span>';
-    }
-    var scoreHtml = played
-      ? '<span style="color:var(--red);font-weight:900">' + rs + '</span><span style="color:var(--text3);font-size:11px"> – </span><span style="color:var(--blue);font-weight:900">' + bs + '</span>' + badge
-      : '<span style="color:var(--text3);font-size:11px">' + (m.predicted_time ? fmtTime(m.predicted_time) : 'TBD') + '</span>';
-
-    function teamChip(key) {
-      var num = key.replace('frc','');
-      var isOurs  = key === us;
-      var isFocus = hlKey && key === hlKey;
-      return '<span class="mrow-tm' + (isOurs || isFocus ? ' gold' : '') + '">' + num + '</span>';
-    }
-
-    return '<div class="mrow' + (isHl ? ' gold-row' : '') + '">' +
-      '<div class="mrow-num">' + fmtMatchName(m) + '</div>' +
-      '<div class="mrow-teams">' +
-        '<div class="mrow-ally" style="color:var(--red)">' + red.map(teamChip).join('') + '</div>' +
-        '<div class="mrow-ally" style="color:var(--blue)">' + blue.map(teamChip).join('') + '</div>' +
-      '</div>' +
-      '<div class="mrow-score">' + scoreHtml + '</div>' +
-      '</div>';
-  }).join('');
-
-  var offlineBanner = offline ? '<div class="offline-banner">⚠ Offline — showing cached data</div>' : '';
-  var emptyLabel = matchesApplMode === 'team' && matchesApplTeam
-    ? 'No matches found for Team ' + matchesApplTeam + '.'
-    : matchesApplMode === '3310'
-      ? 'No matches found for Team 3310 yet.'
-      : 'No matches scheduled yet.'; // 'all' mode
-  var emptyMsg = displayed.length === 0
-    ? '<div style="text-align:center;padding:28px 20px;color:var(--text3);font-size:14px">' + emptyLabel + '</div>'
-    : '';
-  setMatchesBody(offlineBanner + (emptyMsg || '<div class="card" style="padding:0;margin:0 14px 10px">' + rows + '</div>'));
-}
-
-/* ─── RANKINGS ─── */
-function loadRankings() {
-  var key = matchesCurrentEvent;
-  var now = Date.now();
-  if (matchesCache.rankings[key] && (now - (matchesCache.rankingsAt[key]||0)) < CACHE_TTL) {
-    renderRankings(matchesCache.rankings[key], false); return;
-  }
-  setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">Loading rankings…</div>');
-  tbaFetch('/event/' + key + '/rankings', function(data) {
-    if (data && data.rankings) { matchesCache.rankings[key] = data; matchesCache.rankingsAt[key] = Date.now(); renderRankings(data, false); }
-    else if (matchesCache.rankings[key]) { renderRankings(matchesCache.rankings[key], true); }
-    else setMatchesBody('<div style="text-align:center;padding:40px 20px;color:var(--text3)">📊 Rankings not available yet.</div>');
-  });
-}
-
-function renderRankings(data, offline) {
-  if (!data || !data.rankings || !data.rankings.length) {
-    setMatchesBody('<div style="text-align:center;padding:48px 20px;font-size:28px">🏆<div style="font-size:16px;color:var(--text2);margin-top:12px;font-weight:700">Rankings not available yet</div></div>');
-    return;
-  }
-  var us = 'frc3310';
-  var sortInfo = (data.sort_order_info || []).map(function(s){ return s.name; });
-  var hdCols = ['#','Team','W-L-T', sortInfo[0]||'RS', sortInfo[1]||'Pts'];
-  var header = '<div class="rank-row hd">' + hdCols.map(function(c){ return '<span>' + c + '</span>'; }).join('') + '</div>';
-
-  var rows = data.rankings.map(function(r) {
-    var isUs = r.team_key === us;
-    var rec = r.record ? r.record.wins + '-' + r.record.losses + '-' + r.record.ties : '—';
-    var rs = r.sort_orders && r.sort_orders[0] != null ? r.sort_orders[0].toFixed(2) : '—';
-    var s2 = r.sort_orders && r.sort_orders[1] != null ? r.sort_orders[1].toFixed(0) : '—';
-    var num = r.team_key.replace('frc','');
-    return '<div class="rank-row' + (isUs?' gold-row':'') + '">' +
-      '<span class="rank-r">' + r.rank + '</span>' +
-      '<span class="rank-tm" style="' + (isUs?'color:var(--gold)':'') + '">' + num + '</span>' +
-      '<span style="color:var(--text2)">' + rec + '</span>' +
-      '<span style="font-weight:700">' + rs + '</span>' +
-      '<span style="color:var(--text2)">' + s2 + '</span>' +
-      '</div>';
-  }).join('');
-
-  var offlineBanner = offline ? '<div class="offline-banner">⚠ Offline — showing cached data</div>' : '';
-  setMatchesBody(offlineBanner + '<div class="card" style="padding:0;margin:10px 14px">' + header + rows + '</div>');
-}
-
-/* ═══════════════════════════════════════════
    GEO BACKGROUND
 ═══════════════════════════════════════════ */
 function initGeoBg() {
@@ -1458,12 +766,8 @@ function initGeoBg() {
       ctx.arc(pt[0], pt[1], 1.4, 0, Math.PI*2);
       ctx.fill();
     });
-    var url = c.toDataURL();
-    window._geoUrl = url; // stash for splash replay
-    // Apply to body, .screen, and #splash-geo
-    var st = document.createElement('style');
-    st.textContent = 'body,.screen,#splash-geo{background-image:url(' + url + ')!important;background-repeat:repeat!important}';
-    document.head.appendChild(st);
+    document.body.style.backgroundImage = 'url(' + c.toDataURL() + ')';
+    document.body.style.backgroundRepeat = 'repeat';
   } catch(e) {}
 }
 
@@ -1492,12 +796,12 @@ function mkCtr(field, label, isFoul) {
     '<input type="number" inputmode="numeric" min="0" class="ctr-num" id="c-' + field + '" value="' + cur + '" oninput="adjSet(\'' + field + '\',this.value)">' +
     '<div class="ctr-btns-row">' +
     '<button class="cb cb-sm" onclick="adj(\'' + field + '\',-5)">−5</button>' +
-    '<button class="cb cb-sm" onclick="adj(\'' + field + '\',-1)">−</button>' +
+    '<button class="cb cb-big" onclick="adj(\'' + field + '\',-1)">−</button>' +
     '<button class="cb cb-big plus" onclick="adj(\'' + field + '\',1)">+</button>' +
-    '<button class="cb cb-big plus p5" onclick="adj(\'' + field + '\',5)">+5</button>' +
+    '<button class="cb cb-sm p5" onclick="adj(\'' + field + '\',5)">+5</button>' +
     '</div>' +
     '<div class="ctr-slider-wrap">' +
-    '<input type="range" min="0" max="1000" value="' + cur + '" class="ctr-slider" id="s-' + field + '" oninput="adjSlide(\'' + field + '\',this.value)">' +
+    '<input type="range" min="0" max="500" value="' + cur + '" class="ctr-slider" id="s-' + field + '" oninput="adjSlide(\'' + field + '\',this.value)">' +
     '</div>' +
     '</div></div>';
 }
@@ -1507,7 +811,6 @@ function adj(field, delta) {
   var key = obj === P ? field.slice(2) : field;
   var cur = (obj[key] || 0) + delta;
   if (cur < 0) cur = 0;
-  if (cur > 1000) cur = 1000;
   obj[key] = cur;
   var el = document.getElementById('c-' + field);
   if (el) {
@@ -1534,7 +837,6 @@ function adjSet(field, val) {
   var oldVal = obj[key] || 0;
   var n = parseInt(val, 10);
   if (isNaN(n) || n < 0) n = 0;
-  if (n > 1000) n = 1000;
   obj[key] = n;
   var sl = document.getElementById('s-' + field);
   if (sl) sl.value = n;
@@ -1552,7 +854,7 @@ function adjSlide(field, val) {
   var obj = field.charAt(0) === 'p' && field.charAt(1) === '_' ? P : M;
   var key = obj === P ? field.slice(2) : field;
   var oldVal = obj[key] || 0;
-  var n = Math.max(0, Math.min(1000, parseInt(val, 10) || 0));
+  var n = Math.max(0, Math.min(500, parseInt(val, 10) || 0));
   obj[key] = n;
   var el = document.getElementById('c-' + field);
   if (el) el.value = n;
@@ -1583,7 +885,7 @@ function setCtrMode(m) {
 function mkModeSeg() {
   return '<div class="mode-seg">' +
     '<button class="mode-seg-b' + (ctrMode==='buttons'?' on':'') + '" data-mode="buttons" onclick="setCtrMode(\'buttons\')">🔘 Buttons</button>' +
-    '<button class="mode-seg-b' + (ctrMode==='slider'?' on':'') + '" data-mode="slider" onclick="setCtrMode(\'slider\')">🎚 Slider (0–1000)</button>' +
+    '<button class="mode-seg-b' + (ctrMode==='slider'?' on':'') + '" data-mode="slider" onclick="setCtrMode(\'slider\')">🎚 Slider (0–500)</button>' +
     '</div>';
 }
 
@@ -1637,7 +939,6 @@ function togFn(field, isDanger) {
    MATCH TABS
 ═══════════════════════════════════════════ */
 function mGoTab(t) {
-  markActive();
   mTab = t;
   for (var i = 0; i < 4; i++) {
     var tb = document.getElementById('mt' + i);
@@ -1668,10 +969,7 @@ function mGoTab(t) {
   body.innerHTML = renders[t]();
   body.scrollTop = 0;
   syncCtrDisplay();
-  if (t === 0) {
-    if (setupMode === 'tba') setTimeout(tbaAutoFill, 50);
-    else if (M.teamNum) scheduleTBALookup(M.teamNum, 'm');
-  }
+  if (t === 0 && M.teamNum) scheduleTBALookup(M.teamNum, 'm');
   if (t === 2) updateRateDisplay();
   if (t === 3) setTimeout(buildMatchQR, 120);
 }
@@ -1688,120 +986,25 @@ function updateMHeader() {
 
 /* ─── SETUP ─── */
 function renderSetup() {
-  // Mode toggle strip (Manual / TBA Lookup β)
-  var modeSeg =
-    '<div class="mode-seg" style="margin-bottom:14px">' +
-    '<button class="mode-seg-b' + (setupMode==='manual'?' on':'') + '" data-mode="manual" onclick="setSetupMode(\'manual\')">📋 Manual</button>' +
-    '<button class="mode-seg-b' + (setupMode==='tba'?' on':'') + '" data-mode="tba" onclick="setSetupMode(\'tba\')">🔍 TBA Lookup <span style="font-size:9px;background:var(--gold);color:#000;border-radius:4px;padding:1px 4px;vertical-align:middle;letter-spacing:.3px">β</span></button>' +
-    '</div>';
-
-  // Match # input — in TBA mode also triggers auto-fill
-  var matchNumInput =
-    '<label class="lbl">Match Number</label>' +
-    '<input class="big" type="number" inputmode="numeric" placeholder="26" min="1" max="150" value="' + (M.matchNum||'') + '" ' +
-    'oninput="var v=parseInt(this.value)||0;if(v>150){this.value=150;v=150;}M.matchNum=String(v||this.value);updateMHeader();if(setupMode===\'tba\')tbaAutoFill()">';
-
-  /* ── MANUAL MODE ── */
-  if (setupMode === 'manual') {
-    return '<div class="page">' +
-      '<div class="card">' +
-      '<div class="card-hd">Match Info</div>' +
-      modeSeg +
-      matchNumInput +
-      '<label class="lbl">Team Number</label>' +
-      '<input class="big" type="number" inputmode="numeric" placeholder="3310" value="' + (M.teamNum||'') + '" ' +
-      'oninput="M.teamNum=this.value;updateMHeader();scheduleTBALookup(this.value,\'m\')">' +
-      '<div id="m-team-info" style="padding:6px 2px 2px;font-size:13px;display:none"></div>' +
-      '<label class="lbl">Scout Name</label>' +
-      '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
-      '</div>' +
-      '<div class="card">' +
-      '<div class="card-hd">Alliance</div>' +
-      '<div class="ally">' +
-      '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
-      '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
-      '</div></div>' +
-      '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
-      '</div>';
-  }
-
-  /* ── TBA LOOKUP MODE ── */
-  // Ensure events are loaded; trigger load if missing
-  var evts = matchesCache.events;
-  if (!evts) setupLoadEvents();
-
-  // Competition dropdown
-  var evtHtml = '';
-  if (!evts || !evts.length) {
-    evtHtml = '<div style="color:var(--text3);font-size:13px;padding:4px 0 8px">⏳ Loading events…</div>';
-  } else {
-    if (!setupTBAEvent) setupTBAEvent = evts[evts.length - 1].key;
-    evtHtml =
-      '<label class="lbl">Competition</label>' +
-      '<select oninput="setupTBAEvent=this.value;tbaAutoFill()">' +
-      evts.map(function(e) {
-        return '<option value="' + e.key + '"' + (e.key === setupTBAEvent ? ' selected' : '') + '>' +
-          (e.short_name || e.name) + '</option>';
-      }).join('') +
-      '</select>';
-  }
-
-  // Alliance selector (2 buttons)
-  var allyColor = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--gold)';
-  var allyHtml =
-    '<label class="lbl" style="margin-top:14px">Alliance</label>' +
-    '<div class="ally">' +
-    '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
-    '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
-    '</div>';
-
-  // Position selector (3 buttons)
-  var posHtml =
-    '<label class="lbl" style="margin-top:12px">Position</label>' +
-    '<div style="display:flex;gap:7px">' +
-    [1,2,3].map(function(p) {
-      var on = setupTBAPos === p;
-      var c  = on ? allyColor : 'var(--text2)';
-      var bc = on ? allyColor : 'var(--border)';
-      var bg = on ? (M.alliance==='red' ? 'var(--red-d)' : M.alliance==='blue' ? 'var(--blue-d)' : 'var(--gold-d)') : 'var(--surf2)';
-      return '<button id="pos-tba-' + p + '" ' +
-        'style="flex:1;padding:14px 4px;font-size:26px;font-weight:900;border:2px solid ' + bc + ';' +
-        'border-radius:var(--r-sm);background:' + bg + ';color:' + c + ';cursor:pointer;' +
-        'transition:all .15s;font-family:inherit;touch-action:manipulation" ' +
-        'onclick="setSetupPos(' + p + ')">' + p + '</button>';
-    }).join('') +
-    '</div>';
-
-  // Auto-filled team result
-  var resultHtml =
-    '<div style="margin-top:14px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center">' +
-    '<span id="tba-team-display" style="font-size:42px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--text);' +
-    (M.teamNum ? '' : 'display:none') + '">' +
-    (M.teamNum ? '#' + M.teamNum : '') + '</span>' +
-    '<div id="m-team-info" style="font-size:13px;text-align:center;padding:2px 0;display:none"></div>' +
-    '<div id="tba-fill-status" style="font-size:13px;color:var(--text3);text-align:center;' +
-    (M.teamNum ? 'display:none' : '') + '">' +
-    (!M.alliance || !setupTBAPos || !M.matchNum ? 'Select alliance, position &amp; match #' : '🔍 Looking up…') +
-    '</div>' +
-    '</div>';
-
   return '<div class="page">' +
-    '<div class="card">' +
-    '<div class="card-hd">Match Info</div>' +
-    modeSeg +
-    matchNumInput +
-    evtHtml +
-    '<label class="lbl" style="margin-top:12px">Scout Name</label>' +
-    '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
-    '</div>' +
-    '<div class="card">' +
-    '<div class="card-hd">Alliance &amp; Position</div>' +
-    allyHtml +
-    posHtml +
-    resultHtml +
-    '</div>' +
-    '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
-    '</div>';
+  '<div class="card">' +
+  '<div class="card-hd">Match Info</div>' +
+  '<label class="lbl">Match Number</label>' +
+  '<input class="big" type="number" inputmode="numeric" placeholder="26" value="' + (M.matchNum||'') + '" oninput="M.matchNum=this.value;updateMHeader()">' +
+  '<label class="lbl">Team Number</label>' +
+  '<input class="big" type="number" inputmode="numeric" placeholder="3310" value="' + (M.teamNum||'') + '" oninput="M.teamNum=this.value;updateMHeader();scheduleTBALookup(this.value,\'m\')">' +
+  '<div id="m-team-info" style="padding:6px 2px 2px;font-size:13px;display:none"></div>' +
+  '<label class="lbl">Scout Name</label>' +
+  '<input type="text" placeholder="Your name" value="' + (M.scoutName||'') + '" oninput="M.scoutName=this.value">' +
+  '</div>' +
+  '<div class="card">' +
+  '<div class="card-hd">Alliance</div>' +
+  '<div class="ally">' +
+  '<div class="ally-b r' + (M.alliance==='red'?' on':'') + '" onclick="setAlly(\'red\')">🔴 Red</div>' +
+  '<div class="ally-b b' + (M.alliance==='blue'?' on':'') + '" onclick="setAlly(\'blue\')">🔵 Blue</div>' +
+  '</div></div>' +
+  '<button class="btn btn-gold" onclick="mGoTab(1)">Continue → Autonomous</button>' +
+  '</div>';
 }
 
 function setAlly(a) {
@@ -1810,139 +1013,6 @@ function setAlly(a) {
     b.classList.toggle('on', b.classList.contains(a === 'red' ? 'r' : 'b'));
   });
   updateMHeader();
-  // In TBA mode: refresh position button colors and re-trigger lookup
-  if (setupMode === 'tba') {
-    if (setupTBAPos) setSetupPos(setupTBAPos); else tbaAutoFill();
-  }
-}
-
-/* ─── TBA SETUP HELPERS ─── */
-
-// Switch between Manual and TBA Lookup modes
-function setSetupMode(mode) {
-  setupMode = mode;
-  if (mode === 'tba') {
-    // Pick latest event as default if not already set
-    if (!setupTBAEvent && matchesCache.events && matchesCache.events.length) {
-      setupTBAEvent = matchesCache.events[matchesCache.events.length - 1].key;
-    }
-    // Clear manually-typed team so the result area starts fresh
-    M.teamNum = '';
-    updateMHeader();
-  }
-  mGoTab(0);
-}
-
-// Select robot position (1, 2, or 3) and update button styles inline
-function setSetupPos(pos) {
-  setupTBAPos = pos;
-  var allyColor = M.alliance === 'red' ? 'var(--red)' : M.alliance === 'blue' ? 'var(--blue)' : 'var(--gold)';
-  var allyBg    = M.alliance === 'red' ? 'var(--red-d)' : M.alliance === 'blue' ? 'var(--blue-d)' : 'var(--gold-d)';
-  for (var p = 1; p <= 3; p++) {
-    var btn = document.getElementById('pos-tba-' + p);
-    if (!btn) continue;
-    var on = p === pos;
-    btn.style.borderColor = on ? allyColor    : 'var(--border)';
-    btn.style.background  = on ? allyBg       : 'var(--surf2)';
-    btn.style.color       = on ? allyColor    : 'var(--text2)';
-  }
-  tbaAutoFill();
-}
-
-// Load 3310's events if not already cached, then re-render Setup
-function setupLoadEvents() {
-  if (matchesCache.events) {
-    if (!setupTBAEvent) setupTBAEvent = matchesCache.events[matchesCache.events.length - 1].key;
-    if (mTab === 0) mGoTab(0);
-    return;
-  }
-  tbaFetch('/team/frc3310/events/2026', function(data) {
-    if (data && data.length) {
-      matchesCache.events = data.sort(function(a,b){
-        return (a.start_date||'').localeCompare(b.start_date||'');
-      });
-      matchesCache.eventsAt = Date.now();
-      if (!setupTBAEvent) setupTBAEvent = matchesCache.events[matchesCache.events.length - 1].key;
-    }
-    if (mTab === 0) mGoTab(0); // re-render Setup with loaded events
-  });
-}
-
-// Trigger a TBA team lookup from current event + match# + alliance + position
-function tbaAutoFill() {
-  var statusEl  = document.getElementById('tba-fill-status');
-  var displayEl = document.getElementById('tba-team-display');
-  var infoEl    = document.getElementById('m-team-info');
-
-  // If any required field is missing, show prompt and clear result
-  if (!setupTBAEvent || !setupTBAPos || !M.alliance || !M.matchNum) {
-    if (M.teamNum) { M.teamNum = ''; updateMHeader(); }
-    if (displayEl) { displayEl.textContent = ''; displayEl.style.display = 'none'; }
-    if (infoEl)    { infoEl.innerHTML = ''; infoEl.style.display = 'none'; }
-    if (statusEl)  { statusEl.textContent = 'Select alliance, position & match #'; statusEl.style.display = ''; }
-    return;
-  }
-
-  // Show loading state
-  if (displayEl) displayEl.style.display = 'none';
-  if (infoEl)    { infoEl.innerHTML = ''; infoEl.style.display = 'none'; }
-  if (statusEl)  { statusEl.textContent = '🔍 Looking up\u2026'; statusEl.style.display = ''; }
-
-  var key = setupTBAEvent;
-  var now = Date.now();
-  if (matchesCache.matches[key] && (now - (matchesCache.matchesAt[key]||0)) < CACHE_TTL) {
-    tbaFillFromCache();
-    return;
-  }
-  // Fetch the match list for this event (reuses the matches cache)
-  tbaFetch('/event/' + key + '/matches', function(data) {
-    if (data) { matchesCache.matches[key] = data; matchesCache.matchesAt[key] = Date.now(); }
-    tbaFillFromCache();
-  });
-}
-
-// Resolve team from cached match list and populate M.teamNum + display
-function tbaFillFromCache() {
-  var statusEl  = document.getElementById('tba-fill-status');
-  var displayEl = document.getElementById('tba-team-display');
-
-  var matches = matchesCache.matches[setupTBAEvent];
-  if (!matches) {
-    if (statusEl) { statusEl.textContent = '\u26a0 Could not load match data'; statusEl.style.display = ''; }
-    return;
-  }
-
-  // Find the qualification match by number
-  var mn = parseInt(M.matchNum);
-  var match = null;
-  for (var i = 0; i < matches.length; i++) {
-    if (matches[i].comp_level === 'qm' && matches[i].match_number === mn) {
-      match = matches[i]; break;
-    }
-  }
-  if (!match) {
-    if (statusEl) { statusEl.textContent = 'Match ' + mn + ' not in schedule yet'; statusEl.style.display = ''; }
-    if (displayEl) displayEl.style.display = 'none';
-    return;
-  }
-
-  var teamKeys = (match.alliances[M.alliance] || {}).team_keys || [];
-  var teamKey  = teamKeys[setupTBAPos - 1];
-  if (!teamKey) {
-    if (statusEl) { statusEl.textContent = '\u2014 position not found'; statusEl.style.display = ''; }
-    return;
-  }
-
-  var teamNum = teamKey.replace('frc', '');
-  M.teamNum = teamNum;
-  updateMHeader();
-
-  // Update display without full re-render
-  if (displayEl) { displayEl.textContent = '#' + teamNum; displayEl.style.display = ''; }
-  if (statusEl)  statusEl.style.display = 'none';
-
-  // Kick off TBA team name lookup (populates #m-team-info)
-  scheduleTBALookup(teamNum, 'm');
 }
 
 /* ─── AUTON ─── */
@@ -1953,7 +1023,7 @@ function renderAuton() {
   mkTog('noShow', 'No Show', 'Robot did not appear on field', true) +
   '</div>' +
   '<div id="auton-rest" class="' + (M.noShow ? 'dimmed' : '') + '">' +
-  '<div class="card" id="req-startPos">' +
+  '<div class="card">' +
   '<div class="card-hd">Starting Position</div>' +
   '<div class="pos-grid">' +
   START_POS.map(function(p) {
@@ -1970,7 +1040,6 @@ function renderAuton() {
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
-  mkTog('autonNoMove', 'No Move', 'Robot did not leave starting zone', false) +
   mkTog('autonPassed', 'Passed?', 'Robot crossed the field boundary', false) +
   mkTog('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
@@ -1982,7 +1051,7 @@ function renderAuton() {
   '<div class="card-hd">Comments</div>' +
   '<textarea placeholder="Notes on auton performance…" oninput="M.autonNotes=this.value">' + (M.autonNotes||'') + '</textarea>' +
   '</div></div>' +
-  '<button class="btn btn-gold" onclick="autonNext()">Continue → Teleop</button>' +
+  '<button class="btn btn-gold" onclick="mGoTab(2)">Continue → Teleop</button>' +
   '</div>';
 }
 
@@ -1992,8 +1061,6 @@ function setStartPos(id) {
     var onclick = b.getAttribute('onclick') || '';
     b.classList.toggle('on', onclick.indexOf("'" + id + "'") !== -1);
   });
-  var rEl = document.getElementById('req-startPos');
-  if (rEl) { rEl.classList.remove('req-err'); rEl.classList.remove('req-shake'); }
 }
 
 /* ─── TELEOP ─── */
@@ -2012,25 +1079,14 @@ function renderTeleop() {
   '<div style="font-size:11px;color:var(--text3);padding:3px 12px 8px;line-height:1.5">Needs 3+ balls. If it doesn\'t work, pick a speed below and ignore the timer.</div>' +
   mkCtr('teleMissed', '❌ Missed', false) +
   '</div>' +
-  '<div class="card" id="req-shooterSpeed">' +
+  '<div class="card">' +
   '<div class="card-hd">Shooter Speed</div>' +
   '<div class="spd-grid2">' +
-  SPEEDS.map(function(s, i) {
-    var tierColors = [
-      {bg:'rgba(76,175,125,0.08)',border:'rgba(76,175,125,0.22)'},
-      {bg:'rgba(76,175,125,0.05)',border:'rgba(76,175,125,0.15)'},
-      {bg:'rgba(180,200,80,0.06)',border:'rgba(180,200,80,0.18)'},
-      {bg:'rgba(240,165,0,0.07)',border:'rgba(240,165,0,0.20)'},
-      {bg:'rgba(230,130,40,0.07)',border:'rgba(230,130,40,0.20)'},
-      {bg:'rgba(232,83,74,0.06)',border:'rgba(232,83,74,0.18)'},
-      {bg:'rgba(232,83,74,0.10)',border:'rgba(232,83,74,0.28)'}
-    ];
-    var tc = tierColors[i] || tierColors[3];
-    var tintStyle = M.shooterSpeed===s.id ? '' : 'background:' + tc.bg + ';border-color:' + tc.border + ';';
-    return '<button class="spd-grid2-b' + (M.shooterSpeed===s.id?' on':'') + '" style="' + tintStyle + '" onclick="setSpeed(\'' + s.id + '\')">' + s.label + '</button>';
+  SPEEDS.map(function(s) {
+    return '<button class="spd-grid2-b' + (M.shooterSpeed===s.id?' on':'') + '" onclick="setSpeed(\'' + s.id + '\')">' + s.label + '</button>';
   }).join('') +
   '</div></div>' +
-  '<div class="card" id="req-climbLevel">' +
+  '<div class="card">' +
   '<div class="card-hd">End-game Climb</div>' +
   '<div class="seg">' +
   ['L3','L2','L1','none'].map(function(c) {
@@ -2068,8 +1124,6 @@ function setSpeed(id) {
     var oc = b.getAttribute('onclick') || '';
     b.classList.toggle('on', oc.indexOf("'" + id + "'") !== -1);
   });
-  var rEl = document.getElementById('req-shooterSpeed');
-  if (rEl) { rEl.classList.remove('req-err'); rEl.classList.remove('req-shake'); }
 }
 
 function setClimb(c) {
@@ -2080,88 +1134,10 @@ function setClimb(c) {
     b.classList.toggle('on', match);
     b.classList.toggle('g', match);
   });
-  var rEl = document.getElementById('req-climbLevel');
-  if (rEl) { rEl.classList.remove('req-err'); rEl.classList.remove('req-shake'); }
-}
-
-/* ─── VALIDATION ─── */
-// Scroll `el` to center inside `container` smoothly using viewport-relative math
-function scrollToCenter(el, container) {
-  var elRect = el.getBoundingClientRect();
-  var cRect  = container.getBoundingClientRect();
-  var target = container.scrollTop + (elRect.top - cRect.top) - (container.clientHeight - elRect.height) / 2;
-  container.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
-}
-
-function shakeReq(el) {
-  el.classList.add('req-err');
-  el.classList.remove('req-shake');
-  void el.offsetWidth;
-  el.classList.add('req-shake');
-}
-
-function autonNext() {
-  if (!M.noShow && !M.startPos) {
-    var el = document.getElementById('req-startPos');
-    if (el) {
-      shakeReq(el);
-      scrollToCenter(el, document.getElementById('m-body'));
-    }
-    toast('⚠️ Select a starting position first');
-    return;
-  }
-  mGoTab(2);
-}
-
-function validateAndSave(onPass) {
-  // noShow bypasses field validation
-  if (M.noShow) { saveMatchEntry(false); onPass && onPass(); return; }
-
-  var missing = [];
-  if (!M.shooterSpeed) missing.push({field:'shooterSpeed', tab:2});
-  if (!M.climbLevel)   missing.push({field:'climbLevel',  tab:2});
-
-  if (!missing.length) { saveMatchEntry(false); onPass && onPass(); return; }
-
-  // Navigate to the tab containing the first missing field
-  var firstTab = missing[0].tab;
-  mGoTab(firstTab);
-
-  // Wait for render, then highlight and smooth-scroll to first missing card
-  setTimeout(function() {
-    var body = document.getElementById('m-body');
-    var firstEl = null;
-    missing.forEach(function(m) {
-      if (m.tab === firstTab) {
-        var el = document.getElementById('req-' + m.field);
-        if (el) {
-          shakeReq(el);
-          if (!firstEl) firstEl = el;
-        }
-      }
-    });
-    if (firstEl) scrollToCenter(firstEl, body);
-    toast('⚠️ Fill in highlighted fields first');
-  }, 60);
 }
 
 /* ─── EXPORT ─── */
-function saveAndExport() { validateAndSave(function() { mGoTab(3); }); }
-
-function saveAndClear() {
-  validateAndSave(function() {
-    var num = M.matchNum || '?';
-    var scout = M.scoutName;
-    var ally   = M.alliance;
-    var nextNum = String((parseInt(M.matchNum) || 0) + 1);
-    M = blankM();
-    M.scoutName = scout;
-    M.alliance  = ally;
-    M.matchNum  = nextNum;
-    mGoTab(0);
-    toast('✅ Saved M' + num + ' — form cleared');
-  });
-}
+function saveAndExport() { saveMatchEntry(false); mGoTab(3); }
 
 function renderExport() {
   var ms = saved.filter(function(e) { return e.type === 'match'; });
@@ -2177,11 +1153,9 @@ function renderExport() {
     var items = ms.map(function(e) {
       var gi = saved.indexOf(e);
       var ec = e.alliance === 'red' ? 'var(--red)' : e.alliance === 'blue' ? 'var(--blue)' : 'var(--text)';
-      var sp = e.syncId ? '<span class="sentry-pill ' + (e.syncStatus||'pending') + '">' +
-        (e.syncStatus === 'synced' ? '☁✓' : e.syncStatus === 'failed' ? '✕' : '…') + '</span>' : '';
       return '<div class="si">' +
         '<div>' +
-        '<div class="si-name" style="color:' + ec + ';display:flex;align-items:center">M' + e.matchNum + ' · Team #' + e.teamNum + sp + '</div>' +
+        '<div class="si-name" style="color:' + ec + '">M' + e.matchNum + ' · Team #' + e.teamNum + '</div>' +
         '<div class="si-sub">⚽ ' + ((e.autonScored||0)+(e.teleScored||0)) + ' fuel · 🏆 ' + (e.climbLevel||'no climb') + '</div>' +
         '</div>' +
         '<div style="display:flex;gap:6px;align-items:center">' +
@@ -2220,7 +1194,8 @@ function renderExport() {
   '</div></div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
-  '<button class="btn btn-gold" onclick="saveAndClear()">💾 Save &amp; Clear Form</button>' +
+  '<button class="btn btn-gold" onclick="saveMatchEntry(true)">💾 Save Entry</button>' +
+  '<button class="btn btn-surf" onclick="newMatch()">＋ New Match (Clear)</button>' +
   '</div>' +
   savedRows +
   '</div>';
@@ -2233,14 +1208,13 @@ function mCSV(e) {
     d.matchNum, d.teamNum, d.alliance, d.scoutName,
     ns, ns ? '' : (d.startPos||''),
     ns ? 0 : (d.autonScored||0), ns ? 0 : (d.autonMissed||0), ns ? 0 : (d.autonFoul||0),
-    ns ? 0 : (d.autonNoMove?1:0), ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
+    ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
     ns ? '' : (d.autonNotes||'').replace(/,/g,';'),
     ns ? 0 : (d.teleScored||0), ns ? 0 : (d.teleMissed||0), ns ? 0 : (d.teleFoul||0),
     ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
     ns ? 0 : (d.teleStuck?1:0), ns ? 0 : (d.teleBroke?1:0),
     ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump?1:0), ns ? 0 : (d.wentUnderTrench?1:0),
-    ns ? '' : ((d.shooterSpeed||'').replace('T','')), ns ? '' : (d.teleNotes||'').replace(/,/g,';'),
-    d.timestamp || ''
+    ns ? '' : (d.shooterSpeed||''), ns ? '' : (d.teleNotes||'').replace(/,/g,';')
   ].join(',');
 }
 
@@ -2251,9 +1225,9 @@ function buildMatchQR() {
   try {
     new QRCode(el, {
       text: mCSV() || 'empty',
-      width: 256, height: 256,
+      width: 220, height: 220,
       colorDark:'#000000', colorLight:'#ffffff',
-      correctLevel: QRCode.CorrectLevel.L
+      correctLevel: QRCode.CorrectLevel.M
     });
   } catch(err) {
     el.innerHTML = '<div style="color:var(--red);padding:10px;font-size:12px">QR error: ' + err.message + '</div>';
@@ -2261,7 +1235,6 @@ function buildMatchQR() {
 }
 
 function saveMatchEntry(notify) {
-  markActive();
   var idx = -1;
   for (var i = 0; i < saved.length; i++) {
     if (saved[i].type === 'match' && saved[i].matchNum === M.matchNum && saved[i].teamNum === M.teamNum) {
@@ -2272,22 +1245,9 @@ function saveMatchEntry(notify) {
   Object.keys(M).forEach(function(k) { entry[k] = M[k]; });
   entry.type = 'match';
   entry.savedAt = Date.now();
-  var now = new Date();
-  entry.timestamp = (now.getMonth()+1) + '/' + now.getDate() + '/' + now.getFullYear() + ' ' +
-    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-  // Assign a stable sync ID for dedup (keep existing one if re-saving same entry)
-  if (idx >= 0 && saved[idx].syncId) {
-    entry.syncId = saved[idx].syncId;
-    entry.syncStatus = saved[idx].syncStatus === 'synced' ? 'synced' : 'pending';
-  } else {
-    entry.syncId = syncGenId();
-    entry.syncStatus = 'pending';
-  }
   if (idx >= 0) saved[idx] = entry; else saved.push(entry);
   localStorage.setItem('bh3310', JSON.stringify(saved));
   refreshBadge();
-  // Queue for Google Sheets sync (non-blocking — never interrupts scouting)
-  if (entry.syncStatus !== 'synced') syncEnqueue(entry);
   if (notify) {
     toast('✅ Match entry saved!');
     M.matchNum = String((parseInt(M.matchNum) || 0) + 1);
@@ -2356,18 +1316,14 @@ function renderPit() {
     return '<div class="dt-b' + (P.drivetrain===d?' on':'') + '" onclick="setPDT(\'' + d + '\')">' + d + '</div>';
   }).join('') +
   '</div>' +
-  '<div id="dt-other-wrap" style="margin-top:8px;display:' + (P.drivetrain==='Other'?'block':'none') + '">' +
-  '<input type="text" placeholder="Describe drivetrain…" value="' + (P.drivetrainOther||'') + '" oninput="P.drivetrainOther=this.value"></div>' +
   '<label class="lbl" style="margin-top:14px">Battery Count</label>' +
-  '<input type="number" inputmode="numeric" placeholder="e.g. 5" value="' + (P.batteryCount||'') + '" oninput="P.batteryCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
+  '<input type="number" inputmode="numeric" placeholder="e.g. 2" value="' + (P.batteryCount||'') + '" oninput="P.batteryCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
   '<label class="lbl" style="margin-top:14px">Robot Archetype</label>' +
   '<div class="arch-grid">' +
   ARCHETYPES.map(function(a) {
     return '<div class="arch-b' + (P.archetype===a?' on':'') + '" onclick="setPArch(\'' + a + '\')">' + a + '</div>';
   }).join('') +
   '</div>' +
-  '<div id="arch-other-wrap" style="margin-top:8px;display:' + (P.archetype==='Other'?'block':'none') + '">' +
-  '<input type="text" placeholder="Describe archetype…" value="' + (P.archetypeOther||'') + '" oninput="P.archetypeOther=this.value"></div>' +
   '<label class="lbl" style="margin-top:14px">Human Player Count</label>' +
   '<input type="number" inputmode="numeric" placeholder="e.g. 1" value="' + (P.humanPlayerCount||'') + '" oninput="P.humanPlayerCount=this.value" style="text-align:center;font-size:22px;font-weight:800">' +
   '<label class="lbl" style="margin-top:14px">Hopper Capacity</label>' +
@@ -2387,37 +1343,16 @@ function renderPit() {
   if (P.teamNum) scheduleTBALookup(P.teamNum, 'p');
 }
 
-function setPDT(d) {
-  P.drivetrain = d;
-  document.querySelectorAll('.dt-b').forEach(function(b) {
-    b.classList.toggle('on', b.textContent.trim() === d);
-  });
-  var dtWrap = document.getElementById('dt-other-wrap');
-  if (dtWrap) dtWrap.style.display = d === 'Other' ? 'block' : 'none';
-  if (d !== 'Other') { P.drivetrainOther = ''; }
-  else { setTimeout(function() { var i = document.querySelector('#dt-other-wrap input'); if(i) i.focus(); }, 50); }
-}
-function setPArch(a) {
-  P.archetype = a;
-  document.querySelectorAll('.arch-b').forEach(function(b) {
-    b.classList.toggle('on', b.textContent.trim() === a);
-  });
-  var archWrap = document.getElementById('arch-other-wrap');
-  if (archWrap) archWrap.style.display = a === 'Other' ? 'block' : 'none';
-  if (a !== 'Other') { P.archetypeOther = ''; }
-  else { setTimeout(function() { var i = document.querySelector('#arch-other-wrap input'); if(i) i.focus(); }, 50); }
-}
+function setPDT(d)    { P.drivetrain = d; renderPit(); }
+function setPArch(a)  { P.archetype = a; renderPit(); }
 
 function pCSV(e) {
   var d = e || P;
-  var dt = (d.drivetrain === 'Other' && d.drivetrainOther) ? d.drivetrainOther : (d.drivetrain||'');
-  var arch = (d.archetype === 'Other' && d.archetypeOther) ? d.archetypeOther : (d.archetype||'');
   return [
     d.teamNum, d.scoutName, d.driveCoach,
-    dt, d.batteryCount||'', arch,
+    d.drivetrain, d.batteryCount||'', d.archetype||'',
     d.humanPlayerCount||'', d.hopperCapacity||'',
-    (d.notes||'').replace(/,/g,';'),
-    d.timestamp || ''
+    (d.notes||'').replace(/,/g,';')
   ].join(',');
 }
 
@@ -2431,48 +1366,23 @@ function savePit(notify) {
   entry.autonPositions = (P.autonPositions || []).slice();
   entry.type = 'pit';
   entry.savedAt = Date.now();
-  var now = new Date();
-  entry.timestamp = (now.getMonth()+1) + '/' + now.getDate() + '/' + now.getFullYear() + ' ' +
-    String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
-  // Assign a stable sync ID for dedup
-  if (idx >= 0 && saved[idx].syncId) {
-    entry.syncId = saved[idx].syncId;
-    entry.syncStatus = saved[idx].syncStatus === 'synced' ? 'synced' : 'pending';
-  } else {
-    entry.syncId = syncGenId();
-    entry.syncStatus = 'pending';
-  }
   if (idx >= 0) saved[idx] = entry; else saved.push(entry);
   localStorage.setItem('bh3310', JSON.stringify(saved));
   refreshBadge();
-  // Queue for Google Sheets sync (non-blocking)
-  if (entry.syncStatus !== 'synced') syncEnqueue(entry);
   if (notify) toast('✅ Pit entry saved!');
 }
 
 function savePitAndQR() {
   savePit(true);
   showQRModal('Pit · Team #' + (P.teamNum||'?'), pCSV(),
-    (P.teamName || 'Team ' + P.teamNum) + ' · ' + (P.drivetrain||'?'));
+    (P.teamName || 'Team ' + P.teamNum) + ' · ' + (P.drivetrain||'?') + ' · Climb ' + (P.climbLevel||'?'));
 }
 
 function newPit() {
   if (!confirm('Clear pit form for a new robot?')) return;
-  var scout = P.scoutName;
   P = blankP();
-  P.scoutName = scout;
   renderPit();
-  toast('🗑 Pit form cleared — scout name kept');
-}
-
-function loadPitEntry(i) {
-  var e = saved[i];
-  if (!e || e.type !== 'pit') return;
-  P = blankP();
-  Object.keys(e).forEach(function(k) { if (k in P) P[k] = e[k]; });
-  goTo('sc-pit');
-  renderPit();
-  toast('📥 Loaded Team #' + (P.teamNum||'?') + ' — edit and re-save');
+  toast('🗑 Pit form cleared');
 }
 
 /* ═══════════════════════════════════════════
@@ -2491,11 +1401,9 @@ function renderHistory() {
     ms.forEach(function(e) {
       var gi = saved.indexOf(e);
       var ec = e.alliance === 'red' ? 'var(--red)' : e.alliance === 'blue' ? 'var(--blue)' : 'var(--text)';
-      var sp = e.syncId ? '<span class="sentry-pill ' + (e.syncStatus||'pending') + '">' +
-        (e.syncStatus === 'synced' ? '☁✓' : e.syncStatus === 'failed' ? '✕' : '…') + '</span>' : '';
       html += '<div class="si">' +
         '<div>' +
-        '<div class="si-name" style="color:' + ec + ';display:flex;align-items:center">M' + e.matchNum + ' · Team #' + e.teamNum + sp + '</div>' +
+        '<div class="si-name" style="color:' + ec + '">M' + e.matchNum + ' · Team #' + e.teamNum + '</div>' +
         '<div class="si-sub">⚽ ' + ((e.autonScored||0)+(e.teleScored||0)) + ' fuel &nbsp;·&nbsp; 🏆 ' +
           (e.climbLevel||'no climb') + ' &nbsp;·&nbsp; ' + (e.scoutName||'—') + '</div>' +
         '</div>' +
@@ -2512,17 +1420,12 @@ function renderHistory() {
     html += '<div class="card"><div class="card-hd">Pit Entries (' + ps.length + ')</div>';
     ps.forEach(function(e) {
       var gi = saved.indexOf(e);
-      var sp = e.syncId ? '<span class="sentry-pill ' + (e.syncStatus||'pending') + '">' +
-        (e.syncStatus === 'synced' ? '☁✓' : e.syncStatus === 'failed' ? '✕' : '…') + '</span>' : '';
       html += '<div class="si">' +
         '<div>' +
-        '<div class="si-name" style="display:flex;align-items:center">Team #' + e.teamNum + (e.teamName ? ' — ' + e.teamName : '') + sp + '</div>' +
+        '<div class="si-name">Team #' + e.teamNum + (e.teamName ? ' — ' + e.teamName : '') + '</div>' +
         '<div class="si-sub">🔧 ' + (e.drivetrain||'?') + ' &nbsp;·&nbsp; 🏆 ' + (e.climbLevel||'none') + ' &nbsp;·&nbsp; 🎯 ' + (e.shooterSpeed||'none') + '</div>' +
         '</div>' +
-        '<div style="display:flex;gap:6px;align-items:center">' +
-        '<button class="si-del" style="background:var(--blue-d);border-color:var(--blue);color:var(--blue)" onclick="loadPitEntry(' + gi + ')">📥</button>' +
         '<button class="si-del" onclick="delEntry(' + gi + ');renderHistory()">✕</button>' +
-        '</div>' +
         '</div>';
     });
     html += '</div>';
@@ -2572,10 +1475,16 @@ function showQRModal(title, csvData, subtitle) {
   setTimeout(function() {
     var el = document.getElementById('mqr');
     if (!el) return;
+    var lvl = QRCode.CorrectLevel.M;
     try {
-      new QRCode(el, { text: csvData || 'empty', width:256, height:256, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.L });
-    } catch(e2) {
-      el.innerHTML = '<div style="color:var(--red);padding:14px;font-size:12px;max-width:200px">⚠️ Too much data for one QR — shorten your notes or export individually.</div>';
+      new QRCode(el, { text: csvData || 'empty', width:210, height:210, colorDark:'#000000', colorLight:'#ffffff', correctLevel: lvl });
+    } catch(e1) {
+      el.innerHTML = '';
+      try {
+        new QRCode(el, { text: csvData || 'empty', width:210, height:210, colorDark:'#000000', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.L });
+      } catch(e2) {
+        el.innerHTML = '<div style="color:var(--red);padding:14px;font-size:12px;max-width:180px">⚠️ Too much data for one QR. Export individual entries.</div>';
+      }
     }
   }, 80);
 }
@@ -2585,8 +1494,6 @@ function showQRModal(title, csvData, subtitle) {
 ═══════════════════════════════════════════ */
 function renderInfo() {
   var html = '<div class="page">' +
-
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.1.2</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -2624,7 +1531,7 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">⚡ Energized RP</span><span class="info-v">100+ fuel scored</span></div>' +
   '<div class="info-rule"><span class="info-k">🔋 Supercharged RP</span><span class="info-v">360+ fuel scored</span></div>' +
   '<div class="info-rule"><span class="info-k">🗼 Traversal RP</span><span class="info-v">50+ tower pts</span></div>' +
-  '<div class="info-rule"><span class="info-k">Win RP</span><span class="info-v">3 pts (win) / 1 pt (tie)</span></div>' +
+  '<div class="info-rule"><span class="info-k">Win RP</span><span class="info-v">2 pts (win) / 1 pt (tie)</span></div>' +
   '</div>' +
 
   '<div class="card">' +
@@ -2646,32 +1553,12 @@ function renderInfo() {
   '<div class="info-rule"><span class="info-k">TBA lookup</span><span class="info-v">Auto-fills team name</span></div>' +
   '</div>' +
 
-  '<div class="card">' +
-  '<div class="card-hd">\u2601 GOOGLE SHEETS SYNC</div>' +
-  '<div id="sync-panel-wrap">' + syncBuildPanel() + '</div>' +
-  '</div>' +
-
   '<div style="text-align:center;padding:8px 0 4px;color:var(--text3);font-size:12px">Team 3310 Black Hawks · REBUILT™ 2026</div>' +
   '<div style="text-align:center;padding:0 20px 4px;color:var(--text3);font-size:11px;line-height:1.6">' +
   '<span style="color:var(--text2);font-weight:700;letter-spacing:.3px">HawkEye Scouting System</span><br>' +
   'Created by Bryce Custer, Pavel Popoff, and Claude Cowork' +
   '</div>' +
   '<div style="text-align:center;padding:0 20px 24px;color:var(--text3);font-size:11px">⚡ Powered by Diet Coke</div>' +
-
-  // ── Debug Tools ──
-  '<div style="margin-top:30px;padding-bottom:24px">' +
-  '<div style="border-top:1px solid var(--border);margin-bottom:14px"></div>' +
-  '<div style="text-align:center;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--text3);text-transform:uppercase;margin-bottom:12px">🛠 Debug Tools</div>' +
-  '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">' +
-  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="window.playSplash()">▶ Play Intro</button>' +
-  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgCopyJSON()">📋 Copy Raw JSON</button>' +
-  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgClearTBA()">🔄 Clear TBA Cache</button>' +
-  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgStorageStats()">📊 Storage Stats</button>' +
-  '<button class="btn btn-surf" style="font-size:12px;padding:10px" onclick="dbgDeviceInfo()">🔧 Device Info</button>' +
-  '<button class="btn btn-surf" style="font-size:12px;padding:10px;color:var(--red)" onclick="dbgNuclearReset()">🗑 Nuclear Reset</button>' +
-  '</div>' +
-  '</div>' +
-
   '</div>';
 
   var el = document.getElementById('info-body');
@@ -2783,781 +1670,16 @@ function rateApply() {
 }
 
 /* ═══════════════════════════════════════════
-   GOOGLE SHEETS SYNC
-   Architecture: Apps Script web app endpoint.
-   Entries are queued in localStorage and flushed
-   sequentially. Never blocks the scouting workflow.
-═══════════════════════════════════════════ */
-
-var SYNC_CFG_KEY   = 'hawkeye_sync_settings';
-var SYNC_QUEUE_KEY = 'hawkeye_sync_queue';
-
-/* ─── RUNTIME STATE ─── */
-var syncCfg   = { enabled: false, endpoint: '', passphrase: '' };
-var syncQueue = [];    // array of pending payload objects
-var syncFails = 0;     // consecutive send failures
-var syncTimer = null;  // back-off retry timer handle
-var syncBusy  = false; // true while a flush is in progress
-
-/* ─── SETTINGS PERSISTENCE ─── */
-function syncLoadCfg() {
-  try {
-    var s = JSON.parse(localStorage.getItem(SYNC_CFG_KEY) || '{}');
-    syncCfg.enabled    = s.enabled    !== undefined ? !!s.enabled    : false;
-    syncCfg.endpoint   = s.endpoint   || '';
-    syncCfg.passphrase = s.passphrase || '';
-  } catch(e) {}
-}
-function syncSaveCfg() {
-  localStorage.setItem(SYNC_CFG_KEY, JSON.stringify(syncCfg));
-}
-
-/* ─── QUEUE PERSISTENCE ─── */
-function syncLoadQueue() {
-  try { syncQueue = JSON.parse(localStorage.getItem(SYNC_QUEUE_KEY) || '[]'); } catch(e) { syncQueue = []; }
-}
-function syncSaveQueue() {
-  localStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(syncQueue));
-}
-
-/* ─── UNIQUE ID FOR DEDUP ─── */
-function syncGenId() {
-  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
-}
-
-/* ─── BUILD MATCH PAYLOAD ─── */
-function syncMatchPayload(e) {
-  return {
-    syncId:          e.syncId,
-    entryType:       'match',
-    timestamp:       e.timestamp || '',
-    matchNumber:     e.matchNum          || '',
-    teamNumber:      e.teamNum           || '',
-    alliance:        e.alliance          || '',
-    scoutName:       e.scoutName         || '',
-    noShow:          !!e.noShow,
-    startPos:        e.startPos          || '',
-    autonScored:     e.autonScored        || 0,
-    autonMissed:     e.autonMissed        || 0,
-    autonFoul:       e.autonFoul          || 0,
-    autonNoMove:     !!e.autonNoMove,
-    autonPassed:     !!e.autonPassed,
-    autonClimbed:    !!e.autonClimbed,
-    autonNotes:      e.autonNotes         || '',
-    teleScored:      e.teleScored         || 0,
-    teleMissed:      e.teleMissed         || 0,
-    teleFoul:        e.teleFoul           || 0,
-    telePassed:      !!e.telePassed,
-    teleDefense:     !!e.teleDefense,
-    teleStuck:       !!e.teleStuck,
-    teleBroke:       !!e.teleBroke,
-    climbLevel:      e.climbLevel         || '',
-    wentOverBump:    !!e.wentOverBump,
-    wentUnderTrench: !!e.wentUnderTrench,
-    shooterSpeed:    (e.shooterSpeed || '').replace('T', ''),
-    teleNotes:       e.teleNotes          || ''
-  };
-}
-
-/* ─── BUILD PIT PAYLOAD ─── */
-function syncPitPayload(e) {
-  return {
-    syncId:           e.syncId,
-    entryType:        'pit',
-    timestamp:        e.timestamp         || '',
-    teamNumber:       e.teamNum           || '',
-    scoutName:        e.scoutName         || '',
-    driveCoach:       e.driveCoach        || '',
-    drivetrain:       (e.drivetrain === 'Other' && e.drivetrainOther ? e.drivetrainOther : e.drivetrain) || '',
-    batteryCount:     e.batteryCount      || '',
-    archetype:        (e.archetype === 'Other' && e.archetypeOther ? e.archetypeOther : e.archetype) || '',
-    humanPlayerCount: e.humanPlayerCount  || '',
-    hopperCapacity:   e.hopperCapacity    || '',
-    notes:            e.notes             || ''
-  };
-}
-
-/* ─── STATUS INDICATOR UI ─── */
-function syncUpdateStatus() {
-  var indicator = document.getElementById('sync-indicator');
-  var dot       = document.getElementById('sync-dot-main');
-  var badge     = document.getElementById('sync-count-badge');
-  if (!dot) return;
-  // Hide entirely when sync is not configured
-  if (!syncCfg.enabled || !syncCfg.endpoint) {
-    if (indicator) indicator.style.display = 'none';
-    return;
-  }
-  if (indicator) indicator.style.display = 'flex';
-  if (syncBusy) {
-    dot.className = 'sync-dot yellow';
-    if (badge) badge.style.display = 'none';
-  } else if (syncQueue.length > 0) {
-    dot.className = syncFails >= 5 ? 'sync-dot red' : 'sync-dot yellow';
-    if (badge) { badge.textContent = syncQueue.length; badge.style.display = ''; }
-  } else {
-    dot.className = 'sync-dot green';
-    if (badge) badge.style.display = 'none';
-  }
-  // Keep settings panel count in sync if open
-  var qc = document.getElementById('sync-qcount');
-  if (qc) qc.textContent = syncQueue.length;
-}
-
-/* ─── SEND ONE ENTRY (async, 10s timeout) ─── */
-async function syncSend(payload) {
-  var ctrl  = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, 10000) : null;
-  try {
-    var r = await fetch(syncCfg.endpoint, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ passphrase: syncCfg.passphrase, data: payload }),
-      signal:  ctrl ? ctrl.signal : undefined
-    });
-    if (timer) clearTimeout(timer);
-    if (!r.ok) return false;
-    var j = await r.json();
-    return !!(j && j.status === 'ok');
-  } catch(e) {
-    if (timer) clearTimeout(timer);
-    return false;
-  }
-}
-
-/* ─── FLUSH QUEUE SEQUENTIALLY ─── */
-async function syncFlush() {
-  if (syncBusy || !syncCfg.enabled || !syncCfg.endpoint || syncQueue.length === 0) return;
-  syncBusy = true;
-  syncUpdateStatus();
-  while (syncQueue.length > 0) {
-    var item = syncQueue[0];
-    var ok = await syncSend(item);
-    if (ok) {
-      syncQueue.shift();
-      syncSaveQueue();
-      syncFails = 0;
-      syncMarkSaved(item.syncId, 'synced');
-    } else {
-      syncFails++;
-      break;
-    }
-  }
-  syncBusy = false;
-  syncUpdateStatus();
-  // Schedule back-off retry if queue still has items
-  if (syncQueue.length > 0) {
-    var ms = syncFails >= 5 ? 120000 : 30000;
-    if (syncTimer) clearTimeout(syncTimer);
-    syncTimer = setTimeout(syncFlush, ms);
-    if (syncFails === 5) toast('\u26a0\ufe0f Sync error \u2014 ' + syncQueue.length + ' entries queued');
-  }
-}
-
-/* ─── UPDATE SYNC STATUS IN BH3310 STORAGE ─── */
-function syncMarkSaved(syncId, status) {
-  try {
-    var arr = JSON.parse(localStorage.getItem('bh3310') || '[]');
-    var dirty = false;
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i].syncId === syncId) { arr[i].syncStatus = status; dirty = true; break; }
-    }
-    if (dirty) { localStorage.setItem('bh3310', JSON.stringify(arr)); saved = arr; }
-  } catch(e) {}
-}
-
-/* ─── ENQUEUE AND ATTEMPT IMMEDIATE FLUSH ─── */
-function syncEnqueue(entry) {
-  if (!syncCfg.enabled || !syncCfg.endpoint) return;
-  var payload = entry.type === 'pit' ? syncPitPayload(entry) : syncMatchPayload(entry);
-  // Avoid duplicate queue entries
-  for (var i = 0; i < syncQueue.length; i++) {
-    if (syncQueue[i].syncId === payload.syncId) return;
-  }
-  syncQueue.push(payload);
-  syncSaveQueue();
-  syncUpdateStatus();
-  syncFlush(); // non-blocking
-}
-
-/* ─── FORCE SYNC (manual button) ─── */
-function syncForceNow() {
-  if (!syncCfg.enabled || !syncCfg.endpoint) { toast('\u26a0\ufe0f Sync not configured \u2014 see Game Info'); return; }
-  if (syncQueue.length === 0) { toast('\u2705 Queue empty \u2014 all entries synced'); return; }
-  syncFails = 0;
-  if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
-  syncFlush();
-  toast('\u21bb Syncing ' + syncQueue.length + ' entr' + (syncQueue.length === 1 ? 'y' : 'ies') + '\u2026');
-}
-
-/* ─── TEST CONNECTION ─── */
-async function syncTestConn() {
-  var ep = syncCfg.endpoint;
-  if (!ep) { toast('\u26a0\ufe0f Enter endpoint URL first'); return; }
-  var btn = document.getElementById('sync-test-btn');
-  if (btn) { btn.textContent = 'Testing\u2026'; btn.disabled = true; }
-  var ctrl  = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-  var timer = ctrl ? setTimeout(function() { ctrl.abort(); }, 10000) : null;
-  try {
-    var r = await fetch(ep, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ passphrase: syncCfg.passphrase, type: 'ping' }),
-      signal: ctrl ? ctrl.signal : undefined
-    });
-    if (timer) clearTimeout(timer);
-    var j = await r.json();
-    if (j && j.status === 'ok') {
-      toast('\u2705 Connection OK \u2014 pong received!');
-      if (btn) { btn.textContent = '\u2705 OK'; btn.disabled = false; }
-    } else {
-      toast('\u274c Server error: ' + (j && j.message ? j.message : 'unknown'));
-      if (btn) { btn.textContent = 'Test Again'; btn.disabled = false; }
-    }
-  } catch(ex) {
-    if (timer) clearTimeout(timer);
-    toast('\u274c Connection failed \u2014 check URL');
-    if (btn) { btn.textContent = 'Test Again'; btn.disabled = false; }
-  }
-}
-
-/* ─── CLEAR QUEUE ─── */
-function syncClearQueue() {
-  if (!confirm('Remove ' + syncQueue.length + ' entries from the sync queue?\nThey will NOT be sent to Google Sheets.')) return;
-  syncQueue = [];
-  syncSaveQueue();
-  syncFails = 0;
-  if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
-  syncUpdateStatus();
-  var wrap = document.getElementById('sync-panel-wrap');
-  if (wrap) wrap.innerHTML = syncBuildPanel();
-  toast('\ud83d\uddd1 Sync queue cleared');
-}
-
-/* ─── SAVE SETTINGS FROM UI INPUTS ─── */
-function syncSaveUI() {
-  var urlEl  = document.getElementById('sync-url-input');
-  var passEl = document.getElementById('sync-pass-input');
-  var togEl  = document.getElementById('sync-enable-tog');
-  if (urlEl)  syncCfg.endpoint   = urlEl.value.trim();
-  if (passEl) syncCfg.passphrase = passEl.value;
-  if (togEl)  syncCfg.enabled    = togEl.classList.contains('on');
-  syncSaveCfg();
-  syncUpdateStatus();
-  toast('\u2705 Sync settings saved');
-  var wrap = document.getElementById('sync-panel-wrap');
-  if (wrap) wrap.innerHTML = syncBuildPanel();
-  // Attempt flush if we just enabled with a pending queue
-  if (syncCfg.enabled && syncCfg.endpoint && syncQueue.length > 0) {
-    syncFails = 0;
-    syncFlush();
-  }
-}
-
-/* ─── BUILD SETTINGS PANEL HTML ─── */
-function syncBuildPanel() {
-  var qlen    = syncQueue.length;
-  var stColor = !syncCfg.enabled    ? 'var(--text3)'  :
-                qlen === 0          ? 'var(--green)'   :
-                syncFails >= 5      ? 'var(--red)'     : 'var(--gold)';
-  var stText  = !syncCfg.enabled    ? 'Disabled'                        :
-                qlen === 0          ? 'All synced \u2713'                :
-                syncFails >= 5      ? qlen + ' pending (errors)'         :
-                                      qlen + ' pending';
-  return '' +
-    // Enable toggle
-    '<div class="trow" onclick="var t=document.getElementById(\'sync-enable-tog\');t.classList.toggle(\'on\');syncSaveUI()">' +
-    '<div><div class="trow-lbl">Enable Sheets Sync</div>' +
-    '<div class="trow-sub">Auto-send entries to Google Sheets</div></div>' +
-    '<div class="tog' + (syncCfg.enabled ? ' on' : '') + '" id="sync-enable-tog"></div>' +
-    '</div>' +
-    // Apps Script URL
-    '<label class="lbl">Apps Script URL</label>' +
-    '<input type="url" id="sync-url-input" placeholder="https://script.google.com/macros/s/\u2026/exec" ' +
-    'value="' + (syncCfg.endpoint || '').replace(/"/g, '&quot;') + '" ' +
-    'oninput="syncCfg.endpoint=this.value" style="font-size:12px;padding:9px 11px">' +
-    // Passphrase
-    '<label class="lbl">Passphrase</label>' +
-    '<input type="password" id="sync-pass-input" placeholder="Shared passphrase" ' +
-    'value="' + (syncCfg.passphrase || '').replace(/"/g, '&quot;') + '" ' +
-    'oninput="syncCfg.passphrase=this.value" style="font-size:13px;padding:9px 11px">' +
-    // Buttons
-    '<div style="display:flex;gap:7px;margin-top:12px">' +
-    '<button class="btn btn-gold" style="margin:0;flex:1;padding:11px;font-size:13px" onclick="syncSaveUI()">Save</button>' +
-    '<button class="btn btn-surf" id="sync-test-btn" style="margin:0;flex:1;padding:11px;font-size:13px" onclick="syncTestConn()">\u2197 Test</button>' +
-    '</div>' +
-    // Status display
-    '<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">' +
-    '<div class="info-rule"><span class="info-k">Status</span>' +
-    '<span style="font-weight:700;color:' + stColor + '">' + stText + '</span></div>' +
-    '<div class="info-rule" style="border:none"><span class="info-k">Queued entries</span>' +
-    '<span style="font-weight:700" id="sync-qcount">' + qlen + '</span></div>' +
-    '</div>' +
-    // Queue controls
-    '<div style="display:flex;gap:7px;margin-top:6px">' +
-    '<button class="btn btn-blue" style="margin:0;flex:1;padding:10px;font-size:13px" onclick="syncForceNow()">\u21bb Force Sync</button>' +
-    (qlen > 0 ? '<button class="btn btn-red" style="margin:0;flex:0 0 auto;padding:10px 14px;font-size:12px" onclick="syncClearQueue()">\ud83d\uddd1 Clear</button>' : '') +
-    '</div>';
-}
-
-/* ─── RETRY ON VISIBILITY/ONLINE EVENTS ─── */
-function syncOnOnline() {
-  if ((syncQueue.length > 0 || syncFails > 0) && syncCfg.enabled && syncCfg.endpoint) {
-    syncFails = Math.min(syncFails, 1); // reduce back-off when network returns
-    if (syncTimer) { clearTimeout(syncTimer); syncTimer = null; }
-    syncFlush();
-  }
-}
-
-/* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
 refreshBadge();
 initGeoBg();
-checkSplash(); // show splash if inactive 5+ min (or first ever launch)
-
-// Track last-active timestamp for splash inactivity check
-document.addEventListener('visibilitychange', function() {
-  if (document.hidden) markActive();
-});
 
 // PWA Service Worker
-/* ═══════════════════════════════════════════
-   MATCH TIMER — FRC 2026 REBUILT
-═══════════════════════════════════════════ */
-var TMR = {
-  ally:'', wonAuto:'', vol:0.7,
-  running:false, paused:false,
-  startWall:0, elapsedAtPause:0, elapsed:0,
-  tickRaf:0, audioCtx:null, gainNode:null,
-  _lastPhaseIdx:-1
-};
-
-// Phases: {n: name, d: duration seconds, pause: silent transition}
-var TMR_PHASES = [
-  {n:'AUTO',       d:20, pause:false},
-  {n:'PAUSE',      d:3,  pause:true },
-  {n:'TRANSITION', d:10, pause:false},
-  {n:'SHIFT 1',    d:25, pause:false},
-  {n:'SHIFT 2',    d:25, pause:false},
-  {n:'SHIFT 3',    d:25, pause:false},
-  {n:'SHIFT 4',    d:25, pause:false},
-  {n:'END GAME',   d:30, pause:false}
-];
-var TMR_TOTAL = 163;
-var TMR_VIS_PHASES = ['AUTO','TRANSITION','SHIFT 1','SHIFT 2','SHIFT 3','SHIFT 4','END GAME'];
-
-// Pre-compute cumulative start times for each phase
-var TMR_PHASE_STARTS = (function(){
-  var arr = [], t = 0;
-  for(var i=0; i<TMR_PHASES.length; i++){ arr.push(t); t += TMR_PHASES[i].d; }
-  return arr;
-})();
-// TMR_PHASE_STARTS = [0, 20, 23, 33, 58, 83, 108, 133]
-
-function tmrPhaseAt(elapsed) {
-  var t = elapsed;
-  for(var i=0; i<TMR_PHASES.length; i++){
-    if(t < TMR_PHASES[i].d || i === TMR_PHASES.length - 1)
-      return {idx:i, rem:Math.max(0, TMR_PHASES[i].d - t)};
-    t -= TMR_PHASES[i].d;
-  }
-  return {idx:TMR_PHASES.length-1, rem:0};
-}
-
-function openTimer() {
-  goTo('sc-timer');
-  TMR._lastPhaseIdx = -1;
-  renderTimerPre();
-}
-
-function timerGoHome() {
-  timerStop();
-  goTo('sc-home');
-}
-
-function timerStop() {
-  cancelAnimationFrame(TMR.tickRaf);
-  TMR.running = false;
-}
-
-function timerReset() {
-  timerStop();
-  TMR.elapsed = 0;
-  TMR.elapsedAtPause = 0;
-  TMR.paused = false;
-  TMR._lastPhaseIdx = -1;
-  // Cancel all scheduled audio
-  if(TMR.audioCtx) { try{ TMR.audioCtx.close(); }catch(e){} TMR.audioCtx = null; TMR.gainNode = null; }
-  var rb = document.getElementById('tmr-reset-btn');
-  if(rb) rb.style.visibility = 'hidden';
-  renderTimerPre();
-}
-
-function tmrSetAlly(a)    { TMR.ally = a;    renderTimerPre(); }
-function tmrSetWonAuto(a) { TMR.wonAuto = a; renderTimerPre(); }
-
-/* ─── PRE-MATCH CONFIG ─── */
-function renderTimerPre() {
-  var el = document.getElementById('tmr-body');
-  if(!el) return;
-  var rb = document.getElementById('tmr-reset-btn');
-  if(rb) rb.style.visibility = 'hidden';
-  el.style.background = '';
-
-  function abtn(val, color, label) {
-    var on = TMR.ally === val;
-    return '<button onclick="tmrSetAlly(\''+val+'\')" style="flex:1;padding:14px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
-  }
-  function wbtn(val, color, label) {
-    var on = TMR.wonAuto === val;
-    return '<button onclick="tmrSetWonAuto(\''+val+'\')" style="flex:1;padding:10px 4px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
-  }
-
-  var canStart = !!TMR.ally;
-  el.innerHTML =
-    '<div style="max-width:420px;margin:0 auto">' +
-    '<div class="card">' +
-      '<div class="card-hd">YOUR ALLIANCE</div>' +
-      '<div style="display:flex;gap:10px">' +
-        abtn('red','var(--red)','🔴 Red') +
-        abtn('blue','var(--blue)','🔵 Blue') +
-      '</div>' +
-    '</div>' +
-    '<div class="card">' +
-      '<div class="card-hd">AUTO BONUS WON BY</div>' +
-      '<div style="display:flex;gap:8px">' +
-        wbtn('red','var(--red)','🔴 Red') +
-        wbtn('blue','var(--blue)','🔵 Blue') +
-        wbtn('neither','var(--surf4)','— Tie/NA') +
-      '</div>' +
-      '<div style="font-size:11px;color:var(--text2);margin-top:10px">Sets which hub goes inactive during Shifts 1 &amp; 3</div>' +
-    '</div>' +
-    '<div class="card">' +
-      '<div class="card-hd" id="tmr-vol-lbl">SOUND VOLUME <span style="color:var(--text2);font-size:10px;font-weight:600">'+Math.round(TMR.vol*100)+'%</span></div>' +
-      '<input type="range" min="0" max="1" step="0.05" value="'+TMR.vol+'" ' +
-        'oninput="TMR.vol=parseFloat(this.value);var sp=document.getElementById(\'tmr-vol-lbl\');if(sp)sp.innerHTML=\'SOUND VOLUME <span style=\\\"color:var(--text2);font-size:10px;font-weight:600\\\">\'+Math.round(TMR.vol*100)+\'%</span>\'" ' +
-        'style="width:100%;accent-color:var(--gold);margin-top:6px">' +
-    '</div>' +
-    '<button onclick="timerStart()" style="width:100%;padding:18px;background:'+(canStart?'var(--gold)':'var(--surf3)')+';color:'+(canStart?'#000':'var(--text3)')+';border:none;border-radius:var(--r);font-size:17px;font-weight:800;cursor:'+(canStart?'pointer':'default')+';font-family:inherit;letter-spacing:.5px;transition:all .2s;pointer-events:'+(canStart?'auto':'none')+'">▶  START MATCH</button>' +
-    (!canStart ? '<div style="text-align:center;font-size:12px;color:var(--text2);margin-top:10px">Select your alliance to continue</div>' : '') +
-    '</div>';
-}
-
-/* ─── AUDIO ─── */
-function tmrInitAudio() {
-  if(TMR.audioCtx) return;
-  try {
-    TMR.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    TMR.gainNode = TMR.audioCtx.createGain();
-    TMR.gainNode.gain.setValueAtTime(1, TMR.audioCtx.currentTime);
-    TMR.gainNode.connect(TMR.audioCtx.destination);
-  } catch(e) { TMR.audioCtx = null; }
-}
-
-function tmrTone(freq, t0, dur, vol, waveType, vibratoDepth, vibratoRate) {
-  if(!TMR.audioCtx || !TMR.gainNode) return;
-  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var ctx = TMR.audioCtx;
-  var v = (vol || 0.7) * TMR.vol;
-  if(v <= 0) return;
-  var osc = ctx.createOscillator();
-  var g   = ctx.createGain();
-  osc.type = waveType || 'sine';
-  osc.frequency.setValueAtTime(freq, t0);
-  g.gain.setValueAtTime(0, t0);
-  g.gain.linearRampToValueAtTime(v, t0 + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
-  if(vibratoDepth && vibratoRate) {
-    var lfo = ctx.createOscillator();
-    var lg  = ctx.createGain();
-    lfo.frequency.setValueAtTime(vibratoRate, t0);
-    lg.gain.setValueAtTime(vibratoDepth, t0);
-    lfo.connect(lg);
-    lg.connect(osc.frequency);
-    lfo.start(t0);
-    lfo.stop(t0 + dur + 0.1);
-  }
-  osc.connect(g);
-  g.connect(TMR.gainNode);
-  osc.start(t0);
-  osc.stop(t0 + dur + 0.1);
-}
-
-function tmrScheduleSounds() {
-  if(!TMR.audioCtx) return;
-  var now = TMR.audioCtx.currentTime;
-
-  // 1. MATCH START HORN (t=0) — ascending 3-blast
-  tmrTone(294, now+0.00, 0.22, 0.85, 'sawtooth');
-  tmrTone(392, now+0.22, 0.22, 0.85, 'sawtooth');
-  tmrTone(523, now+0.44, 0.55, 0.90, 'sawtooth');
-
-  // 2. AUTO END CHIMES (t=20) — 3-note descending
-  tmrTone(880, now+20.0, 0.40, 0.60, 'sine');
-  tmrTone(660, now+20.5, 0.40, 0.60, 'sine');
-  tmrTone(440, now+21.0, 0.55, 0.65, 'sine');
-
-  // 3. PRE-SHIFT 1 WARNING BEEPS (warn at t=30, shift at t=33)
-  tmrTone(1050, now+30, 0.10, 0.50, 'square');
-  tmrTone(1050, now+31, 0.10, 0.50, 'square');
-  tmrTone(1050, now+32, 0.10, 0.50, 'square');
-  // 4. SHIFT 1 BUZZ (t=33)
-  tmrTone(330, now+33.0, 0.14, 0.70, 'sawtooth');
-  tmrTone(330, now+33.2, 0.14, 0.70, 'sawtooth');
-
-  // PRE-SHIFT 2 WARNING (warn t=55, shift t=58)
-  tmrTone(1050, now+55, 0.10, 0.50, 'square');
-  tmrTone(1050, now+56, 0.10, 0.50, 'square');
-  tmrTone(1050, now+57, 0.10, 0.50, 'square');
-  // SHIFT 2 BUZZ (t=58)
-  tmrTone(330, now+58.0, 0.14, 0.70, 'sawtooth');
-  tmrTone(330, now+58.2, 0.14, 0.70, 'sawtooth');
-
-  // PRE-SHIFT 3 WARNING (warn t=80, shift t=83)
-  tmrTone(1050, now+80, 0.10, 0.50, 'square');
-  tmrTone(1050, now+81, 0.10, 0.50, 'square');
-  tmrTone(1050, now+82, 0.10, 0.50, 'square');
-  // SHIFT 3 BUZZ (t=83)
-  tmrTone(330, now+83.0, 0.14, 0.70, 'sawtooth');
-  tmrTone(330, now+83.2, 0.14, 0.70, 'sawtooth');
-
-  // PRE-SHIFT 4 WARNING (warn t=105, shift t=108)
-  tmrTone(1050, now+105, 0.10, 0.50, 'square');
-  tmrTone(1050, now+106, 0.10, 0.50, 'square');
-  tmrTone(1050, now+107, 0.10, 0.50, 'square');
-  // SHIFT 4 BUZZ (t=108)
-  tmrTone(330, now+108.0, 0.14, 0.70, 'sawtooth');
-  tmrTone(330, now+108.2, 0.14, 0.70, 'sawtooth');
-
-  // PRE-END-GAME WARNING (warn t=130, endgame t=133)
-  tmrTone(1050, now+130, 0.10, 0.50, 'square');
-  tmrTone(1050, now+131, 0.10, 0.50, 'square');
-  tmrTone(1050, now+132, 0.10, 0.50, 'square');
-  // 5. END GAME ASCENDING CHORD (t=133)
-  tmrTone(440, now+133.0, 0.40, 0.60, 'sine');
-  tmrTone(554, now+133.3, 0.40, 0.60, 'sine');
-  tmrTone(659, now+133.6, 0.45, 0.65, 'sine');
-  tmrTone(880, now+134.0, 0.60, 0.70, 'sine');
-
-  // 6. FINAL COUNTDOWN BEEPS (t=160,161,162)
-  tmrTone(1100, now+160, 0.12, 0.65, 'square');
-  tmrTone(1100, now+161, 0.12, 0.65, 'square');
-  tmrTone(1100, now+162, 0.12, 0.65, 'square');
-
-  // 7. END BUZZER WITH VIBRATO (t=163) — long rich buzz
-  tmrTone(220, now+163, 1.6, 0.90, 'sawtooth', 18, 8);
-  tmrTone(330, now+163, 1.6, 0.70, 'sawtooth', 12, 6);
-  tmrTone(440, now+163, 1.2, 0.50, 'square',   8,  5);
-}
-
-/* ─── TIMER START / TICK ─── */
-function timerStart() {
-  if(!TMR.ally) { toast('⚠️ Select your alliance first'); return; }
-  tmrInitAudio();
-  if(TMR.audioCtx && TMR.audioCtx.state === 'suspended') TMR.audioCtx.resume();
-  TMR.running = true;
-  TMR.paused = false;
-  TMR.elapsed = 0;
-  TMR.elapsedAtPause = 0;
-  TMR.startWall = performance.now();
-  TMR._lastPhaseIdx = -1;
-  var rb = document.getElementById('tmr-reset-btn');
-  if(rb) rb.style.visibility = 'visible';
-  tmrScheduleSounds();
-  renderTimerActive();
-  timerTick();
-}
-
-function timerTick() {
-  if(!TMR.running || TMR.paused) return;
-  TMR.elapsed = TMR.elapsedAtPause + (performance.now() - TMR.startWall) / 1000;
-  if(TMR.elapsed >= TMR_TOTAL) {
-    TMR.elapsed = TMR_TOTAL;
-    timerUpdateDisplay();
-    timerStop();
-    if(navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
-    setTimeout(timerShowOver, 1800);
-    return;
-  }
-  timerUpdateDisplay();
-  TMR.tickRaf = requestAnimationFrame(timerTick);
-}
-
-function timerTogglePause() {
-  if(TMR.paused) {
-    TMR.startWall = performance.now();
-    TMR.paused = false;
-    TMR.running = true;
-    timerTick();
-  } else {
-    TMR.elapsedAtPause = TMR.elapsed;
-    TMR.paused = true;
-    cancelAnimationFrame(TMR.tickRaf);
-  }
-  var btn = document.getElementById('tmr-pause-btn');
-  if(btn) btn.textContent = TMR.paused ? '▶  Resume' : '⏸  Pause';
-}
-
-/* ─── HUB STATE ─── */
-function tmrHubState(elapsed) {
-  var ph = tmrPhaseAt(elapsed);
-  var pname = TMR_PHASES[ph.idx].n;
-  var ia = (TMR.wonAuto && TMR.wonAuto !== 'neither') ? TMR.wonAuto : null;
-  var redActive = true, blueActive = true;
-  if(ia && (pname === 'SHIFT 1' || pname === 'SHIFT 3')) {
-    if(ia === 'red') redActive = false; else blueActive = false;
-  }
-  // Warning zone: 3s before Shift 1 (t=30) and Shift 3 (t=80)
-  var s1 = TMR_PHASE_STARTS[3]; // 33
-  var s3 = TMR_PHASE_STARTS[5]; // 83
-  var warnRed  = ia === 'red'  && ((elapsed >= s1-3 && elapsed < s1) || (elapsed >= s3-3 && elapsed < s3));
-  var warnBlue = ia === 'blue' && ((elapsed >= s1-3 && elapsed < s1) || (elapsed >= s3-3 && elapsed < s3));
-  return {redActive:redActive, blueActive:blueActive, warnRed:warnRed, warnBlue:warnBlue};
-}
-
-function tmrFmt(sec) {
-  var s = Math.ceil(sec); if(s < 0) s = 0;
-  var m = Math.floor(s / 60), ss = s % 60;
-  return m + ':' + (ss < 10 ? '0' : '') + ss;
-}
-
-/* ─── ACTIVE TIMER SCREEN ─── */
-function renderTimerActive() {
-  var el = document.getElementById('tmr-body');
-  if(!el) return;
-  var allyColor = TMR.ally === 'red' ? 'var(--red)' : 'var(--blue)';
-
-  el.innerHTML =
-    '<div style="max-width:420px;margin:0 auto;padding-bottom:20px">' +
-    '<div class="tmr-phase-lbl" id="tmr-phase-lbl">PHASE</div>' +
-    '<div class="tmr-phase-name" id="tmr-phase-name">—</div>' +
-    '<div class="tmr-clock" id="tmr-clock" style="color:var(--gold)">0:20</div>' +
-    '<div class="tmr-pips" id="tmr-pips">' +
-      TMR_VIS_PHASES.map(function(n,i){ return '<div class="tmr-pip" id="tmr-pip-'+i+'" title="'+n+'"></div>'; }).join('') +
-    '</div>' +
-    '<div class="tmr-hub-row">' +
-      '<div class="tmr-hub" id="tmr-hub-red">' +
-        '<div class="tmr-hub-lbl" style="color:var(--red)">🔴 RED HUB</div>' +
-        '<div class="tmr-hub-state" id="tmr-hub-red-state">✅ Active</div>' +
-      '</div>' +
-      '<div class="tmr-hub" id="tmr-hub-blue">' +
-        '<div class="tmr-hub-lbl" style="color:var(--blue)">🔵 BLUE HUB</div>' +
-        '<div class="tmr-hub-state" id="tmr-hub-blue-state">✅ Active</div>' +
-      '</div>' +
-    '</div>' +
-    '<div style="font-size:11px;color:var(--text2);text-align:center;margin:-6px 0 12px">Hub status · '+TMR.ally.toUpperCase()+' alliance' + (TMR.wonAuto && TMR.wonAuto!=='neither'?' · '+TMR.wonAuto.toUpperCase()+' won auto':'')+' </div>' +
-    '<div class="tmr-ctrl-row">' +
-      '<button id="tmr-pause-btn" class="tmr-ctrl-btn" onclick="timerTogglePause()" style="background:var(--surf3);color:var(--text);flex:2">⏸  Pause</button>' +
-      '<button class="tmr-ctrl-btn" onclick="timerReset()" style="background:var(--surf2);color:var(--text2);flex:1">↺  Reset</button>' +
-    '</div>' +
-    '</div>';
-
-  timerUpdateDisplay();
-}
-
-function timerUpdateDisplay() {
-  var elapsed = TMR.elapsed;
-  var ph = tmrPhaseAt(elapsed);
-  var pname = TMR_PHASES[ph.idx].n;
-  var isPause = TMR_PHASES[ph.idx].pause;
-  var displayName = isPause ? 'AUTO END' : pname;
-  var displayRem  = isPause ? 0 : ph.rem;
-
-  // Phase label + name
-  var lblEl  = document.getElementById('tmr-phase-lbl');
-  var nameEl = document.getElementById('tmr-phase-name');
-  if(lblEl)  lblEl.textContent  = isPause ? 'FIELD RESET' : 'PHASE';
-  if(nameEl) {
-    nameEl.textContent = displayName;
-    nameEl.className = 'tmr-phase-name' + (pname==='END GAME' ? ' tmr-endgame' : '');
-  }
-
-  // Clock — color by phase
-  var clockEl = document.getElementById('tmr-clock');
-  if(clockEl) {
-    clockEl.textContent = tmrFmt(displayRem);
-    if(pname==='AUTO')         clockEl.style.color = 'var(--blue)';
-    else if(pname==='END GAME') clockEl.style.color = (TMR.ally==='red'?'var(--red)':'var(--blue)');
-    else                        clockEl.style.color = 'var(--gold)';
-  }
-
-  // Pips — skip PAUSE in visible list
-  var visIdx = TMR_VIS_PHASES.indexOf(pname);
-  for(var i=0; i<7; i++) {
-    var pip = document.getElementById('tmr-pip-'+i);
-    if(!pip) continue;
-    if(i < visIdx)       pip.className = 'tmr-pip on';
-    else if(i===visIdx)  pip.className = 'tmr-pip cur';
-    else                 pip.className = 'tmr-pip';
-  }
-
-  // Hub state
-  var hub = tmrHubState(elapsed);
-  var rHub  = document.getElementById('tmr-hub-red');
-  var bHub  = document.getElementById('tmr-hub-blue');
-  var rSt   = document.getElementById('tmr-hub-red-state');
-  var bSt   = document.getElementById('tmr-hub-blue-state');
-  if(rHub && rSt) {
-    rHub.className = 'tmr-hub ' + (hub.redActive ? 'active' : 'inactive') + (hub.warnRed ? ' warning' : '');
-    rSt.textContent = hub.redActive ? '✅ Active' : '🚫 Inactive';
-  }
-  if(bHub && bSt) {
-    bHub.className = 'tmr-hub ' + (hub.blueActive ? 'active' : 'inactive') + (hub.warnBlue ? ' warning' : '');
-    bSt.textContent = hub.blueActive ? '✅ Active' : '🚫 Inactive';
-  }
-
-  // Background tint on body
-  var body = document.getElementById('tmr-body');
-  if(body) {
-    if(pname==='AUTO')          body.style.background = 'rgba(74,143,232,.06)';
-    else if(pname==='END GAME') body.style.background = TMR.ally==='red'?'rgba(232,83,74,.06)':'rgba(74,143,232,.06)';
-    else                        body.style.background = '';
-  }
-
-  // Vibration on phase change
-  if(TMR._lastPhaseIdx !== ph.idx) {
-    TMR._lastPhaseIdx = ph.idx;
-    if(!isPause && navigator.vibrate) {
-      if(pname==='END GAME') navigator.vibrate([100,50,100,50,150]);
-      else                   navigator.vibrate(70);
-    }
-  }
-}
-
-function timerShowOver() {
-  var body = document.getElementById('tmr-body');
-  if(!body) return;
-  var over = document.createElement('div');
-  over.className = 'tmr-over';
-  over.style.animation = 'tmr-flash .25s ease 3';
-  over.innerHTML =
-    '<div style="font-size:52px;margin-bottom:4px">🏁</div>' +
-    '<div style="font-size:26px;font-weight:900;letter-spacing:1.5px">MATCH OVER</div>' +
-    '<div style="font-size:12px;color:var(--text2);letter-spacing:.5px">All 163 seconds complete</div>' +
-    '<button onclick="timerReset()" style="margin-top:16px;padding:16px 44px;background:var(--gold);color:#000;border:none;border-radius:var(--r);font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.3px">▶  New Match</button>';
-  body.appendChild(over);
-}
-
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(function(e) {
     console.log('SW registration failed:', e);
   });
-}
-
-// Google Sheets Sync — load persisted state and start listeners
-syncLoadCfg();
-syncLoadQueue();
-syncUpdateStatus();
-// Retry when app comes back to foreground
-document.addEventListener('visibilitychange', function() {
-  if (!document.hidden) syncOnOnline();
-});
-// Retry when network returns
-window.addEventListener('online', syncOnOnline);
-// Flush any leftover queue from previous session
-if (syncQueue.length > 0 && syncCfg.enabled && syncCfg.endpoint) {
-  syncFlush();
 }
 </script>
 </body>
