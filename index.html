@@ -835,7 +835,7 @@ select option{background:var(--surf2)}
 
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://unpkg.com/mqtt@5.3.5/dist/mqtt.min.js"></script>
+<!-- native WebSocket relay — no MQTT library needed -->
 <script>
 /* ═══════════════════════════════════════════
    CONSTANTS
@@ -3242,42 +3242,61 @@ function tmrPhaseAt(e) {
 }
 
 /* ─── MQTT NETWORKING ─── */
-var TMR_NET = {client:null,connected:false,topic:''};
+/* ─── NATIVE WEBSOCKET RELAY (no library, no signup) ─── */
+var TMR_NET = {
+  ws: null, connected: false,
+  myId: 'h' + Math.random().toString(36).substr(2,6),
+  room: '', _retry: null
+};
+
 function tmrNetRoom() {
   return (localStorage.getItem('tmr_room')||localStorage.getItem('bh3310_event_code')||'hawkeye3310')
     .replace(/[^a-zA-Z0-9_-]/g,'').substring(0,20)||'hawkeye3310';
 }
 function tmrNetIsHost() { return localStorage.getItem('tmr_is_host')==='1'; }
 
-function tmrNetConnect(onReady) {
-  if(TMR_NET.client && TMR_NET.connected){if(onReady)onReady();return;}
-  if(typeof mqtt==='undefined'){toast('⚠️ Network lib not loaded');return;}
-  var room = tmrNetRoom();
-  var topic = 'hawkeye/tmr/'+room;
-  var cid = 'hawk_'+Math.random().toString(36).substr(2,8);
-  try{
-    var c = mqtt.connect('wss://broker.emqx.io:8084/mqtt',{
-      clientId:cid, clean:true, reconnectPeriod:4000, connectTimeout:6000
-    });
-    c.on('connect',function(){
-      TMR_NET.connected=true; TMR_NET.topic=topic;
-      c.subscribe(topic,{qos:0});
+function tmrNetConnect() {
+  // Already open or connecting
+  if(TMR_NET.ws && TMR_NET.ws.readyState <= 1) return;
+  clearTimeout(TMR_NET._retry);
+  TMR_NET.room = tmrNetRoom();
+  // PieSocket free relay — pure WebSocket, no library needed, no API key signup
+  var url = 'wss://demo.piesocket.com/v3/hawkeye-' + TMR_NET.room +
+    '?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9f72&notify_self=0';
+  try {
+    var ws = new WebSocket(url);
+    TMR_NET.ws = ws;
+    ws.onopen = function() {
+      TMR_NET.connected = true;
       tmrUpdateNetDot();
-      if(onReady) onReady();
-    });
-    c.on('message',function(t,msg){
-      try{tmrNetHandle(JSON.parse(msg.toString()));}catch(e){}
-    });
-    c.on('close',function(){TMR_NET.connected=false;tmrUpdateNetDot();});
-    c.on('error',function(){TMR_NET.connected=false;tmrUpdateNetDot();});
-    TMR_NET.client=c;
-  }catch(e){toast('⚠️ Network error: '+e.message);}
+    };
+    ws.onmessage = function(evt) {
+      try {
+        var d = JSON.parse(evt.data);
+        if(d.event_type) return;      // PieSocket system message
+        if(d._from === TMR_NET.myId) return; // own echo (if notify_self was on)
+        tmrNetHandle(d);
+      } catch(e) {}
+    };
+    ws.onclose = function() {
+      TMR_NET.connected = false;
+      TMR_NET.ws = null;
+      tmrUpdateNetDot();
+      TMR_NET._retry = setTimeout(tmrNetConnect, 3500); // auto-reconnect
+    };
+    ws.onerror = function() {
+      TMR_NET.connected = false;
+      tmrUpdateNetDot();
+    };
+  } catch(e) {
+    TMR_NET._retry = setTimeout(tmrNetConnect, 5000);
+  }
 }
 
 function tmrNetPublish(obj) {
-  if(!TMR_NET.client||!TMR_NET.connected) return false;
-  TMR_NET.client.publish(TMR_NET.topic,JSON.stringify(obj),{qos:0});
-  return true;
+  if(!TMR_NET.ws || TMR_NET.ws.readyState !== 1) return false; // 1 = OPEN
+  obj._from = TMR_NET.myId;
+  try { TMR_NET.ws.send(JSON.stringify(obj)); return true; } catch(e) { return false; }
 }
 
 function tmrNetHandle(d) {
@@ -3346,8 +3365,7 @@ function openTimer() {
   goTo('sc-timer');
   TMR._lastPhaseIdx=-1;
   tmrLoadAudio();
-  // Auto-connect to MQTT when opening timer
-  tmrNetConnect(function(){});
+  tmrNetConnect(); // native WebSocket — auto-reconnects on its own
   renderTimerPre();
 }
 function timerGoHome() { timerStop(); goTo('sc-home'); }
