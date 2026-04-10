@@ -3379,7 +3379,7 @@ function renderTimerPre() {
 
   function abtn(val,color,label){
     var on=TMR.ally===val;
-    return '<button onclick="tmrSetAlly(''+val+'')" style="flex:1;padding:14px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
+    return '<button onclick="tmrSetAlly(\'' + val + '\')" style="flex:1;padding:14px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
   }
 
   var netStatusHtml='<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-top:10px">'
@@ -3429,7 +3429,7 @@ function tmrShowCountdownTo(startMs) {
 
   overlay.innerHTML=
     '<div style="font-size:14px;font-weight:800;letter-spacing:2px;color:var(--text2)">MATCH STARTS IN</div>'
-    +'<div id="tmr-countdown-num" style="font-size:140px;font-weight:900;font-family:'SF Mono','Courier New',monospace;line-height:1;color:var(--gold)">5</div>';
+    +'<div id="tmr-countdown-num" class="tmr-clock" style="font-size:140px;color:var(--gold)">5</div>';
   body.parentElement.appendChild(overlay);
 
   // Swap in the timer body immediately
@@ -3716,7 +3716,7 @@ function tmrShowWinnerModal(){
   var m=document.createElement('div');
   m.id='tmr-winner-modal';
   function btn(w,color,label){
-    return '<button onclick="tmrPickWinner(''+w+'')" style="width:100%;padding:16px;border:none;border-radius:var(--r);background:'+color+';color:#fff;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.3px">'+label+'</button>';
+    return '<button onclick="tmrPickWinner(\'' + w + '\')" style="width:100%;padding:16px;border:none;border-radius:var(--r);background:'+color+';color:#fff;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:.3px">'+label+'</button>';
   }
   m.innerHTML=
     '<div style="font-size:14px;font-weight:800;letter-spacing:1.5px;color:var(--text2);margin-bottom:4px">TRANSITION</div>'
