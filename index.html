@@ -235,6 +235,12 @@ body.tab-teleop #sc-match .prog{background:rgba(232,83,74,.09)}
   transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.35)
 }
 .tog.on::after{transform:translateX(21px)}
+/* Tri-state Yes/No/IDK */
+.trow-tri{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);gap:10px}
+.trow-tri:last-child{border-bottom:none}
+.tri-seg{display:flex;gap:4px;flex-shrink:0}
+.tri-b{padding:6px 10px;border:2px solid var(--border);border-radius:var(--r-sm);background:transparent;color:var(--text2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;min-width:36px;text-align:center}
+.tri-b.on{color:#fff}
 
 /* ─── SEGMENT ─── */
 .seg{display:flex;background:var(--surf2);border-radius:var(--r-sm);padding:3px;gap:3px}
@@ -868,7 +874,8 @@ var START_POS = [
   {id:'OB',label:'Outpost\nBump'},
   {id:'CE',label:'Center'},
   {id:'DB',label:'Depot\nBump'},
-  {id:'DT',label:'Depot\nTrench'}
+  {id:'DT',label:'Depot\nTrench'},
+  {id:'IF',label:'I Forgot'}
 ];
 var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
 
@@ -880,10 +887,10 @@ function blankM() {
     matchNum:'', teamNum:'', alliance:'', scoutName:'',
     noShow:false, startPos:'',
     autonScored:0, autonMissed:0, autonFoul:0,
-    autonNoMove:false, autonPassed:false, autonClimbed:false, autonNotes:'',
+    autonPassed:null, autonClimbed:null, autonNotes:'',
     teleScored:0, teleMissed:0, teleFoul:0,
-    telePassed:false, teleDefense:false, teleStuck:false, teleBroke:false,
-    climbLevel:'', wentOverBump:false, wentUnderTrench:false,
+    telePassed:null, teleDefense:null, teleStuck:null, teleBroke:null,
+    climbLevel:'', wentOverBump:null, wentUnderTrench:null,
     shooterSpeed:'', teleNotes:''
   };
 }
@@ -1559,6 +1566,7 @@ function adj(field, delta) {
     scheduleRateFinalize();
     updateRateDisplay();
   }
+  if(scoreMode==='pct') updateAccuracy();
   vibe(7);
 }
 
@@ -1580,6 +1588,7 @@ function adjSet(field, val) {
     scheduleRateFinalize();
     updateRateDisplay();
   }
+  if(scoreMode==='pct') updateAccuracy();
 }
 
 function adjSlide(field, val) {
@@ -1598,10 +1607,12 @@ function adjSlide(field, val) {
     scheduleRateFinalize();
     updateRateDisplay();
   }
+  if(scoreMode==='pct') updateAccuracy();
   vibe(4);
 }
 
 var ctrMode = 'buttons';
+var scoreMode = 'scored'; // 'scored' = Scored & Missed, 'pct' = Shot & % Accuracy
 function setCtrMode(m) {
   ctrMode = m;
   if (m === 'slider') {
@@ -1613,11 +1624,42 @@ function setCtrMode(m) {
     b.classList.toggle('on', b.getAttribute('data-mode') === m);
   });
 }
+function setScoreMode(m) {
+  scoreMode = m;
+  document.querySelectorAll('.score-seg-b').forEach(function(b) {
+    b.classList.toggle('on', b.getAttribute('data-mode') === m);
+  });
+  // Update labels and show/hide accuracy displays
+  document.querySelectorAll('.pct-accuracy').forEach(function(el) {
+    el.style.display = m === 'pct' ? 'block' : 'none';
+  });
+  document.querySelectorAll('.scored-lbl').forEach(function(el) {
+    el.textContent = m === 'pct' ? '🎯 Shots' : '⚽ Scored';
+  });
+  document.querySelectorAll('.missed-lbl').forEach(function(el) {
+    el.textContent = m === 'pct' ? '❌ Missed' : '❌ Missed';
+  });
+  updateAccuracy();
+}
+function updateAccuracy() {
+  ['auton','tele'].forEach(function(prefix) {
+    var scored = M[prefix + 'Scored'] || 0;
+    var missed = M[prefix + 'Missed'] || 0;
+    var total = scored + missed;
+    var pct = total > 0 ? Math.round((scored / total) * 100) : 0;
+    var el = document.getElementById(prefix + '-accuracy');
+    if (el) el.textContent = total > 0 ? pct + '% accuracy (' + scored + '/' + total + ')' : 'No shots yet';
+  });
+}
 
 function mkModeSeg() {
   return '<div class="mode-seg">' +
     '<button class="mode-seg-b' + (ctrMode==='buttons'?' on':'') + '" data-mode="buttons" onclick="setCtrMode(\'buttons\')">🔘 Buttons</button>' +
     '<button class="mode-seg-b' + (ctrMode==='slider'?' on':'') + '" data-mode="slider" onclick="setCtrMode(\'slider\')">🎚 Slider (0–1000)</button>' +
+    '</div>' +
+    '<div class="mode-seg" style="margin-top:4px">' +
+    '<button class="mode-seg-b score-seg-b' + (scoreMode==='scored'?' on':'') + '" data-mode="scored" onclick="setScoreMode(\'scored\')">⚽ Scored & Missed</button>' +
+    '<button class="mode-seg-b score-seg-b' + (scoreMode==='pct'?' on':'') + '" data-mode="pct" onclick="setScoreMode(\'pct\')">🎯 Shot & % Accuracy</button>' +
     '</div>';
 }
 
@@ -1665,6 +1707,48 @@ function togFn(field, isDanger) {
     var bod = document.getElementById('auton-rest');
     if (bod) bod.className = M.noShow ? 'dimmed' : '';
   }
+}
+
+/* ═══════════════════════════════════════════
+   TRI-STATE (Yes / No / I don't know)
+═══════════════════════════════════════════ */
+function mkTri(field, label, desc, isDanger) {
+  var obj = (field.charAt(0) === 'p' && field.charAt(1) === '_') ? P : M;
+  var key = obj === P ? field.slice(2) : field;
+  var val = obj[key]; // null = unset, true = yes, false = no
+  function tbtn(vStr, lbl, color, isOn) {
+    return '<button class="tri-b' + (isOn ? ' on' : '') + '" style="' + (isOn ? 'background:' + color + ';color:#fff;border-color:' + color : '') + '" onclick="setTri(\'' + field + '\',' + vStr + ',' + isDanger + ')">' + lbl + '</button>';
+  }
+  return '<div class="trow-tri" id="req-' + field + '">' +
+    '<div><div class="trow-lbl">' + label + '</div>' +
+    (desc ? '<div class="trow-sub">' + desc + '</div>' : '') +
+    '</div>' +
+    '<div class="tri-seg">' +
+    tbtn('true', 'Yes', isDanger ? 'var(--red)' : 'var(--green)', val === true) +
+    tbtn('false', 'No', 'var(--surf4)', val === false) +
+    tbtn('null', 'IDK', 'var(--gold)', false) +
+    '</div></div>';
+}
+function setTri(field, val, isDanger) {
+  // val comes as true, false, or null from onclick
+  var obj = (field.charAt(0) === 'p' && field.charAt(1) === '_') ? P : M;
+  var key = obj === P ? field.slice(2) : field;
+  obj[key] = val;
+  var wrap = document.getElementById('req-' + field);
+  if (wrap) {
+    wrap.classList.remove('req-err','req-shake');
+    var btns = wrap.querySelectorAll('.tri-b');
+    var vals = [true, false, null];
+    var colors = isDanger ? ['var(--red)','var(--surf4)','var(--gold)'] : ['var(--green)','var(--surf4)','var(--gold)'];
+    btns.forEach(function(b, i) {
+      var on = val === vals[i];
+      b.classList.toggle('on', on);
+      b.style.background = on ? colors[i] : '';
+      b.style.color = on ? '#fff' : '';
+      b.style.borderColor = on ? colors[i] : '';
+    });
+  }
+  vibe(10);
 }
 
 /* ═══════════════════════════════════════════
@@ -1999,14 +2083,14 @@ function renderAuton() {
   '<div class="card">' +
   '<div class="card-hd">Fuel Shots</div>' +
   mkModeSeg() +
-  mkCtr('autonScored', '⚽ Scored', false) +
-  mkCtr('autonMissed', '❌ Missed', false) +
+  mkCtr('autonScored', '<span class="scored-lbl">' + (scoreMode==='pct'?'🎯 Shots':'⚽ Scored') + '</span>', false) +
+  mkCtr('autonMissed', '<span class="missed-lbl">❌ Missed</span>', false) +
+  '<div class="pct-accuracy" id="auton-accuracy" style="display:' + (scoreMode==='pct'?'block':'none') + ';text-align:center;font-size:14px;font-weight:700;color:var(--gold);padding:4px 0 8px">No shots yet</div>' +
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
-  mkTog('autonNoMove', 'No Move', 'Robot did not leave starting zone', false) +
-  mkTog('autonPassed', 'Passed?', 'Robot crossed the field boundary', false) +
-  mkTog('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
+  mkTri('autonPassed', 'Passed?', 'Robot passed the ball to a teammate', false) +
+  mkTri('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Fouls Committed</div>' +
@@ -2037,14 +2121,15 @@ function renderTeleop() {
   '<div class="card">' +
   '<div class="card-hd">Fuel Shots</div>' +
   mkModeSeg() +
-  mkCtr('teleScored', '⚽ Scored', false) +
+  mkCtr('teleScored', '<span class="scored-lbl">' + (scoreMode==='pct'?'🎯 Shots':'⚽ Scored') + '</span>', false) +
   '<div class="rate-inline">' +
   '<div class="rate-bps" id="rate-display">— b/s</div>' +
   '<button id="rate-toggle-btn" class="btn btn-surf" style="margin:0;flex:1;padding:9px;font-size:13px" onclick="rateToggle()">&#9654; Start</button>' +
   '<button class="btn btn-red" style="margin:0;flex:1;padding:9px;font-size:13px" onclick="rateApply()">Apply &#10003;</button>' +
   '</div>' +
   '<div style="font-size:11px;color:var(--text3);padding:3px 12px 8px;line-height:1.5">Needs 3+ balls. If it doesn\'t work, pick a speed below and ignore the timer.</div>' +
-  mkCtr('teleMissed', '❌ Missed', false) +
+  mkCtr('teleMissed', '<span class="missed-lbl">❌ Missed</span>', false) +
+  '<div class="pct-accuracy" id="tele-accuracy" style="display:' + (scoreMode==='pct'?'block':'none') + ';text-align:center;font-size:14px;font-weight:700;color:var(--gold);padding:4px 0 8px">No shots yet</div>' +
   '</div>' +
   '<div class="card" id="req-shooterSpeed">' +
   '<div class="card-hd">Shooter Speed</div>' +
@@ -2074,15 +2159,15 @@ function renderTeleop() {
   '</div></div>' +
   '<div class="card">' +
   '<div class="card-hd">Field Navigation</div>' +
-  mkTog('wentOverBump', 'Went Over Bump', 'Robot drove over the bump', false) +
-  mkTog('wentUnderTrench', 'Went Under Trench', 'Robot passed under the trench arm', false) +
-  mkTog('telePassed', 'Passed Zone', 'Crossed into opponent zone', false) +
+  mkTri('wentOverBump', 'Went Over Bump', 'Robot drove over the bump', false) +
+  mkTri('wentUnderTrench', 'Went Under Trench', 'Robot passed under the trench arm', false) +
+  mkTri('telePassed', 'Passed?', 'Robot passed the ball to a teammate', false) +
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Robot Status</div>' +
-  mkTog('teleDefense', 'Played Defense', 'Primary role was defense', false) +
-  mkTog('teleStuck', 'Got Stuck', 'Robot became immobile', true) +
-  mkTog('teleBroke', 'Broke Down', 'Mechanical or electrical failure', true) +
+  mkTri('teleDefense', 'Played Defense', 'Primary role was defense', false) +
+  mkTri('teleStuck', 'Got Stuck', 'Robot became immobile', true) +
+  mkTri('teleBroke', 'Broke Down', 'Mechanical or electrical failure', true) +
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Fouls Committed</div>' +
@@ -2144,6 +2229,18 @@ function autonNext() {
     toast('⚠️ Select a starting position first');
     return;
   }
+  if (!M.noShow) {
+    var autonTri = ['autonPassed','autonClimbed'];
+    var body = document.getElementById('m-body');
+    for (var i = 0; i < autonTri.length; i++) {
+      if (M[autonTri[i]] === null) {
+        var el = document.getElementById('req-' + autonTri[i]);
+        if (el) { shakeReq(el); scrollToCenter(el, body); }
+        toast('⚠️ Answer all Yes/No/IDK fields');
+        return;
+      }
+    }
+  }
   mGoTab(2);
 }
 
@@ -2152,6 +2249,16 @@ function validateAndSave(onPass) {
   if (M.noShow) { saveMatchEntry(false); onPass && onPass(); return; }
 
   var missing = [];
+  // Tri-state fields must be answered (not null)
+  var triFields = [
+    {field:'autonPassed', tab:1}, {field:'autonClimbed', tab:1},
+    {field:'wentOverBump', tab:2}, {field:'wentUnderTrench', tab:2},
+    {field:'telePassed', tab:2}, {field:'teleDefense', tab:2},
+    {field:'teleStuck', tab:2}, {field:'teleBroke', tab:2}
+  ];
+  triFields.forEach(function(tf) {
+    if (M[tf.field] === null) missing.push(tf);
+  });
   if (!M.shooterSpeed) missing.push({field:'shooterSpeed', tab:2});
   if (!M.climbLevel)   missing.push({field:'climbLevel',  tab:2});
 
@@ -2267,7 +2374,7 @@ function mCSV(e) {
     d.matchNum, d.teamNum, d.alliance, d.scoutName,
     ns, ns ? '' : (d.startPos||''),
     ns ? 0 : (d.autonScored||0), ns ? 0 : (d.autonMissed||0), ns ? 0 : (d.autonFoul||0),
-    ns ? 0 : (d.autonNoMove?1:0), ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
+    ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
     ns ? '' : (d.autonNotes||'').replace(/,/g,';'),
     ns ? 0 : (d.teleScored||0), ns ? 0 : (d.teleMissed||0), ns ? 0 : (d.teleFoul||0),
     ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
@@ -2620,7 +2727,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.3.3</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.3</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -3613,8 +3720,6 @@ function tmrShowCountdownTo(startMs) {
       return;
     }
     if(numEl) numEl.textContent=rem;
-    // Play shift tick on each countdown number (host only)
-    if(tmrNetIsHost()) tmrPlay('shift');
   },500);
 }
 
@@ -3831,26 +3936,24 @@ function timerUpdateDisplay(){
     }
   }
 
-  // Offset-based sound cues (host only) — each sound ENDS when its phase STARTS
-  // Durations: cavalrycharge 1.71, buzzer 2.98, threebells 1.61, shift 0.94, endgame 2.68
+  // Sound cues (host only) — each sound STARTS when its phase STARTS
   if(tmrNetIsHost()){
     if(!TMR._sfxPlayed)TMR._sfxPlayed={};
     var cues=[
-      {k:'auto_end',   snd:'buzzer',     trigger:20,    dur:2.98},  // buzzer ends auto
-      {k:'teleop',     snd:'threebells', trigger:33,    dur:1.61},  // 3 bells start teleop (Shift 1)
-      {k:'shift2',     snd:'shift',      trigger:58,    dur:0.94},  // shift sound
-      {k:'shift3',     snd:'shift',      trigger:83,    dur:0.94},
-      {k:'shift4',     snd:'shift',      trigger:108,   dur:0.94},
-      {k:'endgame',    snd:'endgame',    trigger:133,   dur:2.68},  // endgame warning
-      {k:'match_end',  snd:'buzzer',     trigger:163,   dur:2.98}   // buzzer ends match
+      {k:'auto_end',   snd:'buzzer',     trigger:20},    // buzzer at auto end
+      {k:'teleop',     snd:'threebells', trigger:33},    // 3 bells at teleop start (Shift 1)
+      {k:'shift2',     snd:'shift',      trigger:58},    // shift sound
+      {k:'shift3',     snd:'shift',      trigger:83},
+      {k:'shift4',     snd:'shift',      trigger:108},
+      {k:'endgame',    snd:'endgame',    trigger:133},   // endgame warning
+      {k:'match_end',  snd:'buzzer',     trigger:163}    // buzzer at match end
     ];
     cues.forEach(function(c){
-      var playAt=c.trigger-c.dur;
-      if(elapsed>=playAt&&elapsed<c.trigger&&!TMR._sfxPlayed[c.k]){
+      if(elapsed>=c.trigger&&!TMR._sfxPlayed[c.k]){
         TMR._sfxPlayed[c.k]=true;
         tmrPlay(c.snd);
       }
-      if(elapsed<playAt)TMR._sfxPlayed[c.k]=false;
+      if(elapsed<c.trigger)TMR._sfxPlayed[c.k]=false;
     });
   }
 }
