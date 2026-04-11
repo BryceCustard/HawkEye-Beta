@@ -589,8 +589,8 @@ select option{background:var(--surf2)}
 /* Hub halo — full-screen edge glow on sc-timer */
 #tmr-halo{position:fixed;inset:0;pointer-events:none;z-index:997;transition:box-shadow .6s ease,opacity .6s ease;border-radius:0}
 #tmr-halo-left,#tmr-halo-right{position:fixed;top:0;bottom:0;width:50%;pointer-events:none;z-index:997;transition:box-shadow .6s ease}
-#tmr-halo-left{left:0;border-right:1px solid rgba(255,255,255,.08)}
-#tmr-halo-right{right:0;border-left:1px solid rgba(255,255,255,.08)}
+#tmr-halo-left{left:0}
+#tmr-halo-right{right:0}
 @keyframes tmr-halo-warn{0%,100%{opacity:1}50%{opacity:.25}}
 @keyframes tmr-halo-end{0%,100%{box-shadow:inset 0 0 80px 30px var(--tmr-halo-c,transparent)}50%{box-shadow:inset 0 0 130px 55px var(--tmr-halo-c,transparent)}}
 @keyframes tmr-halo-chase{0%{box-shadow:inset 0 0 70px 30px rgba(255,255,255,.5)}25%{box-shadow:inset 0 0 100px 45px rgba(255,255,255,.65)}50%{box-shadow:inset 0 0 70px 30px rgba(255,255,255,.35)}75%{box-shadow:inset 0 0 100px 45px rgba(255,255,255,.65)}100%{box-shadow:inset 0 0 70px 30px rgba(255,255,255,.5)}}
@@ -2727,7 +2727,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.3</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.4</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -3653,14 +3653,18 @@ function renderTimerPre() {
 
   el.innerHTML=
     '<div style="max-width:420px;margin:0 auto">'
-    +(isHost
-      ?'<div class="card" style="text-align:center"><div class="card-hd">EVENT HOST <span class="tmr-host-badge">HOST</span></div>'
-        +'<div style="font-size:13px;color:var(--text2);margin:4px 0 2px">Split-screen — both hubs visible</div></div>'
-      :'<div class="card">'
-        +'<div class="card-hd">YOUR ALLIANCE</div>'
-        +'<div style="display:flex;gap:10px">'+abtn('red','var(--red)','🔴 Red')+abtn('blue','var(--blue)','🔵 Blue')+'</div>'
-      +'</div>'
-    )
+    +'<div class="card">'
+      +'<div class="card-hd">'+(isHost?'HUB VIEW <span class="tmr-host-badge">HOST</span>':'YOUR ALLIANCE')+'</div>'
+      +(isHost
+        ?'<div style="display:flex;gap:8px">'
+          +abtn('red','var(--red)','🔴 Red')
+          +abtn('both','var(--surf3)','↔ Both')
+          +abtn('blue','var(--blue)','🔵 Blue')
+          +'</div>'
+          +'<div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center">'+(TMR.ally==='both'||TMR.ally===''?'Split-screen — both hubs':TMR.ally==='red'?'Red hub full-screen':'Blue hub full-screen')+'</div>'
+        :'<div style="display:flex;gap:10px">'+abtn('red','var(--red)','🔴 Red')+abtn('blue','var(--blue)','🔵 Blue')+'</div>'
+      )
+    +'</div>'
     +'<div class="card" style="padding:14px 16px">'
       +'<div style="display:flex;align-items:center;gap:10px">'
         +'<div style="font-size:18px;opacity:.7" onclick="tmrSetMaster(0)">🔇</div>'
@@ -3726,7 +3730,9 @@ function tmrShowCountdownTo(startMs) {
 /* ─── HOST: BEGIN COUNTDOWN ─── */
 function timerBeginCountdown() {
   if(!tmrNetIsHost()&&!TMR.ally){toast('⚠️ Pick your alliance first');return;}
-  if(tmrNetIsHost()) TMR.ally='host';
+  // Host: default to 'both' split-screen if no specific side picked
+  if(tmrNetIsHost()&&(!TMR.ally||TMR.ally==='both')) TMR.ally='host';
+  // Host picked a specific side — keep it as-is for single halo
   if(!TMR_NET.connected){
     // Offline mode — just countdown locally
     var sm=Date.now()+5500;
@@ -3973,26 +3979,26 @@ function tmrHaloStyle(active,warn,isWinner,transWinner,pn,isPause,rgb){
 }
 function tmrUpdateHalo(hub,pn,isPause,elapsed){
   var isHost=tmrNetIsHost();
-  if(isHost){
-    // Split-screen: left=red, right=blue
-    var hl=document.getElementById('tmr-halo-left');
-    var hr=document.getElementById('tmr-halo-right');
-    var halo=document.getElementById('tmr-halo');
+  var ally=TMR.ally;
+  var halo=document.getElementById('tmr-halo');
+  var hl=document.getElementById('tmr-halo-left');
+  var hr=document.getElementById('tmr-halo-right');
+  // Host in split mode ('host'=both)
+  if(isHost&&ally==='host'){
     if(halo)halo.style.display='none';
     if(!hl||!hr)return;
     hl.style.display='block';hr.style.display='block';
-    var baseL='display:block;position:fixed;top:0;bottom:0;left:0;width:50%;pointer-events:none;z-index:997;';
-    var baseR='display:block;position:fixed;top:0;bottom:0;right:0;width:50%;pointer-events:none;z-index:997;';
+    var baseL='display:block;position:fixed;top:0;bottom:0;left:0;width:50%;pointer-events:none;z-index:997;border-right:1px solid rgba(255,255,255,.08);';
+    var baseR='display:block;position:fixed;top:0;bottom:0;right:0;width:50%;pointer-events:none;z-index:997;border-left:1px solid rgba(255,255,255,.08);';
     var isRedWin=hub.winner==='red',isBlueWin=hub.winner==='blue';
     hl.style.cssText=baseL+tmrHaloStyle(hub.redActive,hub.warnRed,isRedWin,hub.transWinner,pn,isPause,'232,83,74');
     hr.style.cssText=baseR+tmrHaloStyle(hub.blueActive,hub.warnBlue,isBlueWin,hub.transWinner,pn,isPause,'74,143,232');
     return;
   }
-  // Client: single full-screen halo
-  var halo=document.getElementById('tmr-halo');
-  if(!halo||!TMR.ally||TMR.ally==='host')return;
-  var hl2=document.getElementById('tmr-halo-left');if(hl2)hl2.style.display='none';
-  var hr2=document.getElementById('tmr-halo-right');if(hr2)hr2.style.display='none';
+  // Single full-screen halo: client OR host who picked a specific side
+  if(hl)hl.style.display='none';
+  if(hr)hr.style.display='none';
+  if(!halo||!ally||ally==='host')return;
   halo.style.display='block';
   var myActive=TMR.ally==='red'?hub.redActive:hub.blueActive;
   var myWarn=TMR.ally==='red'?hub.warnRed:hub.warnBlue;
@@ -4056,9 +4062,8 @@ function timerShowOver(){
   if(!body)return;
   var halo=document.getElementById('tmr-halo');
   if(halo){halo.style.boxShadow='none';halo.style.animation='none';}
-  var hl=document.getElementById('tmr-halo-left');if(hl){hl.style.boxShadow='none';hl.style.animation='none';}
-  var hr=document.getElementById('tmr-halo-right');if(hr){hr.style.boxShadow='none';hr.style.animation='none';}
-  if(tmrNetIsHost())tmrPlay('threebells');
+  var hl=document.getElementById('tmr-halo-left');if(hl){hl.style.boxShadow='none';hl.style.animation='none';hl.style.display='none';}
+  var hr=document.getElementById('tmr-halo-right');if(hr){hr.style.boxShadow='none';hr.style.animation='none';hr.style.display='none';}
   var over=document.createElement('div');
   over.className='tmr-over';
   over.style.animation='tmr-flash .25s ease 3';
