@@ -835,7 +835,7 @@ select option{background:var(--surf2)}
 
 <div class="toast" id="toast"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<!-- native WebSocket relay — no MQTT library needed -->
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <script>
 /* ═══════════════════════════════════════════
    CONSTANTS
@@ -2606,7 +2606,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.2.1</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.2.2</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -3242,11 +3242,10 @@ function tmrPhaseAt(e) {
 }
 
 /* ─── MQTT NETWORKING ─── */
-/* ─── NATIVE WEBSOCKET RELAY (no library, no signup) ─── */
+/* ─── PEERJS P2P NETWORKING (WebRTC — direct device-to-device) ─── */
 var TMR_NET = {
-  ws: null, connected: false,
-  myId: 'h' + Math.random().toString(36).substr(2,6),
-  room: '', _retry: null
+  peer: null, conns: [], connected: false,
+  room: '', _retry: null, _peerOpen: false
 };
 
 function tmrNetRoom() {
@@ -3255,53 +3254,140 @@ function tmrNetRoom() {
 }
 function tmrNetIsHost() { return localStorage.getItem('tmr_is_host')==='1'; }
 
-function tmrNetConnect() {
-  // Already open or connecting
-  if(TMR_NET.ws && TMR_NET.ws.readyState <= 1) return;
+function tmrNetDestroy() {
   clearTimeout(TMR_NET._retry);
+  TMR_NET.conns.forEach(function(c){ try{c.close();}catch(e){} });
+  TMR_NET.conns = [];
+  if(TMR_NET.peer){ try{TMR_NET.peer.destroy();}catch(e){} TMR_NET.peer=null; }
+  TMR_NET.connected = false;
+  TMR_NET._peerOpen = false;
+}
+
+function tmrNetConnect() {
+  if(TMR_NET.peer && !TMR_NET.peer.destroyed) return;
+  clearTimeout(TMR_NET._retry);
+  if(typeof Peer === 'undefined'){ toast('⚠️ P2P library loading…'); TMR_NET._retry=setTimeout(tmrNetConnect,2000); return; }
+
   TMR_NET.room = tmrNetRoom();
-  // PieSocket free relay — pure WebSocket, no library needed, no API key signup
-  var url = 'wss://demo.piesocket.com/v3/hawkeye-' + TMR_NET.room +
-    '?api_key=VCXCEuvhGcBDP7XhiJJUDvR1e1D3eiVjgZ9f72&notify_self=0';
-  try {
-    var ws = new WebSocket(url);
-    TMR_NET.ws = ws;
-    ws.onopen = function() {
+  var hostId = 'hawkeye-' + TMR_NET.room + '-host';
+  var isHost = tmrNetIsHost();
+
+  if(isHost) {
+    /* ── HOST: register with known peer ID, accept client connections ── */
+    var peer;
+    try { peer = new Peer(hostId); } catch(e){ toast('⚠️ P2P init failed'); return; }
+    TMR_NET.peer = peer;
+
+    peer.on('open', function() {
+      TMR_NET._peerOpen = true;
       TMR_NET.connected = true;
       tmrUpdateNetDot();
-    };
-    ws.onmessage = function(evt) {
-      try {
-        var d = JSON.parse(evt.data);
-        if(d.event_type) return;      // PieSocket system message
-        if(d._from === TMR_NET.myId) return; // own echo (if notify_self was on)
-        tmrNetHandle(d);
-      } catch(e) {}
-    };
-    ws.onclose = function() {
+    });
+
+    peer.on('connection', function(conn) {
+      conn.on('open', function() {
+        TMR_NET.conns.push(conn);
+        tmrUpdateNetDot();
+        toast('👥 Device joined (' + TMR_NET.conns.length + ')');
+        // Send current timer state so late joiners sync up
+        if(TMR.running || TMR.paused) {
+          try{ conn.send(JSON.stringify({t:'full_state', running:TMR.running, paused:TMR.paused, startMs:TMR._startMs, wonAuto:TMR.wonAuto, elapsed:TMR.elapsed})); }catch(e){}
+        }
+      });
+      conn.on('close', function() {
+        TMR_NET.conns = TMR_NET.conns.filter(function(c){return c!==conn;});
+        tmrUpdateNetDot();
+      });
+      conn.on('error', function(){});
+    });
+
+    peer.on('error', function(err) {
+      if(err.type === 'unavailable-id') {
+        toast('⚠️ Room ' + TMR_NET.room + ' already has a host');
+      }
       TMR_NET.connected = false;
-      TMR_NET.ws = null;
       tmrUpdateNetDot();
-      TMR_NET._retry = setTimeout(tmrNetConnect, 3500); // auto-reconnect
-    };
-    ws.onerror = function() {
+    });
+
+    peer.on('disconnected', function() {
       TMR_NET.connected = false;
       tmrUpdateNetDot();
-    };
-  } catch(e) {
-    TMR_NET._retry = setTimeout(tmrNetConnect, 5000);
+      if(TMR_NET.peer && !TMR_NET.peer.destroyed) {
+        TMR_NET._retry = setTimeout(function(){ try{TMR_NET.peer.reconnect();}catch(e){} }, 3000);
+      }
+    });
+
+  } else {
+    /* ── CLIENT: connect to host's known peer ID ── */
+    var peer;
+    try { peer = new Peer(); } catch(e){ toast('⚠️ P2P init failed'); return; }
+    TMR_NET.peer = peer;
+
+    peer.on('open', function() {
+      TMR_NET._peerOpen = true;
+      var conn = peer.connect(hostId, {reliable:true, serialization:'json'});
+      conn.on('open', function() {
+        TMR_NET.conns = [conn];
+        TMR_NET.connected = true;
+        tmrUpdateNetDot();
+        toast('📡 Synced to host · Room: ' + TMR_NET.room);
+      });
+      conn.on('data', function(raw) {
+        try {
+          var d = (typeof raw==='string') ? JSON.parse(raw) : raw;
+          tmrNetHandle(d);
+        } catch(e){}
+      });
+      conn.on('close', function() {
+        TMR_NET.conns = [];
+        TMR_NET.connected = false;
+        tmrUpdateNetDot();
+        // Retry connection to host
+        TMR_NET._retry = setTimeout(function(){ tmrNetDestroy(); tmrNetConnect(); }, 4000);
+      });
+      conn.on('error', function(){});
+    });
+
+    peer.on('error', function(err) {
+      if(err.type === 'peer-unavailable') {
+        toast('⏳ Waiting for host on room ' + TMR_NET.room + '…');
+      }
+      TMR_NET.connected = false;
+      tmrUpdateNetDot();
+      TMR_NET._retry = setTimeout(function(){ tmrNetDestroy(); tmrNetConnect(); }, 5000);
+    });
   }
 }
 
 function tmrNetPublish(obj) {
-  if(!TMR_NET.ws || TMR_NET.ws.readyState !== 1) return false; // 1 = OPEN
-  obj._from = TMR_NET.myId;
-  try { TMR_NET.ws.send(JSON.stringify(obj)); return true; } catch(e) { return false; }
+  if(!TMR_NET.conns.length) return false;
+  var msg = JSON.stringify(obj);
+  TMR_NET.conns.forEach(function(c){ if(c.open){ try{c.send(msg);}catch(e){} } });
+  return true;
 }
 
 function tmrNetHandle(d) {
   // Both host and client process these
   switch(d.t){
+    case 'full_state':
+      // Late-joiner sync — host sends current state when a client connects
+      if(!tmrNetIsHost()){
+        TMR._startMs = d.startMs||0;
+        TMR.wonAuto = d.wonAuto||'';
+        TMR._lastPhaseIdx = -1;
+        if(d.running && !d.paused && TMR._startMs) {
+          TMR.running=true; TMR.paused=false;
+          TMR.elapsed = (Date.now()-TMR._startMs)/1000;
+          var rb=document.getElementById('tmr-reset-btn'); if(rb)rb.style.visibility='visible';
+          renderTimerActive(); timerTick();
+        } else if(d.paused && TMR._startMs) {
+          TMR.running=false; TMR.paused=true;
+          TMR.elapsed = d.elapsed||0;
+          TMR.elapsedAtPause = TMR.elapsed;
+          renderTimerActive(); timerUpdateDisplay();
+        }
+      }
+      break;
     case 'start_in':
       TMR._startMs = d.startMs;
       TMR.ally = TMR.ally || d.hostAlly || ''; // keep local ally
@@ -3368,7 +3454,7 @@ function openTimer() {
   tmrNetConnect(); // native WebSocket — auto-reconnects on its own
   renderTimerPre();
 }
-function timerGoHome() { timerStop(); goTo('sc-home'); }
+function timerGoHome() { timerStop(); tmrNetDestroy(); goTo('sc-home'); }
 function timerStop() { cancelAnimationFrame(TMR.tickRaf); TMR.running=false; }
 
 function timerReset() {
@@ -3400,9 +3486,14 @@ function renderTimerPre() {
     return '<button onclick="tmrSetAlly(\'' + val + '\')" style="flex:1;padding:14px;border-radius:var(--r-sm);border:2px solid '+(on?color:'var(--border)')+';background:'+(on?color:'var(--surf2)')+';color:'+(on?'#fff':'var(--text2)')+';font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s">'+label+'</button>';
   }
 
+  var netMsg = '';
+  if(TMR_NET.connected && isHost) { netMsg = 'Host ready · <b style="color:var(--text)">'+room+'</b> · '+TMR_NET.conns.length+' device'+(TMR_NET.conns.length!==1?'s':''); }
+  else if(TMR_NET.connected) { netMsg = 'Synced to host · <b style="color:var(--text)">'+room+'</b>'; }
+  else if(isHost) { netMsg = 'Starting host on <b style="color:var(--text)">'+room+'</b>…'; }
+  else { netMsg = 'Looking for host on <b style="color:var(--text)">'+room+'</b>…'; }
   var netStatusHtml='<div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);margin-top:10px">'
     +'<span class="tmr-net-dot '+(TMR_NET.connected?'on':'off')+'"></span>'
-    +(TMR_NET.connected?'Connected · Room <b style="color:var(--text)">'+room+'</b>':'Connecting to room <b style="color:var(--text)">'+room+'</b>...')
+    +netMsg
     +'</div>';
 
   var hostSection='';
