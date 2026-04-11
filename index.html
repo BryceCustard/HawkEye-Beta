@@ -570,7 +570,7 @@ select option{background:var(--surf2)}
 .tmr-hub-lbl{font-size:10px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px}
 .tmr-hub-state{font-size:13px;font-weight:700}
 .tmr-hub.active{border-color:var(--green);background:rgba(76,175,125,.12)}
-.tmr-hub.inactive{border-color:var(--red);background:rgba(232,83,74,.12)}
+.tmr-hub.inactive{border-color:var(--surf4);background:rgba(30,30,40,.4);opacity:.5}
 @keyframes tmr-hub-warn{0%,100%{opacity:1}50%{opacity:.15}}
 .tmr-hub.warning{animation:tmr-hub-warn .33s ease-in-out infinite}
 @keyframes tmr-end-pulse{0%,100%{opacity:1}50%{opacity:.5}}
@@ -584,6 +584,9 @@ select option{background:var(--surf2)}
 #tmr-halo{position:fixed;inset:0;pointer-events:none;z-index:997;transition:box-shadow .6s ease,opacity .6s ease;border-radius:0}
 @keyframes tmr-halo-warn{0%,100%{opacity:1}50%{opacity:.25}}
 @keyframes tmr-halo-end{0%,100%{box-shadow:inset 0 0 80px 30px var(--tmr-halo-c,transparent)}50%{box-shadow:inset 0 0 130px 55px var(--tmr-halo-c,transparent)}}
+@keyframes tmr-halo-chase{0%{box-shadow:inset 0 0 70px 30px rgba(255,255,255,.5)}25%{box-shadow:inset 0 0 100px 45px rgba(255,255,255,.65)}50%{box-shadow:inset 0 0 70px 30px rgba(255,255,255,.35)}75%{box-shadow:inset 0 0 100px 45px rgba(255,255,255,.65)}100%{box-shadow:inset 0 0 70px 30px rgba(255,255,255,.5)}}
+.tmr-hub.transition-chase{border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.12);animation:tmr-hub-chase 1.2s linear infinite}
+@keyframes tmr-hub-chase{0%,100%{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.05)}50%{border-color:rgba(255,255,255,.7);background:rgba(255,255,255,.18)}}
 /* Net status dot */
 .tmr-net-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:middle}
 .tmr-net-dot.on{background:var(--green)}
@@ -2606,7 +2609,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.2.2</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.2.4</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -3182,17 +3185,39 @@ function tmrLoadAudio() {
     TMR_SFX[n] = a;
   });
 }
+var TMR_ACTX=null;
+function tmrGetAudioCtx(){
+  if(!TMR_ACTX){try{TMR_ACTX=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  if(TMR_ACTX&&TMR_ACTX.state==='suspended')TMR_ACTX.resume().catch(function(){});
+  return TMR_ACTX;
+}
 function tmrPlay(name) {
   if(!TMR_SFX[name]) return;
   var a;
   try { a = TMR_SFX[name].cloneNode(true); } catch(e) { a = new Audio(TMR_AUDIO_B64[name]); }
-  a.volume = Math.max(0, Math.min(1, TMR.vol));
+  var ctx=tmrGetAudioCtx();
+  if(ctx&&TMR.gain>1){
+    a.volume=1;
+    try{
+      var src=ctx.createMediaElementSource(a);
+      var g=ctx.createGain();
+      g.gain.value=Math.min(5,TMR.vol*TMR.gain);
+      src.connect(g);g.connect(ctx.destination);
+    }catch(e){a.volume=Math.min(1,TMR.vol);}
+  } else {
+    a.volume=Math.max(0,Math.min(1,TMR.vol));
+  }
   a.play().catch(function(){});
 }
 function tmrSetVol(v) {
   TMR.vol = parseFloat(v) || 0;
   var sp = document.getElementById('tmr-vol-pct');
   if(sp) sp.textContent = Math.round(TMR.vol*100)+'%';
+}
+function tmrSetGain(v) {
+  TMR.gain = parseFloat(v) || 1;
+  var sp = document.getElementById('tmr-gain-pct');
+  if(sp) sp.textContent = TMR.gain.toFixed(1)+'x';
 }
 
 function tmrToggleHost(el) {
@@ -3208,7 +3233,7 @@ function tmrToggleHost(el) {
 
 /* ─── TMR STATE ─── */
 var TMR = {
-  ally:'', wonAuto:'', vol:0.7,
+  ally:'', wonAuto:'', vol:1.0, gain:2.5,
   running:false, paused:false,
   _startMs:0, elapsed:0, elapsedAtPause:0, startWall:0,
   tickRaf:0, _lastPhaseIdx:-1, _lastSyncSent:0
@@ -3515,7 +3540,12 @@ function renderTimerPre() {
     +'</div>'
     +'<div class="card" style="padding:12px 16px">'
       +'<div class="card-hd" style="margin-bottom:10px">SOUND VOLUME <span id="tmr-vol-pct" style="color:var(--text2);font-size:10px;font-weight:600">'+Math.round(TMR.vol*100)+'%</span>'+(isHost?'  <span style="font-size:10px;color:var(--text2);font-weight:500">(PA output)</span>':'')+'</div>'
-      +'<input type="range" min="0" max="1" step="0.05" value="'+TMR.vol+'" oninput="tmrSetVol(this.value)" style="width:100%;accent-color:var(--gold)">'
+      +'<input type="range" min="0" max="1" step="0.01" value="'+TMR.vol+'" oninput="tmrSetVol(this.value)" style="width:100%;accent-color:var(--gold)">'
+      +'<div style="display:flex;justify-content:space-between;margin-top:6px">'
+        +'<span style="font-size:10px;color:var(--text3)">Gain Boost</span>'
+        +'<span id="tmr-gain-pct" style="font-size:10px;color:var(--text2);font-weight:600">'+TMR.gain.toFixed(1)+'x</span>'
+      +'</div>'
+      +'<input type="range" min="1" max="5" step="0.1" value="'+TMR.gain+'" oninput="tmrSetGain(this.value)" style="width:100%;accent-color:var(--gold)">'
     +'</div>'
     +hostSection
     +netStatusHtml
@@ -3663,13 +3693,28 @@ function timerTogglePause() {
 function tmrHubState(elapsed){
   var ph=tmrPhaseAt(elapsed);
   var pn=TMR_PHASES[ph.idx].n;
-  var ia=(TMR.wonAuto&&TMR.wonAuto!=='neither')?TMR.wonAuto:null;
+  var w=(TMR.wonAuto&&TMR.wonAuto!=='neither')?TMR.wonAuto:null;
+  // Default: both active
   var ra=true,ba=true;
-  if(ia&&(pn==='SHIFT 1'||pn==='SHIFT 3')){if(ia==='red')ra=false;else ba=false;}
-  var s1=TMR_PHASE_STARTS[3],s3=TMR_PHASE_STARTS[5]; // 33, 83
-  var warnZone=ia&&((elapsed>=s1-3&&elapsed<s1)||(elapsed>=s3-3&&elapsed<s3));
-  return{redActive:ra,blueActive:ba,
-    warnRed:warnZone&&ia==='red',warnBlue:warnZone&&ia==='blue'};
+  // Transition: white chase on winner hub (special state)
+  var transWinner=false,transLoser=false;
+  // Winner inactive Shifts 1&3; Loser inactive Shifts 2&4
+  if(w){
+    if(pn==='SHIFT 1'||pn==='SHIFT 3'){if(w==='red')ra=false;else ba=false;}
+    if(pn==='SHIFT 2'||pn==='SHIFT 4'){if(w==='red')ba=false;else ra=false;}
+    if(pn==='TRANSITION'){transWinner=true;}
+  }
+  // Warning 3s before ANY hub deactivation
+  // Shift1 start: winner goes inactive. Shift2 start: loser goes inactive.
+  // Shift3 start: winner goes inactive. Shift4 start: loser goes inactive.
+  var s1=TMR_PHASE_STARTS[3],s2=TMR_PHASE_STARTS[4],s3=TMR_PHASE_STARTS[5],s4=TMR_PHASE_STARTS[6];
+  var warnWinner=w&&((elapsed>=s1-3&&elapsed<s1)||(elapsed>=s3-3&&elapsed<s3));
+  var warnLoser=w&&((elapsed>=s2-3&&elapsed<s2)||(elapsed>=s4-3&&elapsed<s4));
+  var warnRed=false,warnBlue=false;
+  if(w==='red'){warnRed=warnWinner;warnBlue=warnLoser;}
+  else if(w==='blue'){warnBlue=warnWinner;warnRed=warnLoser;}
+  return{redActive:ra,blueActive:ba,warnRed:warnRed,warnBlue:warnBlue,
+    transWinner:transWinner,winner:w,phaseName:pn};
 }
 
 function tmrFmt(sec){
@@ -3714,8 +3759,20 @@ function timerUpdateDisplay(){
   var bh=document.getElementById('tmr-hub-blue');
   var rs=document.getElementById('tmr-hub-red-state');
   var bs=document.getElementById('tmr-hub-blue-state');
-  if(rh&&rs){rh.className='tmr-hub '+(hub.redActive?'active':'inactive')+(hub.warnRed?' warning':'');rs.textContent=hub.redActive?'✅ Active':'🚫 Inactive';}
-  if(bh&&bs){bh.className='tmr-hub '+(hub.blueActive?'active':'inactive')+(hub.warnBlue?' warning':'');bs.textContent=hub.blueActive?'✅ Active':'🚫 Inactive';}
+  // Hub classes and labels
+  function hubClass(active,warn,isTrans,isWinner){
+    if(isTrans&&isWinner) return 'tmr-hub transition-chase';
+    if(warn) return 'tmr-hub active warning';
+    return 'tmr-hub '+(active?'active':'inactive');
+  }
+  function hubLabel(active,warn,isTrans,isWinner){
+    if(isTrans&&isWinner) return '⚪ White Chase';
+    if(warn) return '⚠️ Warning';
+    return active?'✅ Active':'⛔ Off';
+  }
+  var isRedWinner=hub.winner==='red',isBlueWinner=hub.winner==='blue';
+  if(rh&&rs){rh.className=hubClass(hub.redActive,hub.warnRed,hub.transWinner,isRedWinner);rs.textContent=hubLabel(hub.redActive,hub.warnRed,hub.transWinner,isRedWinner);}
+  if(bh&&bs){bh.className=hubClass(hub.blueActive,hub.warnBlue,hub.transWinner,isBlueWinner);bs.textContent=hubLabel(hub.blueActive,hub.warnBlue,hub.transWinner,isBlueWinner);}
 
   // Halo
   tmrUpdateHalo(hub,pn,isPause,elapsed);
@@ -3748,12 +3805,12 @@ function timerUpdateDisplay(){
     }
   }
 
-  // Warning sounds 3s before shift
+  // Warning sounds 3s before any hub deactivation (all 4 shifts)
   if(tmrNetIsHost()&&TMR.wonAuto){
-    var s1=TMR_PHASE_STARTS[3],s3=TMR_PHASE_STARTS[5];
+    var s1=TMR_PHASE_STARTS[3],s2=TMR_PHASE_STARTS[4],s3=TMR_PHASE_STARTS[5],s4=TMR_PHASE_STARTS[6];
     var warnKey='_warnPlayed';
     if(!TMR[warnKey])TMR[warnKey]={};
-    var zones=[{k:'s1',t:s1},{k:'s3',t:s3}];
+    var zones=[{k:'s1',t:s1},{k:'s2',t:s2},{k:'s3',t:s3},{k:'s4',t:s4}];
     zones.forEach(function(z){
       if(elapsed>=z.t-3&&elapsed<z.t&&!TMR[warnKey][z.k]){
         TMR[warnKey][z.k]=true;
@@ -3784,37 +3841,52 @@ function tmrUpdateHalo(hub,pn,isPause,elapsed){
   halo.style.display='block';
   var myActive=TMR.ally==='red'?hub.redActive:hub.blueActive;
   var myWarn=TMR.ally==='red'?hub.warnRed:hub.warnBlue;
+  var imWinner=(hub.winner===TMR.ally);
   var allyRgb=TMR.ally==='red'?'232,83,74':'74,143,232';
+  var base='display:block;position:fixed;inset:0;pointer-events:none;z-index:997;';
 
   if(isPause){
-    halo.style.cssText='display:block;position:fixed;inset:0;pointer-events:none;z-index:997;box-shadow:none;transition:box-shadow .6s ease;animation:none';
+    halo.style.cssText=base+'box-shadow:none;transition:box-shadow .6s ease;animation:none';
     return;
   }
   if(pn==='END GAME'){
-    // Intense pulsing alliance color
-    halo.style.cssText='display:block;position:fixed;inset:0;pointer-events:none;z-index:997;'
+    // Both active — intense pulsing alliance color
+    halo.style.cssText=base
       +'box-shadow:inset 0 0 100px 50px rgba('+allyRgb+',.65);'
       +'animation:tmr-halo-end 0.8s ease-in-out infinite;'
       +'--tmr-halo-c:rgba('+allyRgb+',.65)';
     return;
   }
+  if(hub.transWinner&&hub.winner){
+    // Transition: winner gets white chase halo, loser gets steady alliance
+    if(imWinner){
+      halo.style.cssText=base
+        +'box-shadow:inset 0 0 90px 40px rgba(255,255,255,.55);'
+        +'animation:tmr-halo-chase 1.2s linear infinite';
+    } else {
+      halo.style.cssText=base
+        +'box-shadow:inset 0 0 80px 30px rgba('+allyRgb+',.5);'
+        +'animation:none;transition:box-shadow .6s ease';
+    }
+    return;
+  }
   if(myWarn){
-    // Amber pulsing — hub about to deactivate
-    halo.style.cssText='display:block;position:fixed;inset:0;pointer-events:none;z-index:997;'
-      +'box-shadow:inset 0 0 80px 35px rgba(240,140,0,.7);'
+    // Pulsing alliance color — 3s warning before deactivation
+    halo.style.cssText=base
+      +'box-shadow:inset 0 0 90px 40px rgba('+allyRgb+',.7);'
       +'animation:tmr-hub-warn .33s ease-in-out infinite';
     return;
   }
   if(!myActive){
-    // My hub inactive — dark red pulse (can't score!)
-    halo.style.cssText='display:block;position:fixed;inset:0;pointer-events:none;z-index:997;'
-      +'box-shadow:inset 0 0 70px 28px rgba(200,40,30,.5);'
-      +'animation:tmr-hub-warn .7s ease-in-out infinite';
+    // Hub OFF — no glow, dim dark
+    halo.style.cssText=base
+      +'box-shadow:inset 0 0 60px 20px rgba(30,30,40,.6);'
+      +'animation:none;transition:box-shadow .6s ease';
     return;
   }
-  // My hub active — steady alliance glow
-  var intensity=pn==='AUTO'?.55:.35;
-  halo.style.cssText='display:block;position:fixed;inset:0;pointer-events:none;z-index:997;'
+  // Hub active — solid alliance color glow (100% brightness)
+  var intensity=pn==='AUTO'?.55:.45;
+  halo.style.cssText=base
     +'box-shadow:inset 0 0 80px 30px rgba('+allyRgb+','+intensity+');'
     +'animation:none;transition:box-shadow .6s ease';
 }
