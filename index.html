@@ -2727,7 +2727,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.4</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.5</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
@@ -3644,7 +3644,10 @@ function renderTimerPre() {
   var hostSection='';
   if(isHost){
     hostSection=
-      '<button onclick="timerBeginCountdown()" style="width:100%;padding:18px;background:var(--gold);color:#000;border:none;border-radius:var(--r);font-size:17px;font-weight:800;cursor:pointer;font-family:inherit">▶  Start 5-Second Countdown</button>';
+      '<div style="display:flex;gap:10px">'
+      +'<button onclick="timerBeginCountdown()" style="flex:2;padding:18px;background:var(--gold);color:#000;border:none;border-radius:var(--r);font-size:17px;font-weight:800;cursor:pointer;font-family:inherit">▶  5s Countdown</button>'
+      +'<button onclick="timerInstantStart()" style="flex:1;padding:18px;background:var(--surf3);color:var(--text);border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit">⚡ Go</button>'
+      +'</div>';
   } else {
     hostSection=
       '<div style="text-align:center;padding:22px 0 10px;color:var(--text2);font-size:15px;font-weight:600;letter-spacing:.3px">'
@@ -3725,6 +3728,23 @@ function tmrShowCountdownTo(startMs) {
     }
     if(numEl) numEl.textContent=rem;
   },500);
+}
+
+/* ─── HOST: INSTANT START ─── */
+function timerInstantStart() {
+  if(!tmrNetIsHost()&&!TMR.ally){toast('⚠️ Pick your alliance first');return;}
+  if(tmrNetIsHost()&&(!TMR.ally||TMR.ally==='both')) TMR.ally='host';
+  var sm=Date.now()+200; // tiny buffer for network
+  TMR._startMs=sm;
+  if(TMR_NET.connected) tmrNetPublish({t:'start_in',startMs:sm,hostAlly:TMR.ally});
+  // Skip countdown overlay — go straight to timer
+  TMR.running=true; TMR.paused=false;
+  TMR._lastPhaseIdx=-1;
+  var rb=document.getElementById('tmr-reset-btn');
+  if(rb) rb.style.visibility='visible';
+  if(tmrNetIsHost()) tmrPlay('cavalrycharge');
+  renderTimerActive();
+  timerTick();
 }
 
 /* ─── HOST: BEGIN COUNTDOWN ─── */
