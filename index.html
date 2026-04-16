@@ -637,6 +637,7 @@ select option{background:var(--surf2)}
     <div class="hdr-title">Team 3310 HawkEye</div>
     <div class="hdr-sub">REBUILT 2026</div>
   </div>
+  <div style="background:linear-gradient(90deg,rgba(140,20,20,.95),rgba(180,30,30,.95));text-align:center;padding:3px 0;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.9)">State Champs Edition</div>
   <div class="home-scroll">
     <div class="hero">
       <img src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png"
@@ -1566,7 +1567,7 @@ function adj(field, delta) {
     scheduleRateFinalize();
     updateRateDisplay();
   }
-  if(scoreMode==='pct') updateAccuracy();
+
   vibe(7);
 }
 
@@ -1588,7 +1589,7 @@ function adjSet(field, val) {
     scheduleRateFinalize();
     updateRateDisplay();
   }
-  if(scoreMode==='pct') updateAccuracy();
+
 }
 
 function adjSlide(field, val) {
@@ -1607,12 +1608,13 @@ function adjSlide(field, val) {
     scheduleRateFinalize();
     updateRateDisplay();
   }
-  if(scoreMode==='pct') updateAccuracy();
+
   vibe(4);
 }
 
 var ctrMode = 'buttons';
 var scoreMode = 'scored'; // 'scored' = Scored & Missed, 'pct' = Shot & % Accuracy
+var pctState = {autonShot:0, autonAcc:50, teleShot:0, teleAcc:50};
 function setCtrMode(m) {
   ctrMode = m;
   if (m === 'slider') {
@@ -1625,33 +1627,89 @@ function setCtrMode(m) {
   });
 }
 function setScoreMode(m) {
+  // When switching to pct mode, seed pctState from current M values
+  if (m === 'pct') {
+    ['auton','tele'].forEach(function(p) {
+      var s = M[p+'Scored']||0, mi = M[p+'Missed']||0;
+      pctState[p+'Shot'] = s + mi;
+      pctState[p+'Acc'] = (s+mi) > 0 ? Math.round(s/(s+mi)*100) : 50;
+    });
+  }
   scoreMode = m;
   document.querySelectorAll('.score-seg-b').forEach(function(b) {
     b.classList.toggle('on', b.getAttribute('data-mode') === m);
   });
-  // Update labels and show/hide accuracy displays
-  document.querySelectorAll('.pct-accuracy').forEach(function(el) {
-    el.style.display = m === 'pct' ? 'block' : 'none';
-  });
-  document.querySelectorAll('.scored-lbl').forEach(function(el) {
-    el.textContent = m === 'pct' ? '🎯 Shots' : '⚽ Scored';
-  });
-  document.querySelectorAll('.missed-lbl').forEach(function(el) {
-    el.textContent = m === 'pct' ? '❌ Missed' : '❌ Missed';
-  });
-  updateAccuracy();
+  // Toggle visibility
+  document.querySelectorAll('.scored-mode').forEach(function(el) { el.style.display = m==='scored' ? '' : 'none'; });
+  document.querySelectorAll('.pct-mode').forEach(function(el) { el.style.display = m==='pct' ? '' : 'none'; });
+  if (m === 'pct') syncPctDisplay();
 }
-function updateAccuracy() {
-  ['auton','tele'].forEach(function(prefix) {
-    var scored = M[prefix + 'Scored'] || 0;
-    var missed = M[prefix + 'Missed'] || 0;
-    var total = scored + missed;
-    var pct = total > 0 ? Math.round((scored / total) * 100) : 0;
-    var el = document.getElementById(prefix + '-accuracy');
-    if (el) el.textContent = total > 0 ? pct + '% accuracy (' + scored + '/' + total + ')' : 'No shots yet';
+function setPctShot(prefix, val) {
+  pctState[prefix+'Shot'] = Math.max(0, Math.min(1000, parseInt(val,10)||0));
+  pctCalc(prefix);
+  var el = document.getElementById('pct-shot-'+prefix);
+  if (el) el.value = pctState[prefix+'Shot'];
+  vibe(7);
+}
+function adjPctShot(prefix, delta) {
+  pctState[prefix+'Shot'] = Math.max(0, Math.min(1000, pctState[prefix+'Shot'] + delta));
+  pctCalc(prefix);
+  var el = document.getElementById('pct-shot-'+prefix);
+  if (el) { el.value = pctState[prefix+'Shot']; el.classList.add('pop'); setTimeout(function(){el.classList.remove('pop');},90); }
+  vibe(7);
+}
+function setPctAcc(prefix, val) {
+  pctState[prefix+'Acc'] = Math.max(0, Math.min(100, parseInt(val,10)||0));
+  pctCalc(prefix);
+  var lbl = document.getElementById('pct-acc-lbl-'+prefix);
+  if (lbl) lbl.textContent = pctState[prefix+'Acc'] + '%';
+}
+function pctCalc(prefix) {
+  var shot = pctState[prefix+'Shot'];
+  var acc = pctState[prefix+'Acc'];
+  var scored = Math.round(shot * acc / 100);
+  var missed = shot - scored;
+  M[prefix+'Scored'] = scored;
+  M[prefix+'Missed'] = missed;
+  var info = document.getElementById('pct-info-'+prefix);
+  if (info) info.textContent = scored + ' scored · ' + missed + ' missed';
+}
+function syncPctDisplay() {
+  ['auton','tele'].forEach(function(p) {
+    var el = document.getElementById('pct-shot-'+p);
+    if (el) el.value = pctState[p+'Shot'];
+    var sl = document.getElementById('pct-acc-'+p);
+    if (sl) sl.value = pctState[p+'Acc'];
+    var lbl = document.getElementById('pct-acc-lbl-'+p);
+    if (lbl) lbl.textContent = pctState[p+'Acc'] + '%';
+    pctCalc(p);
   });
 }
 
+function mkPctBlock(prefix) {
+  var shot = pctState[prefix+'Shot'];
+  var acc = pctState[prefix+'Acc'];
+  var scored = Math.round(shot * acc / 100);
+  var missed = shot - scored;
+  return '<div class="pct-mode" style="display:' + (scoreMode==='pct'?'':'none') + '">' +
+    '<div class="ctr"><div class="ctr-lbl">🎯 Shots</div><div class="ctr-box">' +
+    '<input type="number" inputmode="numeric" min="0" class="ctr-num" id="pct-shot-' + prefix + '" value="' + shot + '" oninput="setPctShot(\'' + prefix + '\',this.value)">' +
+    '<div class="ctr-btns-row">' +
+    '<button class="cb cb-sm" onclick="adjPctShot(\'' + prefix + '\',-5)">−5</button>' +
+    '<button class="cb cb-sm" onclick="adjPctShot(\'' + prefix + '\',-1)">−</button>' +
+    '<button class="cb cb-big plus" onclick="adjPctShot(\'' + prefix + '\',1)">+</button>' +
+    '<button class="cb cb-big plus p5" onclick="adjPctShot(\'' + prefix + '\',5)">+5</button>' +
+    '</div></div></div>' +
+    '<div style="padding:8px 0 4px">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">' +
+    '<span style="font-size:13px;font-weight:600;color:var(--text)">Accuracy</span>' +
+    '<span id="pct-acc-lbl-' + prefix + '" style="font-size:15px;font-weight:800;color:var(--gold);font-family:\'SF Mono\',monospace">' + acc + '%</span>' +
+    '</div>' +
+    '<input type="range" min="0" max="100" step="1" value="' + acc + '" class="ctr-slider" style="display:block" id="pct-acc-' + prefix + '" oninput="setPctAcc(\'' + prefix + '\',this.value)">' +
+    '</div>' +
+    '<div id="pct-info-' + prefix + '" style="text-align:center;font-size:13px;font-weight:600;color:var(--text2);padding:4px 0 6px">' + scored + ' scored · ' + missed + ' missed</div>' +
+    '</div>';
+}
 function mkModeSeg() {
   return '<div class="mode-seg">' +
     '<button class="mode-seg-b' + (ctrMode==='buttons'?' on':'') + '" data-mode="buttons" onclick="setCtrMode(\'buttons\')">🔘 Buttons</button>' +
@@ -2083,13 +2141,15 @@ function renderAuton() {
   '<div class="card">' +
   '<div class="card-hd">Fuel Shots</div>' +
   mkModeSeg() +
-  mkCtr('autonScored', '<span class="scored-lbl">' + (scoreMode==='pct'?'🎯 Shots':'⚽ Scored') + '</span>', false) +
-  mkCtr('autonMissed', '<span class="missed-lbl">❌ Missed</span>', false) +
-  '<div class="pct-accuracy" id="auton-accuracy" style="display:' + (scoreMode==='pct'?'block':'none') + ';text-align:center;font-size:14px;font-weight:700;color:var(--gold);padding:4px 0 8px">No shots yet</div>' +
+  '<div class="scored-mode" style="display:' + (scoreMode==='scored'?'':'none') + '">' +
+  mkCtr('autonScored', '⚽ Scored', false) +
+  mkCtr('autonMissed', '❌ Missed', false) +
+  '</div>' +
+  mkPctBlock('auton') +
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
-  mkTri('autonPassed', 'Passed?', 'Robot passed the ball to a teammate', false) +
+  mkTri('autonPassed', 'Passed?', 'Robot passed balls to a teammate', false) +
   mkTri('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
   '<div class="card">' +
@@ -2121,15 +2181,17 @@ function renderTeleop() {
   '<div class="card">' +
   '<div class="card-hd">Fuel Shots</div>' +
   mkModeSeg() +
-  mkCtr('teleScored', '<span class="scored-lbl">' + (scoreMode==='pct'?'🎯 Shots':'⚽ Scored') + '</span>', false) +
+  '<div class="scored-mode" style="display:' + (scoreMode==='scored'?'':'none') + '">' +
+  mkCtr('teleScored', '⚽ Scored', false) +
   '<div class="rate-inline">' +
   '<div class="rate-bps" id="rate-display">— b/s</div>' +
   '<button id="rate-toggle-btn" class="btn btn-surf" style="margin:0;flex:1;padding:9px;font-size:13px" onclick="rateToggle()">&#9654; Start</button>' +
   '<button class="btn btn-red" style="margin:0;flex:1;padding:9px;font-size:13px" onclick="rateApply()">Apply &#10003;</button>' +
   '</div>' +
   '<div style="font-size:11px;color:var(--text3);padding:3px 12px 8px;line-height:1.5">Needs 3+ balls. If it doesn\'t work, pick a speed below and ignore the timer.</div>' +
-  mkCtr('teleMissed', '<span class="missed-lbl">❌ Missed</span>', false) +
-  '<div class="pct-accuracy" id="tele-accuracy" style="display:' + (scoreMode==='pct'?'block':'none') + ';text-align:center;font-size:14px;font-weight:700;color:var(--gold);padding:4px 0 8px">No shots yet</div>' +
+  mkCtr('teleMissed', '❌ Missed', false) +
+  '</div>' +
+  mkPctBlock('tele') +
   '</div>' +
   '<div class="card" id="req-shooterSpeed">' +
   '<div class="card-hd">Shooter Speed</div>' +
@@ -2161,7 +2223,7 @@ function renderTeleop() {
   '<div class="card-hd">Field Navigation</div>' +
   mkTri('wentOverBump', 'Went Over Bump', 'Robot drove over the bump', false) +
   mkTri('wentUnderTrench', 'Went Under Trench', 'Robot passed under the trench arm', false) +
-  mkTri('telePassed', 'Passed?', 'Robot passed the ball to a teammate', false) +
+  mkTri('telePassed', 'Passed?', 'Robot passed balls to a teammate', false) +
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Robot Status</div>' +
@@ -2727,7 +2789,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.5</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.6</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
