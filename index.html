@@ -637,7 +637,7 @@ select option{background:var(--surf2)}
     <div class="hdr-title">Team 3310 HawkEye</div>
     <div class="hdr-sub">REBUILT 2026</div>
   </div>
-  <div style="background:linear-gradient(90deg,rgba(140,20,20,.95),rgba(180,30,30,.95));text-align:center;padding:3px 0;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.9)">State Champs Edition</div>
+  <div style="background:linear-gradient(90deg,rgba(140,20,20,.95),rgba(180,30,30,.95));text-align:center;padding:3px 0;font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.9)">State Champs Edition V2</div>
   <div class="home-scroll">
     <div class="hero">
       <img src="https://frc3310.com/wp-content/uploads/2024/08/logonobg.png"
@@ -875,8 +875,7 @@ var START_POS = [
   {id:'OB',label:'Outpost\nBump'},
   {id:'CE',label:'Center'},
   {id:'DB',label:'Depot\nBump'},
-  {id:'DT',label:'Depot\nTrench'},
-  {id:'IF',label:'I Forgot'}
+  {id:'DT',label:'Depot\nTrench'}
 ];
 var TAB_NAMES = ['Setup','Auton','Teleop','Export'];
 
@@ -888,10 +887,10 @@ function blankM() {
     matchNum:'', teamNum:'', alliance:'', scoutName:'',
     noShow:false, startPos:'',
     autonScored:0, autonMissed:0, autonFoul:0,
-    autonPassed:'unset', autonClimbed:'unset', autonNotes:'',
+    autonNoMove:false, autonPassed:false, autonClimbed:false, autonNotes:'',
     teleScored:0, teleMissed:0, teleFoul:0,
-    telePassed:'unset', teleDefense:'unset', teleStuck:'unset', teleBroke:'unset',
-    climbLevel:'', wentOverBump:'unset', wentUnderTrench:'unset',
+    telePassed:false, teleDefense:false, teleStuck:false, teleBroke:false,
+    climbLevel:'', wentOverBump:false, wentUnderTrench:false,
     shooterSpeed:'', teleNotes:''
   };
 }
@@ -1773,7 +1772,7 @@ function togFn(field, isDanger) {
 function mkTri(field, label, desc, isDanger) {
   var obj = (field.charAt(0) === 'p' && field.charAt(1) === '_') ? P : M;
   var key = obj === P ? field.slice(2) : field;
-  var val = obj[key]; // 'unset' = not answered, true = yes, false = no, null = idk
+  var val = obj[key]; // true = yes, false = no
   function tbtn(vStr, lbl, color, isOn) {
     return '<button class="tri-b' + (isOn ? ' on' : '') + '" style="' + (isOn ? 'background:' + color + ';color:#fff;border-color:' + color : '') + '" onclick="setTri(\'' + field + '\',' + vStr + ',' + isDanger + ')">' + lbl + '</button>';
   }
@@ -1784,7 +1783,6 @@ function mkTri(field, label, desc, isDanger) {
     '<div class="tri-seg">' +
     tbtn('true', 'Yes', isDanger ? 'var(--red)' : 'var(--green)', val === true) +
     tbtn('false', 'No', 'var(--surf4)', val === false) +
-    tbtn('null', 'IDK', 'var(--gold)', val === null) +
     '</div></div>';
 }
 function setTri(field, val, isDanger) {
@@ -2149,6 +2147,7 @@ function renderAuton() {
   '</div>' +
   '<div class="card">' +
   '<div class="card-hd">Actions</div>' +
+  mkTri('autonNoMove', 'No Move', 'Robot did not leave starting zone', false) +
   mkTri('autonPassed', 'Passed?', 'Robot passed balls to a teammate', false) +
   mkTri('autonClimbed', 'Climbed Tower (L1)', 'Earns 15 pts in auton', false) +
   '</div>' +
@@ -2291,18 +2290,6 @@ function autonNext() {
     toast('⚠️ Select a starting position first');
     return;
   }
-  if (!M.noShow) {
-    var autonTri = ['autonPassed','autonClimbed'];
-    var body = document.getElementById('m-body');
-    for (var i = 0; i < autonTri.length; i++) {
-      if (M[autonTri[i]] === 'unset') {
-        var el = document.getElementById('req-' + autonTri[i]);
-        if (el) { shakeReq(el); scrollToCenter(el, body); }
-        toast('⚠️ Answer all Yes/No/IDK fields');
-        return;
-      }
-    }
-  }
   mGoTab(2);
 }
 
@@ -2311,16 +2298,6 @@ function validateAndSave(onPass) {
   if (M.noShow) { saveMatchEntry(false); onPass && onPass(); return; }
 
   var missing = [];
-  // Tri-state fields must be answered (not null)
-  var triFields = [
-    {field:'autonPassed', tab:1}, {field:'autonClimbed', tab:1},
-    {field:'wentOverBump', tab:2}, {field:'wentUnderTrench', tab:2},
-    {field:'telePassed', tab:2}, {field:'teleDefense', tab:2},
-    {field:'teleStuck', tab:2}, {field:'teleBroke', tab:2}
-  ];
-  triFields.forEach(function(tf) {
-    if (M[tf.field] === 'unset') missing.push(tf);
-  });
   if (!M.shooterSpeed) missing.push({field:'shooterSpeed', tab:2});
   if (!M.climbLevel)   missing.push({field:'climbLevel',  tab:2});
 
@@ -2436,12 +2413,12 @@ function mCSV(e) {
     d.matchNum, d.teamNum, d.alliance, d.scoutName,
     ns, ns ? '' : (d.startPos||''),
     ns ? 0 : (d.autonScored||0), ns ? 0 : (d.autonMissed||0), ns ? 0 : (d.autonFoul||0),
-    ns ? 0 : (d.autonPassed===true?1:0), ns ? 0 : (d.autonClimbed===true?1:0),
+    ns ? 0 : (d.autonNoMove?1:0), ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
     ns ? '' : (d.autonNotes||'').replace(/,/g,';'),
     ns ? 0 : (d.teleScored||0), ns ? 0 : (d.teleMissed||0), ns ? 0 : (d.teleFoul||0),
-    ns ? 0 : (d.telePassed===true?1:0), ns ? 0 : (d.teleDefense===true?1:0),
-    ns ? 0 : (d.teleStuck===true?1:0), ns ? 0 : (d.teleBroke===true?1:0),
-    ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump===true?1:0), ns ? 0 : (d.wentUnderTrench===true?1:0),
+    ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
+    ns ? 0 : (d.teleStuck?1:0), ns ? 0 : (d.teleBroke?1:0),
+    ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump?1:0), ns ? 0 : (d.wentUnderTrench?1:0),
     ns ? '' : ((d.shooterSpeed||'').replace('T','')), ns ? '' : (d.teleNotes||'').replace(/,/g,';'),
     d.timestamp || ''
   ].join(',');
