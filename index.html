@@ -888,10 +888,10 @@ function blankM() {
     matchNum:'', teamNum:'', alliance:'', scoutName:'',
     noShow:false, startPos:'',
     autonScored:0, autonMissed:0, autonFoul:0,
-    autonPassed:null, autonClimbed:null, autonNotes:'',
+    autonPassed:'unset', autonClimbed:'unset', autonNotes:'',
     teleScored:0, teleMissed:0, teleFoul:0,
-    telePassed:null, teleDefense:null, teleStuck:null, teleBroke:null,
-    climbLevel:'', wentOverBump:null, wentUnderTrench:null,
+    telePassed:'unset', teleDefense:'unset', teleStuck:'unset', teleBroke:'unset',
+    climbLevel:'', wentOverBump:'unset', wentUnderTrench:'unset',
     shooterSpeed:'', teleNotes:''
   };
 }
@@ -1773,7 +1773,7 @@ function togFn(field, isDanger) {
 function mkTri(field, label, desc, isDanger) {
   var obj = (field.charAt(0) === 'p' && field.charAt(1) === '_') ? P : M;
   var key = obj === P ? field.slice(2) : field;
-  var val = obj[key]; // null = unset, true = yes, false = no
+  var val = obj[key]; // 'unset' = not answered, true = yes, false = no, null = idk
   function tbtn(vStr, lbl, color, isOn) {
     return '<button class="tri-b' + (isOn ? ' on' : '') + '" style="' + (isOn ? 'background:' + color + ';color:#fff;border-color:' + color : '') + '" onclick="setTri(\'' + field + '\',' + vStr + ',' + isDanger + ')">' + lbl + '</button>';
   }
@@ -1784,7 +1784,7 @@ function mkTri(field, label, desc, isDanger) {
     '<div class="tri-seg">' +
     tbtn('true', 'Yes', isDanger ? 'var(--red)' : 'var(--green)', val === true) +
     tbtn('false', 'No', 'var(--surf4)', val === false) +
-    tbtn('null', 'IDK', 'var(--gold)', false) +
+    tbtn('null', 'IDK', 'var(--gold)', val === null) +
     '</div></div>';
 }
 function setTri(field, val, isDanger) {
@@ -2295,7 +2295,7 @@ function autonNext() {
     var autonTri = ['autonPassed','autonClimbed'];
     var body = document.getElementById('m-body');
     for (var i = 0; i < autonTri.length; i++) {
-      if (M[autonTri[i]] === null) {
+      if (M[autonTri[i]] === 'unset') {
         var el = document.getElementById('req-' + autonTri[i]);
         if (el) { shakeReq(el); scrollToCenter(el, body); }
         toast('⚠️ Answer all Yes/No/IDK fields');
@@ -2319,7 +2319,7 @@ function validateAndSave(onPass) {
     {field:'teleStuck', tab:2}, {field:'teleBroke', tab:2}
   ];
   triFields.forEach(function(tf) {
-    if (M[tf.field] === null) missing.push(tf);
+    if (M[tf.field] === 'unset') missing.push(tf);
   });
   if (!M.shooterSpeed) missing.push({field:'shooterSpeed', tab:2});
   if (!M.climbLevel)   missing.push({field:'climbLevel',  tab:2});
@@ -2436,12 +2436,12 @@ function mCSV(e) {
     d.matchNum, d.teamNum, d.alliance, d.scoutName,
     ns, ns ? '' : (d.startPos||''),
     ns ? 0 : (d.autonScored||0), ns ? 0 : (d.autonMissed||0), ns ? 0 : (d.autonFoul||0),
-    ns ? 0 : (d.autonPassed?1:0), ns ? 0 : (d.autonClimbed?1:0),
+    ns ? 0 : (d.autonPassed===true?1:0), ns ? 0 : (d.autonClimbed===true?1:0),
     ns ? '' : (d.autonNotes||'').replace(/,/g,';'),
     ns ? 0 : (d.teleScored||0), ns ? 0 : (d.teleMissed||0), ns ? 0 : (d.teleFoul||0),
-    ns ? 0 : (d.telePassed?1:0), ns ? 0 : (d.teleDefense?1:0),
-    ns ? 0 : (d.teleStuck?1:0), ns ? 0 : (d.teleBroke?1:0),
-    ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump?1:0), ns ? 0 : (d.wentUnderTrench?1:0),
+    ns ? 0 : (d.telePassed===true?1:0), ns ? 0 : (d.teleDefense===true?1:0),
+    ns ? 0 : (d.teleStuck===true?1:0), ns ? 0 : (d.teleBroke===true?1:0),
+    ns ? '' : (d.climbLevel||''), ns ? 0 : (d.wentOverBump===true?1:0), ns ? 0 : (d.wentUnderTrench===true?1:0),
     ns ? '' : ((d.shooterSpeed||'').replace('T','')), ns ? '' : (d.teleNotes||'').replace(/,/g,';'),
     d.timestamp || ''
   ].join(',');
@@ -2789,7 +2789,7 @@ function showQRModal(title, csvData, subtitle) {
 function renderInfo() {
   var html = '<div class="page">' +
 
-  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.6</div>' +
+  '<div style="text-align:center;padding:10px 0 14px;color:var(--text2);font-size:14px;font-weight:800;letter-spacing:1.5px">v3.4.7</div>' +
 
   '<div class="card">' +
   '<div class="card-hd">📱 How to Use This App</div>' +
